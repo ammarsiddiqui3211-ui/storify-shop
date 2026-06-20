@@ -1,0 +1,6 @@
+.env
+# Ignore IDE / local server files
+.vscode/
+.idea/
+*.log
+.DS_Store
