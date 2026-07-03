@@ -2633,38 +2633,109 @@
             font-size: 12px;
         }
 
-        .account-page-header {
-            display: flex;
-            align-items: center;
-            gap: 24px;
+        .account-page-header-premium {
+            position: relative;
+            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+            border-radius: 24px;
+            padding: 40px;
+            color: var(--white);
             margin-bottom: 36px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .account-page-avatar {
-            width: 90px;
-            height: 90px;
+        .account-premium-overlay {
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .account-header-content {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            z-index: 2;
+        }
+
+        .account-page-avatar-premium {
+            position: relative;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: linear-gradient(135deg, var(--accent) 0%, #a17838 100%);
             color: var(--white);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 34px;
+            font-size: 38px;
             font-weight: 800;
             flex-shrink: 0;
-            box-shadow: 0 8px 24px rgba(74, 144, 226, 0.25);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(197, 160, 89, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .account-page-avatar-premium:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 12px 28px rgba(197, 160, 89, 0.5);
+        }
+
+        .avatar-glow {
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            opacity: 0.5;
+            animation: pulse-glow 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.08); opacity: 0.1; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+
+        .account-membership-badge {
+            display: inline-block;
+            background: rgba(197, 160, 89, 0.15);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            margin-bottom: 12px;
         }
 
         .account-page-header-info h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+            margin: 0 0 8px 0;
+            background: linear-gradient(120deg, #ffffff 0%, #f1f5f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .account-page-header-info p {
-            color: var(--text-light);
-            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0;
+            max-width: 680px;
         }
 
         .account-page-grid {
@@ -2673,135 +2744,297 @@
             gap: 24px;
         }
 
-        .account-page-card {
+        .account-page-card-premium {
             background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 4px 20px var(--shadow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
         }
 
-        .account-page-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px var(--shadow-strong);
+        .account-page-card-premium:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            border-color: rgba(197, 160, 89, 0.2);
         }
 
-        .account-page-card-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 20px;
+        .card-header-premium {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 18px;
         }
 
-        .account-page-card-title svg {
+        .card-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon-wrapper svg {
             width: 20px;
             height: 20px;
-            color: var(--accent);
         }
 
-        .account-page-info-row {
+        .card-header-premium h3 {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .profile-details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-grow: 1;
+        }
+
+        .profile-detail-item {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
         }
 
-        .account-page-info-row:last-child {
+        .profile-detail-item:last-child {
             border-bottom: none;
         }
 
-        .account-page-info-label {
-            font-size: 12px;
+        .detail-label {
+            font-size: 11px;
             font-weight: 700;
-            letter-spacing: 0.6px;
             text-transform: uppercase;
+            letter-spacing: 0.8px;
             color: var(--text-light);
         }
 
-        .account-page-info-value {
+        .detail-value {
             font-size: 15px;
             font-weight: 600;
             color: var(--primary);
             text-align: right;
-            word-break: break-word;
+            max-width: 60%;
+            word-wrap: break-word;
         }
 
-        .account-page-quick-actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        .profile-actions-wrapper {
+            margin-top: 28px;
+            display: flex;
             gap: 14px;
         }
 
-        .account-quick-action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 22px 14px;
-            background: var(--secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.25s ease;
-        }
-
-        .account-quick-action-btn svg {
-            width: 22px;
-            height: 22px;
-            color: var(--accent);
-        }
-
-        .account-quick-action-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px var(--shadow);
-        }
-
-        /* Sign Out Button - Full Width at Bottom */
-        .account-page-signout-section {
-            margin-top: 36px;
-            padding-top: 28px;
-            border-top: 1px solid var(--border);
-        }
-
-        .signout-btn-full {
+        .btn-premium-edit {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 16px 24px;
-            background: #fef2f2;
-            color: #ef4444;
-            border: 2px solid #fecaca;
+            gap: 8px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 14px 20px;
             border-radius: 14px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
             font-family: 'Inter', sans-serif;
         }
 
-        .signout-btn-full svg {
-            width: 20px;
-            height: 20px;
+        .btn-premium-edit:hover {
+            background: var(--accent);
+            box-shadow: 0 6px 18px rgba(197, 160, 89, 0.3);
+            transform: translateY(-2px);
         }
 
-        .signout-btn-full:hover {
+        .btn-premium-signout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            color: #ef4444;
+            border: 2px solid #fee2e2;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-premium-signout:hover {
             background: #ef4444;
             color: var(--white);
             border-color: #ef4444;
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.15);
+        }
+
+        /* Stats styling */
+        .shopping-stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-premium-box {
+            background: #f8fafc;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+
+        .stat-premium-box:hover {
+            background: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        .stat-premium-box .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .stat-premium-box .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-light);
+        }
+
+        .quick-actions-section h4 {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--primary);
+            margin: 0 0 16px 0;
+        }
+
+        .quick-actions-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .action-btn-premium {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-btn-premium:hover {
+            background: var(--white);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(197, 160, 89, 0.15);
+        }
+
+        .action-btn-premium:hover .action-icon {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .action-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+
+        .action-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .action-btn-premium span {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Perks Banner */
+        .account-perks-banner {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 36px;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid var(--border);
+        }
+
+        .perk-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .perk-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .perk-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .perk-info h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 0 4px 0;
+        }
+
+        .perk-info p {
+            font-size: 12px;
+            color: var(--text-light);
+            margin: 0;
+            line-height: 1.4;
         }
 
         @media (max-width: 992px) {
@@ -2813,22 +3046,28 @@
                 padding: 24px 20px 40px;
             }
 
-            .account-page-header h1 {
-                font-size: 22px;
-            }
-
-            .account-page-quick-actions {
-                grid-template-columns: repeat(2, 1fr);
+            .account-perks-banner {
+                grid-template-columns: 1fr;
+                gap: 18px;
             }
         }
 
         @media (max-width: 576px) {
-            .account-page-header {
+            .account-header-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 20px;
             }
 
-            .account-page-quick-actions {
+            .account-page-header-premium {
+                padding: 30px 20px;
+            }
+
+            .profile-actions-wrapper {
+                flex-direction: column;
+            }
+
+            .quick-actions-buttons {
                 grid-template-columns: 1fr;
             }
         }
@@ -5702,90 +5941,144 @@
             const addressStr = [account.address, account.city, account.zip].filter(Boolean).join(', ') || 'No address saved';
 
             view.innerHTML = `
-                <!-- Header with Avatar -->
-                <div class="account-page-header">
-                    <div class="account-page-avatar">${escapeHtml(initials)}</div>
-                    <div class="account-page-header-info">
-                        <h1>Welcome back, ${escapeHtml(account.name)}</h1>
-                        <p>Manage your account details, view your shopping activity, and more.</p>
+                <!-- Breadcrumbs -->
+                <div class="account-page-breadcrumb">
+                    <a href="#" onclick="showView('home')">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>My Account</span>
+                </div>
+
+                <!-- Premium Header Card -->
+                <div class="account-page-header-premium">
+                    <div class="account-premium-overlay"></div>
+                    <div class="account-header-content">
+                        <div class="account-page-avatar-premium">
+                            <span>${escapeHtml(initials)}</span>
+                            <div class="avatar-glow"></div>
+                        </div>
+                        <div class="account-page-header-info">
+                            <span class="account-membership-badge">Storify Premium Club</span>
+                            <h1>Welcome back, ${escapeHtml(account.name)}</h1>
+                            <p>Here you can view your personal details, track your wishlist, check shopping stats, and manage your shipping information.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Main Grid -->
+                <!-- Main Dashboard Grid -->
                 <div class="account-page-grid">
-                    <!-- Personal Information Card -->
-                    <div class="account-page-card">
-                        <div class="account-page-card-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/><circle cx="12" cy="7" r="4"/></svg>
-                            Personal Information
+                    <!-- Profile Card -->
+                    <div class="account-page-card-premium">
+                        <div class="card-header-premium">
+                            <div class="card-icon-wrapper">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <h3>Personal Information</h3>
                         </div>
-                        <div class="account-page-info-row">
-                            <span class="account-page-info-label">Full Name</span>
-                            <span class="account-page-info-value">${escapeHtml(account.name)}</span>
+                        <div class="profile-details-list">
+                            <div class="profile-detail-item">
+                                <div class="detail-label">Full Name</div>
+                                <div class="detail-value">${escapeHtml(account.name)}</div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <div class="detail-label">Email Address</div>
+                                <div class="detail-value">${escapeHtml(account.email)}</div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <div class="detail-label">Phone Number</div>
+                                <div class="detail-value">${escapeHtml(account.phone || 'Not added')}</div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <div class="detail-label">Shipping Address</div>
+                                <div class="detail-value">${escapeHtml(addressStr)}</div>
+                            </div>
                         </div>
-                        <div class="account-page-info-row">
-                            <span class="account-page-info-label">Email</span>
-                            <span class="account-page-info-value">${escapeHtml(account.email)}</span>
-                        </div>
-                        <div class="account-page-info-row">
-                            <span class="account-page-info-label">Phone</span>
-                            <span class="account-page-info-value">${escapeHtml(account.phone)}</span>
-                        </div>
-                        <div class="account-page-info-row">
-                            <span class="account-page-info-label">Address</span>
-                            <span class="account-page-info-value">${escapeHtml(addressStr)}</span>
-                        </div>
-                        <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-                            <button class="account-secondary-btn" onclick="editAccount()">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                Edit Details
+                        <div class="profile-actions-wrapper">
+                            <button class="btn-premium-edit" onclick="editAccount()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                Edit Profile
                             </button>
-                            <button class="account-secondary-btn" onclick="signOutAccount()" style="border-color: #fecaca; color: #ef4444;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            <button class="btn-premium-signout" onclick="signOutAccount()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                 Sign Out
                             </button>
                         </div>
                     </div>
 
-                    <!-- Shopping Snapshot Card -->
-                    <div class="account-page-card">
-                        <div class="account-page-card-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
-                            Shopping Snapshot
-                        </div>
-                        <div class="account-stats" style="margin-top: 0;">
-                            <div class="account-stat">
-                                <div class="account-stat-value">${cartCount}</div>
-                                <div class="account-stat-label">Cart Items</div>
+                    <!-- Shopping Stats & Quick Links Card -->
+                    <div class="account-page-card-premium">
+                        <div class="card-header-premium">
+                            <div class="card-icon-wrapper">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
                             </div>
-                            <div class="account-stat">
-                                <div class="account-stat-value">${wishlistCount}</div>
-                                <div class="account-stat-label">Wishlist Items</div>
+                            <h3>Shopping Activity</h3>
+                        </div>
+                        <div class="shopping-stats-row">
+                            <div class="stat-premium-box">
+                                <div class="stat-value">${cartCount}</div>
+                                <div class="stat-label">In Cart</div>
+                            </div>
+                            <div class="stat-premium-box">
+                                <div class="stat-value">${wishlistCount}</div>
+                                <div class="stat-label">In Wishlist</div>
                             </div>
                         </div>
 
-                        <div class="account-page-card-title" style="margin-top: 28px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                            Quick Actions
-                        </div>
-                        <div class="account-page-quick-actions">
-                            <button class="account-quick-action-btn" onclick="toggleCart()">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
-                                Open Cart
-                            </button>
-                            <button class="account-quick-action-btn" onclick="showView('wishlist')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
-                                Wishlist
-                            </button>
-                            <button class="account-quick-action-btn" onclick="showView('home')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                                Shop Now
-                            </button>
+                        <div class="quick-actions-section">
+                            <h4>Quick Navigation</h4>
+                            <div class="quick-actions-buttons">
+                                <button class="action-btn-premium" onclick="toggleCart()">
+                                    <div class="action-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
+                                    </div>
+                                    <span>View Cart</span>
+                                </button>
+                                <button class="action-btn-premium" onclick="showView('wishlist')">
+                                    <div class="action-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
+                                    </div>
+                                    <span>My Wishlist</span>
+                                </button>
+                                <button class="action-btn-premium" onclick="showView('home')">
+                                    <div class="action-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    </div>
+                                    <span>Explore Shop</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-
+                <!-- Account Perks Banner -->
+                <div class="account-perks-banner">
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="perk-info">
+                            <h5>Flat Rate Shipping</h5>
+                            <p>Rs 250 flat-rate delivery active nationwide</p>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div class="perk-info">
+                            <h5>Secure Authentication</h5>
+                            <p>Powered by Supabase Auth encryption</p>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="perk-info">
+                            <h5>Verified Reviews</h5>
+                            <p>Write trusted feedback on all product styles</p>
+                        </div>
+                    </div>
+                </div>
             `;
         }
 
@@ -7098,6 +7391,30 @@
 
             updateHeroSlider();
             restartHeroSlider();
+
+            // Mobile Touch Swiping for Hero Slider
+            const heroSliderEl = document.getElementById('heroSlider');
+            if (heroSliderEl) {
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                heroSliderEl.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+
+                heroSliderEl.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    const diff = touchEndX - touchStartX;
+                    const swipeThreshold = 50; // Minimum swipe distance in px
+                    if (diff > swipeThreshold) {
+                        // Swipe Right -> Show previous banner
+                        changeHeroSlide(-1);
+                    } else if (diff < -swipeThreshold) {
+                        // Swipe Left -> Show next banner
+                        changeHeroSlide(1);
+                    }
+                }, { passive: true });
+            }
 
             // Search Bar binding
             const searchInput = document.querySelector('.search-input');
