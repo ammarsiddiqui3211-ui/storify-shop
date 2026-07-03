@@ -15,7 +15,7 @@
     <meta name="application-name" content="Storify Shop">
     <meta name="apple-mobile-web-app-title" content="Storify Shop">
     <meta name="format-detection" content="telephone=no">
-    <meta name="p:domain_verify" content="bb3a759ee3bc5322c65da49365b43630"/>
+    <meta name="p:domain_verify" content="bb3a759ee3bc5322c65da49365b43630" />
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Storify Shop">
@@ -3581,8 +3581,15 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .review-form-title {
@@ -3861,15 +3868,18 @@
             .reviews-summary-wrapper {
                 grid-template-columns: 1fr 1fr;
             }
+
             .reviews-actions-card {
                 grid-column: 1 / -1;
                 border-top: 1px solid var(--border);
                 padding-top: 24px;
                 margin-top: 10px;
             }
+
             .reviews-card-avg {
                 border-right: 1px solid var(--border);
             }
+
             .reviews-breakdown {
                 border-right: none;
                 padding-right: 0;
@@ -3881,33 +3891,40 @@
                 grid-template-columns: 1fr;
                 padding: 20px;
             }
+
             .reviews-card-avg {
                 border-right: none;
                 padding-right: 0;
                 border-bottom: 1px solid var(--border);
                 padding-bottom: 24px;
             }
+
             .reviews-breakdown {
                 border-bottom: 1px solid var(--border);
                 padding-bottom: 24px;
             }
+
             .form-row {
                 grid-template-columns: 1fr;
                 gap: 0;
             }
+
             .review-card-item {
                 flex-direction: column;
                 gap: 15px;
             }
+
             .review-card-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 4px;
             }
+
             .review-card-date {
                 align-self: flex-start;
             }
         }
+
         .discount-badge {
             background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
             color: white;
@@ -4083,13 +4100,16 @@
                 <div class="hero-slide active">
                     <img src="images/banners/banner 1.png" alt="Storify shirt collection banner">
                 </div>
-                <div class="hero-slide clickable" onclick="filterCategory('shirts')" role="button" aria-label="Shop shirts category">
+                <div class="hero-slide clickable" onclick="filterCategory('shirts')" role="button"
+                    aria-label="Shop shirts category">
                     <img src="images/banners/banner 2.png" alt="Storify cotton shirts banner">
                 </div>
-                <div class="hero-slide clickable" onclick="filterCategory('watches')" role="button" aria-label="Shop watches category">
+                <div class="hero-slide clickable" onclick="filterCategory('watches')" role="button"
+                    aria-label="Shop watches category">
                     <img src="images/banners/banner 3.png" alt="Storify featured products banner">
                 </div>
-                <div class="hero-slide clickable" onclick="filterCategory('sports')" role="button" aria-label="Shop sports category">
+                <div class="hero-slide clickable" onclick="filterCategory('sports')" role="button"
+                    aria-label="Shop sports category">
                     <img src="images/banners/banner 4.png" alt="Storify sports collection banner">
                 </div>
             </div>
@@ -4697,8 +4717,8 @@
         // SUPABASE CLIENT INITIALIZATION
         // ----------------------------------------------------
         // CONFIG: Replace with your actual Supabase Project URL and Public Anon Key!
-        const SUPABASE_URL = "";
-        const SUPABASE_ANON_KEY = "";
+        const SUPABASE_URL = "https://muohgbsjqisjavicwqdi.supabase.co/rest/v1/";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11b2hnYnNqcWlzamF2aWN3cWRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNjY1NTAsImV4cCI6MjA5ODY0MjU1MH0.nseHW6X4lqp-qveJ2xuCNBlRFFVVIBNM0YwDMET3p4A";
 
         const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
             ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -5884,35 +5904,35 @@
                 email: email,
                 password: password
             })
-            .then(({ data, error }) => {
-                btn.innerHTML = `Sign In`;
-                btn.classList.remove('loading');
+                .then(({ data, error }) => {
+                    btn.innerHTML = `Sign In`;
+                    btn.classList.remove('loading');
 
-                if (error) {
-                    showAuthMessage('error', error.message);
-                } else if (data.user) {
-                    account = {
-                        id: data.user.id,
-                        name: data.user.user_metadata.name || '',
-                        email: data.user.email,
-                        phone: data.user.user_metadata.phone || '',
-                        address: data.user.user_metadata.address || '',
-                        city: data.user.user_metadata.city || '',
-                        zip: data.user.user_metadata.zip || ''
-                    };
-                    saveAccount();
-                    closeAccountModal();
-                    updateAccountNavBtn();
-                    showView('account');
-                    showToast("Welcome back");
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = `Sign In`;
-                btn.classList.remove('loading');
-                showAuthMessage('error', 'An error occurred during login. Please try again.');
-                console.error(err);
-            });
+                    if (error) {
+                        showAuthMessage('error', error.message);
+                    } else if (data.user) {
+                        account = {
+                            id: data.user.id,
+                            name: data.user.user_metadata.name || '',
+                            email: data.user.email,
+                            phone: data.user.user_metadata.phone || '',
+                            address: data.user.user_metadata.address || '',
+                            city: data.user.user_metadata.city || '',
+                            zip: data.user.user_metadata.zip || ''
+                        };
+                        saveAccount();
+                        closeAccountModal();
+                        updateAccountNavBtn();
+                        showView('account');
+                        showToast("Welcome back");
+                    }
+                })
+                .catch(err => {
+                    btn.innerHTML = `Sign In`;
+                    btn.classList.remove('loading');
+                    showAuthMessage('error', 'An error occurred during login. Please try again.');
+                    console.error(err);
+                });
         }
 
         function handleRegisterSubmit(event) {
@@ -5958,40 +5978,40 @@
                     }
                 }
             })
-            .then(({ data, error }) => {
-                btn.innerHTML = `Create Account`;
-                btn.classList.remove('loading');
+                .then(({ data, error }) => {
+                    btn.innerHTML = `Create Account`;
+                    btn.classList.remove('loading');
 
-                if (error) {
-                    showAuthMessage('error', error.message);
-                } else if (data.user) {
-                    if (data.session) {
-                        account = {
-                            id: data.user.id,
-                            name: data.user.user_metadata.name || '',
-                            email: data.user.email,
-                            phone: data.user.user_metadata.phone || '',
-                            address: data.user.user_metadata.address || '',
-                            city: data.user.user_metadata.city || '',
-                            zip: data.user.user_metadata.zip || ''
-                        };
-                        saveAccount();
-                        closeAccountModal();
-                        updateAccountNavBtn();
-                        showView('account');
-                        showToast("Account created");
-                    } else {
-                        showAuthMessage('success', 'Account created! Please check your email to verify your registration.');
-                        showToast("Verification email sent");
+                    if (error) {
+                        showAuthMessage('error', error.message);
+                    } else if (data.user) {
+                        if (data.session) {
+                            account = {
+                                id: data.user.id,
+                                name: data.user.user_metadata.name || '',
+                                email: data.user.email,
+                                phone: data.user.user_metadata.phone || '',
+                                address: data.user.user_metadata.address || '',
+                                city: data.user.user_metadata.city || '',
+                                zip: data.user.user_metadata.zip || ''
+                            };
+                            saveAccount();
+                            closeAccountModal();
+                            updateAccountNavBtn();
+                            showView('account');
+                            showToast("Account created");
+                        } else {
+                            showAuthMessage('success', 'Account created! Please check your email to verify your registration.');
+                            showToast("Verification email sent");
+                        }
                     }
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = `Create Account`;
-                btn.classList.remove('loading');
-                showAuthMessage('error', 'An error occurred during registration.');
-                console.error(err);
-            });
+                })
+                .catch(err => {
+                    btn.innerHTML = `Create Account`;
+                    btn.classList.remove('loading');
+                    showAuthMessage('error', 'An error occurred during registration.');
+                    console.error(err);
+                });
         }
 
 
@@ -6030,35 +6050,35 @@
                     zip: zip
                 }
             })
-            .then(({ data, error }) => {
-                btn.innerHTML = `Update Account`;
-                btn.classList.remove('loading');
+                .then(({ data, error }) => {
+                    btn.innerHTML = `Update Account`;
+                    btn.classList.remove('loading');
 
-                if (error) {
-                    showAuthMessage('error', error.message, 'edit-msg-block');
-                } else if (data.user) {
-                    account = {
-                        id: data.user.id,
-                        name: data.user.user_metadata.name || '',
-                        email: data.user.email,
-                        phone: data.user.user_metadata.phone || '',
-                        address: data.user.user_metadata.address || '',
-                        city: data.user.user_metadata.city || '',
-                        zip: data.user.user_metadata.zip || ''
-                    };
-                    saveAccount();
-                    accountEditMode = false;
-                    closeAccountModal();
-                    renderAccountPageView();
-                    showToast("Details updated");
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = `Update Account`;
-                btn.classList.remove('loading');
-                showAuthMessage('error', 'An error occurred while updating profile.', 'edit-msg-block');
-                console.error(err);
-            });
+                    if (error) {
+                        showAuthMessage('error', error.message, 'edit-msg-block');
+                    } else if (data.user) {
+                        account = {
+                            id: data.user.id,
+                            name: data.user.user_metadata.name || '',
+                            email: data.user.email,
+                            phone: data.user.user_metadata.phone || '',
+                            address: data.user.user_metadata.address || '',
+                            city: data.user.user_metadata.city || '',
+                            zip: data.user.user_metadata.zip || ''
+                        };
+                        saveAccount();
+                        accountEditMode = false;
+                        closeAccountModal();
+                        renderAccountPageView();
+                        showToast("Details updated");
+                    }
+                })
+                .catch(err => {
+                    btn.innerHTML = `Update Account`;
+                    btn.classList.remove('loading');
+                    showAuthMessage('error', 'An error occurred while updating profile.', 'edit-msg-block');
+                    console.error(err);
+                });
         }
 
         function editAccount() {
@@ -6271,9 +6291,9 @@
                         <div class="product-detail-price">
                             <span class="current">${formatPrice(p.currentPrice)}</span>
                             ${p.originalPrice && p.originalPrice > p.currentPrice ?
-                                `<span class="original">${formatPrice(p.originalPrice)}</span>
+                    `<span class="original">${formatPrice(p.originalPrice)}</span>
                                  <span class="discount-badge">${Math.round(((p.originalPrice - p.currentPrice) / p.originalPrice) * 100)}% OFF</span>`
-                            : ''}
+                    : ''}
                         </div>
                         
                         <p class="product-detail-desc">${detailDescriptionHTML}</p>
@@ -6315,7 +6335,7 @@
                     </div>
                 </div>
             `;
-            
+
             // Load and render product reviews asynchronously
             setTimeout(() => {
                 loadProductReviews(productId);
@@ -6686,14 +6706,14 @@
             if (MOCK_REVIEWS[productId]) {
                 return MOCK_REVIEWS[productId];
             }
-            
+
             const p = products.find(prod => prod.id === productId);
             if (!p) return [];
-            
+
             const isWatch = p.categoryKey === 'watches';
             const isSports = p.categoryKey === 'sports';
             const name = p.name;
-            
+
             return [
                 {
                     name: "Muhammad Ali",
@@ -6734,7 +6754,7 @@
                 const t = dateStr.split(/[- :]/);
                 let d;
                 if (t.length >= 6) {
-                    d = new Date(Date.UTC(t[0], t[1]-1, t[2], t[3], t[4], t[5]));
+                    d = new Date(Date.UTC(t[0], t[1] - 1, t[2], t[3], t[4], t[5]));
                 } else {
                     d = new Date(dateStr);
                 }
@@ -6793,11 +6813,11 @@
 
             const mockReviews = getMockReviewsForProduct(productId);
             const allReviews = [...dbReviews, ...mockReviews];
-            
+
             const totalReviews = allReviews.length;
             let sumRatings = 0;
             const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-            
+
             allReviews.forEach(r => {
                 sumRatings += r.rating;
                 const rVal = Math.min(5, Math.max(1, parseInt(r.rating) || 5));
@@ -6898,10 +6918,10 @@
                     ${totalReviews === 0 ? `
                         <div class="no-reviews-state">No reviews yet. Be the first to review this product!</div>
                     ` : allReviews.map(r => {
-                        const nameInitials = (r.name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2);
-                        const isVerified = true;
-                        const dateFormatted = formatDateString(r.created_at);
-                        return `
+                const nameInitials = (r.name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2);
+                const isVerified = true;
+                const dateFormatted = formatDateString(r.created_at);
+                return `
                             <div class="review-card-item">
                                 <div class="review-card-avatar">${nameInitials}</div>
                                 <div class="review-card-content">
@@ -6919,7 +6939,7 @@
                                 </div>
                             </div>
                         `;
-                    }).join('')}
+            }).join('')}
                 </div>
             `;
 
@@ -6985,7 +7005,7 @@
                         }
                     });
                 });
-                
+
                 star.addEventListener('mouseleave', () => {
                     stars.forEach(s => s.classList.remove('hovered'));
                 });
