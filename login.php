@@ -176,6 +176,10 @@ switch ($action) {
     case 'add_review':
         handleAddReview($conn, $input);
         break;
+
+    case 'get_all_review_stats':
+        handleGetAllReviewStats($conn);
+        break;
         
     default:
         echo json_encode([
@@ -451,5 +455,26 @@ function handleAddReview($conn, $data) {
         ]);
     }
     $stmt->close();
+}
+
+/**
+ * Fetch review count and average rating aggregates grouped by product ID
+ */
+function handleGetAllReviewStats($conn) {
+    $result = $conn->query("SELECT product_id, COUNT(*) as count, AVG(rating) as avg_rating FROM reviews GROUP BY product_id");
+    $stats = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $stats[] = [
+                "product_id" => intval($row['product_id']),
+                "count" => intval($row['count']),
+                "avg_rating" => floatval($row['avg_rating'])
+            ];
+        }
+    }
+    echo json_encode([
+        "success" => true,
+        "stats" => $stats
+    ]);
 }
 ?>

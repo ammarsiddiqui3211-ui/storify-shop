@@ -4,31 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storify Store | Premium Cotton Shirts Online in Pakistan</title>
+    <title>Storify Shop | Online Marketplace in Pakistan</title>
     <meta name="description"
-        content="Shop premium cotton shirts at Storify Store with affordable prices, cash on delivery, flat Rs 150 delivery, and easy returns across Pakistan.">
+        content="Shop a wide range of products at Storify Shop, your trusted online marketplace in Pakistan for fashion, electronics, home essentials, and more with cash on delivery and easy returns.">
     <meta name="keywords"
-        content="Storify Store, cotton shirts Pakistan, online shirts Pakistan, T shirts Pakistan, oversized shirts, premium shirts, cash on delivery Pakistan">
-    <meta name="author" content="Storify Store">
+        content="Storify Shop, online marketplace Pakistan, fashion Pakistan, electronics Pakistan, home essentials Pakistan, cash on delivery Pakistan, online shopping Pakistan">
+    <meta name="author" content="Storify Shop">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#1a1a2e">
-    <meta name="application-name" content="Storify Store">
-    <meta name="apple-mobile-web-app-title" content="Storify Store">
+    <meta name="application-name" content="Storify Shop">
+    <meta name="apple-mobile-web-app-title" content="Storify Shop">
     <meta name="format-detection" content="telephone=no">
+    <meta name="p:domain_verify" content="bb3a759ee3bc5322c65da49365b43630"/>
 
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Storify Store">
-    <meta property="og:title" content="Storify Store | Premium Cotton Shirts Online in Pakistan">
+    <meta property="og:site_name" content="Storify Shop">
+    <meta property="og:title" content="Storify Shop | Online Marketplace in Pakistan">
     <meta property="og:description"
-        content="Discover premium cotton shirts, oversized styles, affordable bundles, cash on delivery, and easy returns across Pakistan.">
+        content="Explore a diverse collection of fashion, electronics, home essentials, and more at Storify Shop with cash on delivery and easy returns across Pakistan.">
     <meta property="og:image" content="images/cover/banner%20cover.png">
     <meta property="og:image:alt" content="Storify Store premium shirt collection banner">
     <meta property="og:locale" content="en_PK">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Storify Store | Premium Cotton Shirts Online in Pakistan">
+    <meta name="twitter:title" content="Storify Shop | Online Marketplace in Pakistan">
     <meta name="twitter:description"
-        content="Shop premium cotton shirts with cash on delivery, flat Rs 150 delivery, and easy returns across Pakistan.">
+        content="Shop fashion, electronics, home essentials, and more at Storify Shop with cash on delivery and easy returns across Pakistan.">
     <meta name="twitter:image" content="images/cover/banner%20cover.png">
     <meta name="twitter:image:alt" content="Storify Store premium shirt collection banner">
 
@@ -400,6 +401,10 @@
             transform: translateX(0);
         }
 
+        .hero-slide.clickable {
+            cursor: pointer;
+        }
+
         .hero-kicker {
             display: inline-flex;
             align-items: center;
@@ -623,6 +628,14 @@
             font-weight: 700;
         }
 
+        .product-badge.sold,
+        .product-detail-badge.sold {
+            background: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+            box-shadow: 0 3px 10px rgba(17, 24, 39, 0.25);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
         .product-detail-badge.sale {
             background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
             box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
@@ -691,6 +704,7 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             height: 36px;
+            line-clamp: 2;
         }
 
         .product-rating {
@@ -746,6 +760,22 @@
         .add-to-cart:hover {
             background: var(--accent);
             transform: translateY(-2px);
+        }
+
+        .add-to-cart:disabled,
+        .add-to-cart-large:disabled {
+            cursor: not-allowed;
+            background: #9ca3af;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.85;
+        }
+
+        .add-to-cart:disabled:hover,
+        .add-to-cart-large:disabled:hover {
+            background: #9ca3af;
+            transform: none;
+            box-shadow: none;
         }
 
         /* Features Section */
@@ -1298,15 +1328,15 @@
 
             .hero-banner {
                 border-radius: 16px;
-                min-height: 320px;
+                min-height: 240px;
             }
 
             .hero-slider {
-                min-height: 320px;
+                min-height: 240px;
             }
 
             .hero-slide {
-                padding: 54px 28px 72px;
+                padding: 36px 24px 56px;
             }
 
             .hero-title {
@@ -1509,15 +1539,15 @@
             }
 
             .hero-banner {
-                min-height: 280px;
+                min-height: 220px;
             }
 
             .hero-slider {
-                min-height: 280px;
+                min-height: 220px;
             }
 
             .hero-slide {
-                padding: 42px 22px 68px;
+                padding: 28px 18px 48px;
             }
 
             .hero-content {
@@ -3694,6 +3724,33 @@
             padding-bottom: 10px;
         }
 
+        h1,
+        h2,
+        h3,
+        h4,
+        .hero-title,
+        .section-title,
+        .product-name,
+        .feature-title,
+        .footer-section h3,
+        .cart-title,
+        .product-detail-name,
+        .option-title,
+        .checkout-title,
+        .form-section-title,
+        .account-heading,
+        .account-page-header-info h1,
+        .account-page-card-title,
+        .success-title,
+        .success-details-title,
+        .related-title,
+        .wishlist-title,
+        .reviews-section-title,
+        .review-form-title,
+        .reviews-list-title {
+            font-weight: 500 !important;
+        }
+
         .reviews-list-container {
             display: flex;
             flex-direction: column;
@@ -3849,6 +3906,31 @@
                 align-self: flex-start;
             }
         }
+        .discount-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+        }
+
+        .sale-discount-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+            white-space: nowrap;
+            line-height: 1;
+        }
     </style>
 </head>
 
@@ -3894,13 +3976,13 @@
             <li><a href="#" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
             <li><a href="#" onclick="toggleMobileMenu(); filterCategory('shirts', event)">Shirts</a></li>
             <li><a href="#" onclick="toggleMobileMenu(); filterCategory('watches', event)">Watches</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('sports', event)">Sports</a></li>
         </ul>
         <div class="mobile-nav-actions">
             <button id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account')" aria-label="Account">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                 </svg>
                 <span class="account-btn-text">Login / Sign Up</span>
@@ -3914,11 +3996,11 @@
                 Wishlist
             </button>
             <button onclick="toggleMobileMenu(); toggleCart();" aria-label="Cart">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M6 6h15l-1.5 9h-12z" />
-                    <circle cx="9" cy="20" r="1" />
-                    <circle cx="19" cy="20" r="1" />
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                 </svg>
                 Cart
             </button>
@@ -3928,7 +4010,7 @@
     <!-- Header -->
     <header class="header">
         <div class="top-bar">
-            Delivery charges Rs 150 | 7-day returns
+            Delivery charges Rs 250 | 3-day Delivery | 3-day returns
         </div>
         <div class="nav-container">
             <nav class="nav-main">
@@ -3946,10 +4028,9 @@
                 </div>
                 <div class="nav-actions">
                     <button class="nav-btn" id="desktopAccountBtn" onclick="showView('account')" aria-label="Account">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                             <circle cx="12" cy="7" r="4" />
                         </svg>
                         <span class="account-btn-text">Login / Sign Up</span>
@@ -3964,12 +4045,12 @@
                         Wishlist
                     </button>
                     <button class="nav-btn cart-btn" onclick="toggleCart()" aria-label="Cart">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                             style="vertical-align:middle;margin-right:6px">
-                            <path d="M6 6h15l-1.5 9h-12z" />
-                            <circle cx="9" cy="20" r="1" />
-                            <circle cx="19" cy="20" r="1" />
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                         </svg>
                         Cart
                         <span class="cart-count" id="cartCount">1</span>
@@ -3988,6 +4069,7 @@
                 <a href="#" class="category-link" onclick="filterCategory('featured', event)">Featured</a>
                 <a href="#" class="category-link" onclick="filterCategory('shirts', event)">Shirts</a>
                 <a href="#" class="category-link" onclick="filterCategory('watches', event)">Watches</a>
+                <a href="#" class="category-link" onclick="filterCategory('sports', event)">Sports</a>
             </div>
         </div>
     </header>
@@ -3999,8 +4081,14 @@
                 <div class="hero-slide active">
                     <img src="images/banners/banner 1.png" alt="Storify shirt collection banner">
                 </div>
-                <div class="hero-slide">
+                <div class="hero-slide clickable" onclick="filterCategory('shirts')" role="button" aria-label="Shop shirts category">
                     <img src="images/banners/banner 2.png" alt="Storify cotton shirts banner">
+                </div>
+                <div class="hero-slide clickable" onclick="filterCategory('watches')" role="button" aria-label="Shop watches category">
+                    <img src="images/banners/banner 3.png" alt="Storify featured products banner">
+                </div>
+                <div class="hero-slide clickable" onclick="filterCategory('sports')" role="button" aria-label="Shop sports category">
+                    <img src="images/banners/banner 4.png" alt="Storify sports collection banner">
                 </div>
             </div>
             <div class="hero-controls" aria-label="Banner slider controls">
@@ -4011,6 +4099,10 @@
                         aria-label="Show banner 1"></button>
                     <button class="hero-dot" type="button" onclick="setHeroSlide(1)"
                         aria-label="Show banner 2"></button>
+                    <button class="hero-dot" type="button" onclick="setHeroSlide(2)"
+                        aria-label="Show banner 3"></button>
+                    <button class="hero-dot" type="button" onclick="setHeroSlide(3)"
+                        aria-label="Show banner 4"></button>
                 </div>
                 <button class="hero-arrow" type="button" onclick="changeHeroSlide(1)"
                     aria-label="Next banner">&#10095;</button>
@@ -4039,7 +4131,7 @@
                         </svg>
                     </div>
                     <h3 class="feature-title">Delivery Charges</h3>
-                    <p class="feature-desc">Flat Rs 150, delivered anywhere in Pakistan</p>
+                    <p class="feature-desc">Flat Rs 250, delivered anywhere in Pakistan</p>
                 </div>
                 <div class="feature">
                     <div class="feature-icon">
@@ -4158,9 +4250,10 @@
                 featured: true,
                 currentPrice: 600,
                 originalPrice: null,
-                badge: "Sale",
+                badge: "Sold",
+                sold: true,
                 rating: 5,
-                reviewCount: 180,
+                reviewCount: 3,
                 gradient: "linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)",
                 image: "images/products/shirts/Item 1/1.png",
                 description: "Upgrade your casual wardrobe with this ultra-comfortable, high-quality Export Leftover Graphic Tee. Featuring a minimalist and stylish Christian Dior inspired design across the chest, this t-shirt offers a high-end designer aesthetic at an unbeatable budget-friendly price.\n\nMade from premium, breathable cotton fabric, it's engineered to keep you cool and comfortable all day long. Perfect for daily wear, gym sessions, or casual hangouts with friends.\n\n💎 Premium Export Quality: Get authentic export-grade stitching and fabric durability at a fraction of retail cost!",
@@ -4183,9 +4276,10 @@
                 featured: true,
                 currentPrice: 900,
                 originalPrice: null,
-                badge: "LIMITED",
+                badge: "Sold",
+                sold: true,
                 rating: 4,
-                reviewCount: 92,
+                reviewCount: 2,
                 gradient: "linear-gradient(135deg, #d4a5a5 0%, #c48b8b 100%)",
                 image: "images/products/shirts/Item 2/1.png",
                 description: "Elevate your everyday street style with our exclusive Arabic Calligraphy Graphic Tee. Featuring the bold, elegant text \"میر\" (Mir) across the chest, this t-shirt perfectly blends traditional cultural art with modern fashion aesthetics.\n\nCrafted with eye-catching geometric border accents running vertically down the front and along the hem, this piece offers a unique, structured look. The relaxed-fit cut ensures maximum comfort, making it a perfect choice for casual outings, daily wear, or layering.\n\n⚠️ Hurry! Limited stock available. Grab yours before it's gone!",
@@ -4208,9 +4302,10 @@
                 featured: true,
                 currentPrice: 600,
                 originalPrice: null,
-                badge: "Sale",
+                badge: "Sold",
+                sold: true,
                 rating: 5,
-                reviewCount: 136,
+                reviewCount: 2,
                 gradient: "linear-gradient(135deg, #ef5350 0%, #e53935 100%)",
                 image: "images/products/shirts/Item 3/1.png",
                 description: "Inject a burst of energy into your casual rotation with this high-comfort Export Leftover Graphic Tee. Featuring a clean, modern white script design that reads \"Country Every Day\" accented by minimalist blue and white athletic stripes, this shirt strikes the perfect balance between sporty and casual.\n\nCrafted from premium, export-grade cotton fabric, it offers a soft hand-feel and superior breathability. It's the ideal go-to choice for effortless daily style, layering, or weekend hangouts.\n\n💎 Export Leftover Deal: Enjoy authentic export-quality stitching, premium fabric, and retail-grade durability for just 600 RS!",
@@ -4223,7 +4318,7 @@
                     "Color": "Vibrant Red",
                     "Size": "Medium (M), Large (L) (XL out of stock)",
                     "Fit": "Regular / Standard Comfort Fit"
-                }
+                },
             },
             {
                 id: 4,
@@ -4232,21 +4327,24 @@
                 categoryKey: "shirts",
                 currentPrice: 600,
                 originalPrice: null,
-                badge: "Sale",
+                badge: "Sold",
+                sold: true,
                 rating: 4,
-                reviewCount: 72,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #ef5350 0%, #e53935 100%)",
                 image: "images/products/shirts/Item 4/1.png",
                 description: "Inject a burst of energy into your casual rotation with this high-comfort Export Leftover Graphic Tee. Featuring a clean, modern white script design that reads \"Country Every Day\" accented by minimalist blue and white athletic stripes, this shirt strikes the perfect balance between sporty and casual.\n\nCrafted from premium, export-grade cotton fabric, it offers a soft hand-feel and superior breathability. It's the ideal go-to choice for effortless daily style, layering, or weekend hangouts.\n\n💎 Export Leftover Deal: Enjoy authentic export-quality stitching, premium fabric, and retail-grade durability for just 600 RS!",
-                colors: ["#d32f2f"],
+                colors: ["#d32f2f", "#f5f5f0"],
                 sizes: ["M", "L"],
                 specs: {
-                    "Fabric": "100% Premium Breathable Cotton",
-                    "Design": "\"Country Every Day\" contemporary script with minimalist color accents",
+                    "Fabric Material": "100% Premium Breathable Cotton",
+                    "Design/Theme": "\"Country Every Day\" contemporary script with minimalist color accents",
                     "Stock Category": "Premium Export Leftover",
-                    "Color": "Vibrant Red",
-                    "Size": "Medium (M), Large (L) (XL out of stock)",
-                    "Fit": "Regular / Standard Comfort Fit"
+                    "Available Color": "off white and Vibrant Red",
+                    "Available Sizes": "Medium (M), Large (L) (XL out of stock)",
+                    "Fit": "Regular / Standard Comfort Fit",
+                    "Price": "600 RS Only",
+                    "Key Features": "Breathable Premium Cotton, High-Definition Print, Unbeatable Value"
                 }
             },
             {
@@ -4256,10 +4354,10 @@
                 categoryKey: "shirts",
                 featured: true,
                 currentPrice: 600,
-                originalPrice: null,
+                originalPrice: 750,
                 badge: "Sale",
                 rating: 4,
-                reviewCount: 68,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%)",
                 image: "images/products/shirts/Item 5/1.png",
                 description: "Keep it effortlessly cool and casual with this Premium Export Leftover Graphic Tee. Featuring a minimalist, modern typography design that reads \"Nice, nice.\" in a clean mix of white and sky-blue lettering, this shirt is the perfect casual statement piece.\n\nMade from premium, export-grade cotton fabric, it gives you that ultra-soft feel against the skin and excellent breathability for all-day comfort. Designed with durable, clean stitching, it maintains its sharp look and pitch-black color wash after wash.\n\n⚡ EXCLUSIVE BUNDLE DEAL: Buy 1 for just 600 RS, or smart-shop our Pack of 4 for only 2200 RS to mix, match, and save big before stock runs out!",
@@ -4281,10 +4379,10 @@
                 category: "Shirts",
                 categoryKey: "shirts",
                 currentPrice: 600,
-                originalPrice: null,
+                originalPrice: 750,
                 badge: "Sale",
                 rating: 4,
-                reviewCount: 65,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #faf5ef 0%, #f0e8dc 100%)",
                 image: "images/products/shirts/Item 6/1.png",
                 description: "Embrace effortless luxury and clean aesthetics with this Export Leftover Graphic Tee. Featuring the iconic, minimalist Calvin Klein typography across the chest, this t-shirt brings a high-end designer look to your everyday rotation without breaking the bank.\n\nCrafted from premium, export-grade cotton fabric in a versatile off-white/cream shade, it offers a soft-to-the-touch feel and maximum breathability. It's the ultimate wardrobe staple that pairs perfectly with denim, joggers, or layered under a jacket.\n\n💎 Premium Export Quality: Enjoy authentic retail-grade fabric, precise stitching, and high durability for just 600 RS!",
@@ -4305,10 +4403,10 @@
                 category: "Shirts",
                 categoryKey: "shirts",
                 currentPrice: 600,
-                originalPrice: null,
+                originalPrice: 750,
                 badge: "Sale",
                 rating: 4,
-                reviewCount: 59,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%)",
                 image: "images/products/shirts/Item 7/1.png",
                 description: "Make every moment count with this stylish and thought-provoking Export Leftover Graphic Tee. Featuring a bold, contemporary typography design that crosses out Yesterday and Tomorrow to highlight \"NOW\", this shirt brings an inspiring, modern streetwear vibe to your wardrobe.\n\nCrafted from top-grade, premium export cotton, it features a highly breathable fabric weave that ensures ultra-soft comfort all day long. Its vibrant mint green shade serves as a perfect conversational staple for gym sessions, casual hangouts, or daily streetwear styling.\n\n💎 Premium Export Quality: Get authentic export-grade stitching, retail durability, and a premium hand-feel for just 600 RS!",
@@ -4330,9 +4428,10 @@
                 categoryKey: "shirts",
                 currentPrice: 600,
                 originalPrice: null,
-                badge: "Sale",
+                badge: "Sold",
+                sold: true,
                 rating: 4,
-                reviewCount: 62,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)",
                 image: "images/products/shirts/Item 8/1.png",
                 description: "Add a classic varsity vibe to your daily look with this Export Leftover Graphic Tee. Featuring a bold \"DREAM 1976\" retro athletic design complete with interlocking rings, varsity stripes, and clean typography accents, this shirt delivers the perfect casual, collegiate aesthetic.\n\nCrafted from top-tier, export-grade cotton fabric in an incredibly versatile light gray heather shade, it offers premium breathability and an ultra-soft hand-feel. It's the ideal go-to staple for effortless styling, layering under denim jackets, or hitting the streets in comfort.\n\n💎 Export Leftover Quality: Experience authentic premium retail fabric, durable dual-needle stitching, and high longevity for an incredible price of just 600 RS!",
@@ -4353,10 +4452,10 @@
                 category: "Shirts",
                 categoryKey: "shirts",
                 currentPrice: 600,
-                originalPrice: null,
+                originalPrice: 750,
                 badge: "Sale",
                 rating: 4,
-                reviewCount: 55,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #fafafa 0%, #eeeeee 100%)",
                 image: "images/products/shirts/Item 9/1.png",
                 description: "Level up your casual wardrobe with this ultra-comfortable Export Leftover Graphic Tee. Featuring a clean, retro-arcade inspired chest print that reads \"EXTRA LIFE\" alongside vibrant blue speed stripes and a minimalist gaming mascot motif, this shirt brings an effortless, playful streetwear vibe to your daily look.\n\nCrafted from premium, export-grade cotton fabric, it delivers a soft-to-the-touch feel and high breathability to keep you cool all day. The classic white base makes it incredibly versatile, easily pairing with blue denim, dark cargos, or casual summer shorts.\n\n💎 Premium Export Quality: Get authentic export-grade fabric, precise double-needle stitching, and durable retail-level quality for an incredible price of just 600 RS!",
@@ -4372,40 +4471,16 @@
                 }
             },
             {
-                id: 10,
-                name: "\"Country Every Day\" Premium Export Leftover Cotton Tee – Off-White",
-                category: "Shirts",
-                categoryKey: "shirts",
-                currentPrice: 600,
-                originalPrice: null,
-                badge: "Sale",
-                rating: 4,
-                reviewCount: 48,
-                gradient: "linear-gradient(135deg, #fafafa 0%, #e8e8e8 100%)",
-                image: "images/products/shirts/Item 10/1.png",
-                description: "Refresh your everyday casual wardrobe with this ultra-comfortable Export Leftover Graphic Tee. Featuring a clean, minimalist black script design that reads \"Country Every Day\" accented by sharp blue and black modern athletic stripes, this shirt strikes the perfect balance between sporty and casual.\n\nCrafted from top-tier, export-grade cotton fabric, it offers a soft hand-feel and superior breathability. It's the ideal go-to choice for effortless daily style, layering under denim jackets, or pairing with your favorite cargos and shorts.\n\n💎 Export Leftover Deal: Enjoy authentic export-quality stitching, premium fabric, and retail-grade durability for just 600 RS!",
-                colors: ["#f5f5f0"],
-                sizes: ["M", "L"],
-                specs: {
-                    "Fabric": "100% Premium Breathable Cotton",
-                    "Design": "\"Country Every Day\" contemporary script with minimalist athletic color accents",
-                    "Stock Category": "Premium Export Leftover",
-                    "Color": "Classic White / Off-White",
-                    "Size": "Medium (M), Large (L) (XL out of stock)",
-                    "Fit": "Regular / Standard Comfort Fit"
-                }
-            },
-            {
                 id: 11,
                 name: "\"Aura Midnight\" Minimalist All-Black Arabic Dial Watch – Jet Black Edition",
                 category: "Watches",
                 categoryKey: "watches",
                 featured: true,
-                currentPrice: 999,
-                originalPrice: null,
+                currentPrice: 850,
+                originalPrice: 1200,
                 badge: "Sale",
                 rating: 5,
-                reviewCount: 42,
+                reviewCount: 2,
                 gradient: "linear-gradient(135deg, #1f2937 0%, #111827 100%)",
                 image: "images/products/watches/Item 1/1.png",
                 description: "Master the art of understated elegance with the Aura Midnight Edition. This sleek, monochromatic timepiece is designed for those who appreciate a bold, minimalist aesthetic. Featuring a clean, striking matte black dial with distinct Arabic numerals, it brings an effortless, contemporary edge to your wrist.\n\nCrafted with a lightweight yet highly durable build, it offers exceptional comfort for all-day wear. It’s the perfect versatile accessory—easy to pair with casual street style, sharp office wear, or a formal blazer for a clean, sophisticated look.\n\n💎 Premium Fashion Deal: Enjoy high-end minimalist design, a premium butterfly clasp, and sleek aesthetics for an unbeatable price of just 999 RS!",
@@ -4427,11 +4502,11 @@
                 category: "Watches",
                 categoryKey: "watches",
                 featured: true,
-                currentPrice: 999,
-                originalPrice: null,
+                currentPrice: 850,
+                originalPrice: 1200,
                 badge: "Sale",
                 rating: 5,
-                reviewCount: 38,
+                reviewCount: 1,
                 gradient: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)",
                 image: "images/products/watches/Item 2/1.jpg",
                 description: "Embrace a clean, ultra-modern aesthetic with the Aura Pristine Edition. This timeless timepiece is designed for those who appreciate sleek, minimalist style. Featuring a brilliant, sharp white dial housed in a polished casing, it brings a fresh, bright look that instantly coordinates with your wardrobe.\n\nCrafted with a lightweight yet durable build, it ensures exceptional comfort for all-day wear. It’s the ultimate everyday accessory—perfect for adding a sharp, polished touch to casual street style, bright summer fits, or clean professional outfits.\n\n💎 Premium Fashion Deal: Enjoy high-end minimalist design, a premium butterfly clasp, and pristine aesthetics for an unbeatable price of just 999 RS!",
@@ -4445,6 +4520,111 @@
                     "Clasp Type": "Secure Butterfly Deployment Clasp",
                     "Gender": "Unisex (Designed for both Men & Women)",
                     "Fit": "Adjustable Link Strap for a standard, comfortable fit"
+                }
+            },
+            {
+                id: 13,
+                name: "\"Sub-Mariner Elite\" Two-Tone Luxury Watch - Classic Sea-Dweller Edition",
+                category: "Watches",
+                categoryKey: "watches",
+                featured: true,
+                currentPrice: 2800,
+                originalPrice: 3500,
+                badge: "Sale",
+                rating: 5,
+                reviewCount: 1,
+                gradient: "linear-gradient(135deg, #111827 0%, #d4af37 100%)",
+                image: "images/products/watches/Item 3/1.jpeg",
+                description: "Command attention with a timepiece that exudes ultimate luxury and rugged sophistication. Inspired by legendary deep-sea designs, this premium watch perfectly captures an iconic two-tone aesthetic. Featuring a bold black dial beautifully contrasted by a polished gold and silver steel casing, it brings an instant upgrade to any wardrobe.\n\nThe striking unidirectional rotating bezel features crisp gold numbering, allowing you to track time with professional precision. Complete with a magnified date window at the 3 o'clock position, it seamlessly blends high-end functionality with a timeless executive style.\n\nPremium Fashion Deal: Enjoy the legendary aesthetic of a two-tone luxury dive watch, a robust rotating bezel, and a heavy-duty steel chain for an unbeatable price of just 3,500 RS!",
+                colors: ["linear-gradient(135deg, #111827 0%, #111827 34%, #d4af37 34%, #d4af37 67%, #c0c0c0 67%, #c0c0c0 100%)"],
+                sizes: ["Steel Chain"],
+                specs: {
+                    "Color/Theme": "Luxury Two-Tone (Polished Gold & Premium Silver Steel)",
+                    "Dial Style": "Deep Black with luminous geometric index markers and a magnified date cyclops window",
+                    "Bezel": "Fully functional, unidirectional rotating dive bezel with gold accents",
+                    "Movement": "Precision Analog Quartz / Battery Powered",
+                    "Strap Material": "Premium Two-Tone Stainless Steel Oyster Chain",
+                    "Clasp Type": "Secure Folding Oysterlock Safety Clasp",
+                    "Gender": "Men / Unisex Executive Wear",
+                    "Fit": "Adjustable Link Strap for a weighted, premium feel on the wrist"
+                }
+            },
+            {
+                id: 14,
+                name: "\"Oyster Presidential\" Two-Tone Luxury Watch - Red Dial Edition",
+                category: "Watches",
+                categoryKey: "watches",
+                featured: true,
+                currentPrice: 2800,
+                originalPrice: 3500,
+                badge: "Sale",
+                rating: 5,
+                reviewCount: 1,
+                gradient: "linear-gradient(135deg, #7f1d1d 0%, #d4af37 100%)",
+                image: "images/products/watches/Item 4/1.jfif",
+                description: "Make a bold statement with a timepiece that redefines executive luxury. This premium watch showcases the legendary fluted gold bezel design paired with a jaw-dropping, sunburst cherry-red dial. The rich gradient face shifts beautifully under the light, perfectly complemented by a polished two-tone gold and silver steel casing.\n\nThe striking watch dial features brilliant diamond-style index hour markers that give it an unmistakable, ultra-premium presence on the wrist. Complete with a signature magnified date window at the 3 o'clock position and gold-toned hands, it effortlessly delivers a masterpiece look that commands attention.\n\nPremium Fashion Deal: Enjoy the legendary aesthetic of a two-tone fluted luxury watch, diamond-style index markers, and a premium steel chain for an unbeatable price of just 3,500 RS!",
+                colors: ["linear-gradient(135deg, #7f1d1d 0%, #7f1d1d 34%, #d4af37 34%, #d4af37 67%, #c0c0c0 67%, #c0c0c0 100%)"],
+                sizes: ["Steel Chain"],
+                specs: {
+                    "Color/Theme": "Luxury Two-Tone (Polished Gold Fluted Bezel & Premium Silver Steel)",
+                    "Dial Style": "Radiant Gradient Sunburst Red with diamond-style luxury markers and a magnified date cyclops window",
+                    "Bezel": "Classic Iconic Fluted Executive Bezel with gold accents",
+                    "Movement": "Precision Analog Quartz / Battery Powered",
+                    "Strap Material": "Premium Two-Tone Stainless Steel Jubilee-Style Chain",
+                    "Clasp Type": "Secure Folding Deployant Safety Clasp",
+                    "Gender": "Men / Unisex Executive Wear",
+                    "Fit": "Adjustable Link Strap for a solid, premium feel on the wrist"
+                }
+            },
+            {
+                id: 15,
+                name: "\"Trionda Pro Match\" Premium Official Size 5 Football - Elite Edition",
+                category: "Sports",
+                categoryKey: "sports",
+                featured: true,
+                currentPrice: 3300,
+                originalPrice: null,
+                badge: "New",
+                rating: 5,
+                reviewCount: 3,
+                gradient: "linear-gradient(135deg, #ffffff 0%, #16a34a 45%, #d4af37 100%)",
+                image: "images/products/sports/football/Trionda/1.jpeg",
+                description: "Bring tournament-level performance to your local pitch with a football designed for true enthusiasts. Featuring the stunning, multi-color dynamic panel graphics and metallic accents of the world's biggest tournaments, this premium match ball is built to stand out. It showcases crisp branding alongside official match-grade styling that commands respect the moment it hits the field.\n\nEngineered with textured surface panels for superior aerodynamic stability and a perfect grip, it offers exceptional ball control, true flight trajectories, and responsive power behind every strike. Whether you are running intense training drills, practicing your free kicks, or playing a high-stakes weekend match, this ball delivers top-tier durability and performance.\n\nPremium Sports Deal: Enjoy elite-level textured panel construction, premium graphic styling, and tournament-grade performance for an unbeatable price of just 3,300 RS!",
+                colors: ["linear-gradient(135deg, #ffffff 0%, #ffffff 28%, #16a34a 28%, #16a34a 55%, #d4af37 55%, #d4af37 78%, #ef4444 78%, #ef4444 100%)"],
+                sizes: ["Official Size 5"],
+                specs: {
+                    "Color/Theme": "Vibrant Tournament Edition (Multi-Color Panels with Metallic Gold & Green Accents)",
+                    "Size": "Official Size 5 (Standard Professional Match Size)",
+                    "Construction": "High-performance textured casing for maximum grip and optimal aerodynamic flight",
+                    "Bladder Type": "Premium High-Retention Butyl Bladder for long-lasting air and shape integrity",
+                    "Suitability": "Perfect for both competitive matches and intensive training sessions",
+                    "Playing Surface": "Ideal for Natural Grass and Modern Artificial Turf fields"
+                }
+            },
+            {
+                id: 16,
+                name: "Hublot Classic Fusion Orlinski Edition – Geometric Skeleton Automatic Watch",
+                category: "Watches",
+                categoryKey: "watches",
+                featured: true,
+                currentPrice: 3000,
+                originalPrice: null,
+                badge: "New",
+                rating: 5,
+                reviewCount: 1,
+                gradient: "linear-gradient(135deg, #1e3a5f 0%, #f5f5f5 100%)",
+                image: "images/products/watches/Item 5/1.png",
+                description: "Elevate your collection with a timepiece where high-end horology meets contemporary structural art. Inspired by renowned sculptural aesthetics, this watch features a signature 3D faceted case and a fully integrated geometric bracelet designed to catch the light from every angle.\n\nThe captivating open-heart skeleton dial reveals the intricate mechanical inner workings and gear trains, beautifully anchored by an exposed tourbillon-style balance wheel movement at the 6 o'clock position. Built for those who demand a bold, avant-garde aesthetic without compromising on mechanical allure.\n\nPremium Features: Architectural Faceted Case with stunning multi-angled 3D geometric design, Open-Work Skeleton Dial showcasing precision gears, Premium Finishing available in striking Royal Blue and clean Arctic White, Signature H-shaped bezel accents with contrasting metallic hands.\n\nPremium Fashion Deal: Enjoy a premium automatic skeleton mechanical timepiece with an integrated faceted bracelet for an unbeatable price of just 3,000 RS!",
+                colors: ["#1e3a5f", "#f5f5f5"],
+                sizes: ["Steel Chain"],
+                specs: {
+                    "Color/Theme": "Royal Blue Ceramic / Arctic White Ceramic",
+                    "Dial Style": "Skeleton / Transparent Mechanical Display",
+                    "Movement": "Premium Automatic Mechanical Movement",
+                    "Bracelet": "Integrated Matching Faceted Link Band",
+                    "Clasp": "Secure Push-Button Deployment Clasp",
+                    "Lens": "Scratch-Resistant Hardened Crystal",
+                    "Case Back": "Transparent Exhibition View"
                 }
             }
         ];
@@ -4465,18 +4645,39 @@
                 "images/products/shirts/Item 3/1.png",
                 "images/products/shirts/Item 3/2.png"
             ],
-            4: ["images/products/shirts/Item 4/1.png"],
+            4: [
+                "images/products/shirts/Item 4/1.png",
+                "images/products/shirts/Item 4/2.png"
+            ],
             5: ["images/products/shirts/Item 5/1.png"],
             6: ["images/products/shirts/Item 6/1.png"],
             7: ["images/products/shirts/Item 7/1.png"],
             8: ["images/products/shirts/Item 8/1.png"],
             9: ["images/products/shirts/Item 9/1.png"],
-            10: ["images/products/shirts/Item 10/1.png"],
             11: ["images/products/watches/Item 1/1.png",
                 "images/products/watches/Item 1/2.PNG"
             ],
             12: ["images/products/watches/Item 2/1.jpg",
                 "images/products/watches/Item 2/2.PNG"
+            ],
+            13: ["images/products/watches/Item 3/1.jpeg",
+                "images/products/watches/Item 3/2.jpeg",
+                "images/products/watches/Item 3/3.jpeg",
+                "images/products/watches/Item 3/4.jpeg"
+            ],
+            14: ["images/products/watches/Item 4/1.jfif",
+                "images/products/watches/Item 4/2.jfif"
+            ],
+            15: ["images/products/sports/football/Trionda/1.jpeg",
+                "images/products/sports/football/Trionda/2.jpeg",
+                "images/products/sports/football/Trionda/3.jpeg",
+                "images/products/sports/football/Trionda/4.jpeg",
+                "images/products/sports/football/Trionda/5.jpeg"
+            ],
+            16: ["images/products/watches/Item 5/1.png",
+                "images/products/watches/Item 5/2.jpg",
+                "images/products/watches/Item 5/3.png",
+                "images/products/watches/Item 5/4.png"
             ]
         };
 
@@ -4500,6 +4701,12 @@
         let wishlist = JSON.parse(localStorage.getItem('storify_wishlist')) || [];
         let account = JSON.parse(localStorage.getItem('storify_account')) || null;
         let accountEditMode = false;
+
+        const soldProductIds = new Set(products.filter(product => product.sold).map(product => product.id));
+        if (cart.some(item => soldProductIds.has(item.id))) {
+            cart = cart.filter(item => !soldProductIds.has(item.id));
+            localStorage.setItem('storify_cart', JSON.stringify(cart));
+        }
 
         function escapeHtml(value) {
             return String(value || '').replace(/[&<>"']/g, char => ({
@@ -4645,6 +4852,10 @@
         function addToCart(productId, quantity = 1, color = '', size = '') {
             const p = products.find(prod => prod.id === productId);
             if (!p) return;
+            if (p.sold) {
+                showToast("This product is sold out");
+                return;
+            }
 
             const existing = cart.find(item =>
                 item.id === productId &&
@@ -5254,7 +5465,7 @@
                     card.innerHTML = `
                         <div class="product-image" onclick="showView('product', ${p.id})">
                             <img src="${p.image}" alt="${p.name}">
-                            ${p.badge ? `<span class="product-badge${p.badge === 'Sale' ? ' sale' : ''}">${p.badge}</span>` : ''}
+                            ${p.badge ? `<span class="product-badge${p.badge === 'Sale' ? ' sale' : ''}${p.sold ? ' sold' : ''}">${p.badge}</span>` : ''}
                             <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist(${p.id})" aria-label="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
                             </button>
@@ -5270,7 +5481,7 @@
                                 <span class="current-price">${formatPrice(p.currentPrice)}</span>
                                 ${p.originalPrice ? `<span class="original-price">${formatPrice(p.originalPrice)}</span>` : ''}
                             </div>
-                            <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${p.id})">Add to Cart</button>
+                            <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${p.id})" ${p.sold ? 'disabled' : ''}>${p.sold ? 'Sold Out' : 'Add to Cart'}</button>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -5287,7 +5498,7 @@
 
             container.innerHTML = '';
 
-            // If we are in "All" view and not searching, show Shirts and Watches sections stacked
+            // If we are in "All" view and not searching, show category sections stacked
             if (filter === 'all' && searchQuery === '') {
                 // 1. Shirts Section (Limit to 8 for preview on homepage)
                 const shirts = products.filter(p => p.categoryKey === 'shirts');
@@ -5300,6 +5511,12 @@
                 const displayedWatches = watches.slice(0, 8);
                 const watchesSection = createProductSectionHTML('Watches', displayedWatches, 'watches', true);
                 container.appendChild(watchesSection);
+
+                // 3. Sports Section
+                const sports = products.filter(p => p.categoryKey === 'sports');
+                const displayedSports = sports.slice(0, 8);
+                const sportsSection = createProductSectionHTML('Sports', displayedSports, 'sports', true);
+                container.appendChild(sportsSection);
             } else {
                 // Single Category or Search Results section layout
                 const filtered = products.filter(p => {
@@ -5320,6 +5537,8 @@
                     title = 'Shirts';
                 } else if (filter === 'watches') {
                     title = 'Watches';
+                } else if (filter === 'sports') {
+                    title = 'Sports';
                 }
 
                 const section = createProductSectionHTML(title, filtered, filter, false);
@@ -5843,13 +6062,6 @@
 
             if (wishlistProducts.length === 0) {
                 view.innerHTML = `
-                    <div class="back-btn-wrapper">
-                        <button class="back-btn" onclick="showView('home')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                            Back to Shop
-                        </button>
-                    </div>
-
                     <div class="wishlist-page">
                         <div class="empty-wishlist">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
@@ -5863,13 +6075,6 @@
             }
 
             view.innerHTML = `
-                <div class="back-btn-wrapper">
-                    <button class="back-btn" onclick="showView('home')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                        Back to Shop
-                    </button>
-                </div>
-
                 <div class="wishlist-page">
                     <div class="wishlist-header">
                         <div>
@@ -5884,7 +6089,7 @@
                             <div class="product-card fade-in">
                                 <div class="product-image" onclick="showView('product', ${p.id})">
                                     <img src="${p.image}" alt="${p.name}">
-                                    ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+                                    ${p.badge ? `<span class="product-badge${p.badge === 'Sale' ? ' sale' : ''}${p.sold ? ' sold' : ''}">${p.badge}</span>` : ''}
                                     <button class="wishlist-btn active" onclick="event.stopPropagation(); toggleWishlist(${p.id})" aria-label="Remove from wishlist">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
                                     </button>
@@ -5900,7 +6105,7 @@
                                         <span class="current-price">${formatPrice(p.currentPrice)}</span>
                                         ${p.originalPrice ? `<span class="original-price">${formatPrice(p.originalPrice)}</span>` : ''}
                                     </div>
-                                    <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${p.id})">Add to Cart</button>
+                                    <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${p.id})" ${p.sold ? 'disabled' : ''}>${p.sold ? 'Sold Out' : 'Add to Cart'}</button>
                                 </div>
                             </div>
                         `).join('')}
@@ -5919,6 +6124,13 @@
                 .filter(prod => prod.id !== productId && prod.categoryKey === p.categoryKey)
                 .slice(0, 4);
 
+            let discountBadgeHTML = '';
+            if (p.originalPrice && p.originalPrice > p.currentPrice) {
+                const discount = Math.round(((p.originalPrice - p.currentPrice) / p.originalPrice) * 100);
+                if (discount > 0) {
+                    discountBadgeHTML = `<span class="product-detail-badge sale">${discount}% OFF</span>`;
+                }
+            }
             if (related.length === 0) {
                 related.push(...products.filter(prod => prod.id !== productId).slice(0, 4));
             }
@@ -5981,18 +6193,11 @@
             const detailDescriptionHTML = p.description.replace(/\n/g, '<br>');
 
             view.innerHTML = `
-                <div class="back-btn-wrapper">
-                    <button class="back-btn" onclick="showView('home')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                        Back to Shop
-                    </button>
-                </div>
-                
                 <div class="product-detail-container">
                     <div class="product-gallery">
                         <div class="product-detail-image-wrapper">
                             <img id="detail-main-image" src="${detailImages[0]}" alt="${p.name}">
-                            ${p.badge ? `<span class="product-detail-badge${p.badge === 'Sale' ? ' sale' : ''}">${p.badge}</span>` : ''}
+                            ${p.badge ? `<span class="product-detail-badge${p.badge === 'Sale' ? ' sale' : ''}${p.sold ? ' sold' : ''}">${p.badge}</span>` : ''}
                         </div>
                         ${thumbnailsHTML}
                         
@@ -6009,9 +6214,9 @@
                                         <button class="qty-btn" onclick="adjustDetailQty(1)">+</button>
                                     </div>
                                     
-                                    <button class="add-to-cart-large" onclick="addDetailToCart(${p.id})">
+                                    <button class="add-to-cart-large" onclick="addDetailToCart(${p.id})" ${p.sold ? 'disabled' : ''}>
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                                        Add to Cart
+                                        ${p.sold ? 'Sold Out' : 'Add to Cart'}
                                     </button>
                                 </div>
                             </div>
@@ -6029,7 +6234,10 @@
                         
                         <div class="product-detail-price">
                             <span class="current">${formatPrice(p.currentPrice)}</span>
-                            ${p.originalPrice ? `<span class="original">${formatPrice(p.originalPrice)}</span>` : ''}
+                            ${p.originalPrice && p.originalPrice > p.currentPrice ?
+                                `<span class="original">${formatPrice(p.originalPrice)}</span>
+                                 <span class="discount-badge">${Math.round(((p.originalPrice - p.currentPrice) / p.originalPrice) * 100)}% OFF</span>`
+                            : ''}
                         </div>
                         
                         <p class="product-detail-desc">${detailDescriptionHTML}</p>
@@ -6048,7 +6256,7 @@
                             <div class="product-card fade-in">
                                 <div class="product-image" onclick="showView('product', ${r.id})">
                                     <img src="${r.image}" alt="${r.name}">
-                                    ${r.badge ? `<span class="product-badge">${r.badge}</span>` : ''}
+                                    ${r.badge ? `<span class="product-badge${r.badge === 'Sale' ? ' sale' : ''}${r.sold ? ' sold' : ''}">${r.badge}</span>` : ''}
                                     <button class="wishlist-btn ${wishlist.includes(r.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist(${r.id})" aria-label="${wishlist.includes(r.id) ? 'Remove from wishlist' : 'Add to wishlist'}">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
                                     </button>
@@ -6064,7 +6272,7 @@
                                         <span class="current-price">${formatPrice(r.currentPrice)}</span>
                                         ${r.originalPrice ? `<span class="original-price">${formatPrice(r.originalPrice)}</span>` : ''}
                                     </div>
-                                    <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${r.id})">Add to Cart</button>
+                                    <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${r.id})" ${r.sold ? 'disabled' : ''}>${r.sold ? 'Sold Out' : 'Add to Cart'}</button>
                                 </div>
                             </div>
                         `).join('')}
@@ -6143,17 +6351,10 @@
                 subtotal += item.price * item.quantity;
             });
 
-            const shipping = 150;
+            const shipping = 250;
             const total = subtotal + shipping;
 
             view.innerHTML = `
-                <div class="back-btn-wrapper">
-                    <button class="back-btn" onclick="showView('home')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                        Back to Shop
-                    </button>
-                </div>
-                
                 <div class="checkout-container">
                     <div class="checkout-form-card">
                         <div class="checkout-title">
@@ -6191,8 +6392,8 @@
                                     <input type="text" id="custCity" class="form-control" placeholder="Springfield" value="${escapeHtml(account && account.city)}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="custZip">ZIP / Postal Code *</label>
-                                    <input type="text" id="custZip" class="form-control" placeholder="97477" value="${escapeHtml(account && account.zip)}" required>
+                                    <label for="custZip">ZIP / Postal Code (optional)</label>
+                                    <input type="text" id="custZip" class="form-control" placeholder="97477" value="${escapeHtml(account && account.zip)}">
                                 </div>
                             </div>
                             
@@ -6292,7 +6493,7 @@
             const city = document.getElementById('custCity').value;
             const zip = document.getElementById('custZip').value;
 
-            if (!email || !phone || !name || !address || !city || !zip) {
+            if (!email || !phone || !name || !address || !city) {
                 showToast("Enter billing details");
                 return;
             }
@@ -6309,7 +6510,7 @@
                 itemsDescription.push(`${item.name} x${item.quantity} (Size: ${item.size || 'N/A'}, Color: ${item.color || 'N/A'}) - ${formatPrice(item.price * item.quantity)}`);
             });
 
-            const shipping = 150;
+            const shipping = 250;
             const total = subtotal + shipping;
 
             // Data for FormSubmit.co
@@ -6437,6 +6638,11 @@
             ],
             12: [
                 { name: "Omar Farooq", rating: 5, comment: "Pristine white is very eye-catching. Quartz movement is highly accurate. Great unisex watch.", created_at: "2026-05-22 10:11:55" }
+            ],
+            15: [
+                { name: "Saad Ahmed", rating: 5, comment: "The Trionda ball has a great grip and a solid match-ball feel. The flight is smooth on long passes and shots.", created_at: "2026-06-08 17:20:14" },
+                { name: "Danish Khan", rating: 5, comment: "Used it for weekend football and training drills. Holds air well, feels durable, and the colors look amazing on the pitch.", created_at: "2026-06-14 19:05:33" },
+                { name: "Arham Sheikh", rating: 4, comment: "Good quality football for the price. The textured surface helps control, especially when playing on turf.", created_at: "2026-06-18 16:42:09" }
             ]
         };
 
@@ -6449,23 +6655,28 @@
             if (!p) return [];
             
             const isWatch = p.categoryKey === 'watches';
+            const isSports = p.categoryKey === 'sports';
             const name = p.name;
             
             return [
                 {
                     name: "Muhammad Ali",
-                    rating: isWatch ? 5 : 4,
-                    comment: isWatch 
-                        ? `Bought the "${name}". The minimalist look is super elegant, butterfly clasp is solid. Highly recommended!`
-                        : `Really nice cotton tee. Fabric feels very premium and durable. Stitches are neat. Good deal!`,
+                    rating: isWatch || isSports ? 5 : 4,
+                    comment: isWatch
+                        ? `Bought the "${name}". The design is elegant, the chain feels solid, and the clasp is secure. Highly recommended!`
+                        : isSports
+                            ? `Bought the "${name}" for regular football practice. Great touch, strong build, and the ball feels stable in play.`
+                            : `Really nice cotton tee. Fabric feels very premium and durable. Stitches are neat. Good deal!`,
                     created_at: "2026-05-15 10:25:00"
                 },
                 {
                     name: "Ayesha Omer",
                     rating: 5,
                     comment: isWatch
-                        ? `Beautiful watch! Love the monochromatic design. Looks more expensive than it is.`
-                        : `Super soft and fits perfectly. The color looks exactly like the pictures. Fast shipping!`,
+                        ? `Beautiful watch! The finish looks much more expensive than it is.`
+                        : isSports
+                            ? `The football looks exactly like the pictures and performs really well during drills. Fast delivery too!`
+                            : `Super soft and fits perfectly. The color looks exactly like the pictures. Fast shipping!`,
                     created_at: "2026-06-01 15:40:12"
                 },
                 {
@@ -6473,7 +6684,9 @@
                     rating: isWatch ? 4 : 5,
                     comment: isWatch
                         ? `Excellent quality for this price range. Accurate timekeeping so far.`
-                        : `Got this in bundle deal, amazing value for money. Pure cotton material is very soft.`,
+                        : isSports
+                            ? `Great value for match practice. It kicks cleanly, keeps shape well, and the outer texture gives nice control.`
+                            : `Got this in bundle deal, amazing value for money. Pure cotton material is very soft.`,
                     created_at: "2026-06-10 12:10:45"
                 }
             ];
