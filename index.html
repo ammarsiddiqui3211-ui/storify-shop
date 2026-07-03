@@ -4720,7 +4720,7 @@
         const SUPABASE_URL = "https://muohgbsjqisjavicwqdi.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11b2hnYnNqcWlzamF2aWN3cWRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNjY1NTAsImV4cCI6MjA5ODY0MjU1MH0.nseHW6X4lqp-qveJ2xuCNBlRFFVVIBNM0YwDMET3p4A";
 
-        const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
+        const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase)
             ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
             : null;
 
