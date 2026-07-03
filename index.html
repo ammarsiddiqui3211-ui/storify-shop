@@ -2641,7 +2641,7 @@
             color: var(--white);
             margin-bottom: 36px;
             overflow: hidden;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -2677,14 +2677,12 @@
             font-weight: 800;
             flex-shrink: 0;
             border: 4px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 24px rgba(197, 160, 89, 0.3);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+            transition: border-color 0.25s ease;
         }
 
         .account-page-avatar-premium:hover {
-            transform: scale(1.05);
             border-color: var(--accent);
-            box-shadow: 0 12px 28px rgba(197, 160, 89, 0.5);
         }
 
         .avatar-glow {
@@ -2695,15 +2693,15 @@
             bottom: -4px;
             border-radius: 50%;
             border: 2px solid var(--accent);
-            opacity: 0.5;
-            animation: pulse-glow 2s infinite;
+            opacity: 0.3;
+            animation: pulse-glow 2.5s infinite;
             pointer-events: none;
         }
 
         @keyframes pulse-glow {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.08); opacity: 0.1; }
-            100% { transform: scale(1); opacity: 0.5; }
+            0% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.06); opacity: 0.1; }
+            100% { transform: scale(1); opacity: 0.3; }
         }
 
         .account-membership-badge {
@@ -2749,16 +2747,14 @@
             border: 1px solid rgba(0, 0, 0, 0.05);
             border-radius: 24px;
             padding: 36px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.02);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.01);
+            transition: border-color 0.25s ease;
             display: flex;
             flex-direction: column;
         }
 
         .account-page-card-premium:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-            border-color: rgba(197, 160, 89, 0.2);
+            border-color: rgba(197, 160, 89, 0.25);
         }
 
         .card-header-premium {
@@ -2850,15 +2846,13 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+            transition: background-color 0.25s ease;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
             font-family: 'Inter', sans-serif;
         }
 
         .btn-premium-edit:hover {
             background: var(--accent);
-            box-shadow: 0 6px 18px rgba(197, 160, 89, 0.3);
-            transform: translateY(-2px);
         }
 
         .btn-premium-signout {
@@ -2882,8 +2876,6 @@
             background: #ef4444;
             color: var(--white);
             border-color: #ef4444;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.15);
         }
 
         /* Stats styling */
@@ -2896,23 +2888,24 @@
 
         .stat-premium-box {
             background: #f8fafc;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.03);
             border-radius: 18px;
-            padding: 20px;
+            padding: 24px 20px;
             text-align: center;
-            transition: all 0.25s ease;
+            transition: background-color 0.25s ease, border-color 0.25s ease;
         }
 
         .stat-premium-box:hover {
-            background: var(--secondary);
-            transform: scale(1.02);
+            background: var(--white);
+            border-color: var(--accent);
         }
 
         .stat-premium-box .stat-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 800;
             color: var(--accent);
             margin-bottom: 4px;
+            line-height: 1.1;
         }
 
         .stat-premium-box .stat-label {
@@ -2948,15 +2941,13 @@
             border-radius: 18px;
             padding: 18px 10px;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background-color 0.25s ease, border-color 0.25s ease;
             font-family: 'Inter', sans-serif;
         }
 
         .action-btn-premium:hover {
             background: var(--white);
             border-color: var(--accent);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(197, 160, 89, 0.15);
         }
 
         .action-btn-premium:hover .action-icon {
@@ -2987,29 +2978,39 @@
             color: var(--primary);
         }
 
-        /* Perks Banner */
+        /* Perks Banner - Professional Cards Layout */
         .account-perks-banner {
             grid-column: 1 / -1;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             margin-top: 36px;
-            background: #f8fafc;
+            background: var(--white);
             border-radius: 24px;
-            padding: 28px;
-            border: 1px solid var(--border);
+            padding: 0;
+            border: none;
         }
 
         .perk-item {
             display: flex;
             align-items: flex-start;
-            gap: 16px;
+            gap: 20px;
+            padding: 28px;
+            background: #f8fafc;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: border-color 0.25s ease, background-color 0.25s ease;
+        }
+
+        .perk-item:hover {
+            background: var(--white);
+            border-color: rgba(197, 160, 89, 0.2);
         }
 
         .perk-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             background: rgba(197, 160, 89, 0.1);
             color: var(--accent);
             display: flex;
@@ -3019,22 +3020,23 @@
         }
 
         .perk-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
         }
 
         .perk-info h5 {
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 800;
             color: var(--primary);
-            margin: 0 0 4px 0;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.2px;
         }
 
         .perk-info p {
             font-size: 12px;
             color: var(--text-light);
             margin: 0;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         @media (max-width: 992px) {
@@ -3069,6 +3071,20 @@
 
             .quick-actions-buttons {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+                padding: 14px 0;
+            }
+
+            .detail-value {
+                text-align: left;
+                max-width: 100%;
             }
         }
 
@@ -5941,13 +5957,6 @@
             const addressStr = [account.address, account.city, account.zip].filter(Boolean).join(', ') || 'No address saved';
 
             view.innerHTML = `
-                <!-- Breadcrumbs -->
-                <div class="account-page-breadcrumb">
-                    <a href="#" onclick="showView('home')">Home</a>
-                    <span class="breadcrumb-sep">/</span>
-                    <span>My Account</span>
-                </div>
-
                 <!-- Premium Header Card -->
                 <div class="account-page-header-premium">
                     <div class="account-premium-overlay"></div>
