@@ -3057,12 +3057,30 @@
                 padding: 30px 20px;
             }
 
+            .account-page-card-premium {
+                padding: 24px 18px;
+                border-radius: 18px;
+            }
+
+            .card-header-premium {
+                margin-bottom: 20px;
+                padding-bottom: 14px;
+            }
+
             .profile-actions-wrapper {
                 flex-direction: column;
             }
 
             .quick-actions-buttons {
                 grid-template-columns: 1fr;
+            }
+
+            .account-page-grid {
+                gap: 16px;
+            }
+
+            #account-page-view {
+                padding: 20px 16px 40px;
             }
         }
 
@@ -6050,42 +6068,57 @@
                     </div>
                 </div>
 
-                <!-- Account Perks (Compact Single Row) -->
-                <div class="account-features-row">
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <!-- Account Perks -->
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-truck">
+                                <path d="M14 18H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10" />
+                                <polygon points="19 10 23 10 23 14 19 14 19 10" />
+                                <circle cx="7.5" cy="18.5" r="2.5" />
+                                <circle cx="17.5" cy="18.5" r="2.5" />
+                            </svg>
                         </div>
-                        <div class="account-feature-title">Flat Rate Shipping</div>
-                        <div class="account-feature-desc">Rs 250 flat-rate delivery nationwide</div>
+                        <h3 class="feature-title">Delivery Charges</h3>
+                        <p class="feature-desc">Flat Rs 250, delivered anywhere in Pakistan</p>
                     </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-shield-check">
+                                <path d="M20 13c0 5-3.5 7.5-7.66 9.7a1 1 0 0 1-.68 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .76-.97l8-2a1 1 0 0 1 .48 0l8 2A1 1 0 0 1 20 6z" />
+                                <path d="m9 12 2 2 4-4" />
+                            </svg>
                         </div>
-                        <div class="account-feature-title">Secure Auth</div>
-                        <div class="account-feature-desc">Supabase Auth encryption</div>
+                        <h3 class="feature-title">Secure Payment</h3>
+                        <p class="feature-desc">100% secure payment processing</p>
                     </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-rotate-ccw">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                <path d="M3 3v5h5" />
+                            </svg>
                         </div>
-                        <div class="account-feature-title">Verified Reviews</div>
-                        <div class="account-feature-desc">Trusted product feedback</div>
+                        <h3 class="feature-title">Easy Returns</h3>
+                        <p class="feature-desc">30-day hassle-free return policy</p>
                     </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-gem">
+                                <path d="M6 3h12l4 6-10 13L2 9z" />
+                                <path d="M11 3 8 9l3 13M13 3l3 9-3 10M2 9h20" />
+                            </svg>
                         </div>
-                        <div class="account-feature-title">Easy Returns</div>
-                        <div class="account-feature-desc">30-day hassle-free policy</div>
-                    </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z" /><path d="M11 3 8 9l3 13M13 3l3 9-3 10M2 9h20" /></svg>
-                        </div>
-                        <div class="account-feature-title">Premium Quality</div>
-                        <div class="account-feature-desc">Curated premium products</div>
+                        <h3 class="feature-title">Premium Quality</h3>
+                        <p class="feature-desc">Curated selection of premium products</p>
                     </div>
                 </div>
             `;
