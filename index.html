@@ -4720,16 +4720,16 @@
         const SUPABASE_URL = "https://goguiruuirltoiofmvuj.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvZ3VpcnV1aXJsdG9pb2ZtdnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMDU4MTYsImV4cCI6MjA5ODY4MTgxNn0.N8BCHCsDet0Bpxhe7P9iK0U6vs6NbsChdgNEI8OAFzc";
 
-        let supabase = null;
+        let supabaseClient = null;
         try {
             if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (err) {
             console.error("Failed to initialize Supabase client:", err);
         }
 
-        if (!supabase) {
+        if (!supabaseClient) {
             console.warn("Supabase is not initialized. Please set SUPABASE_URL and SUPABASE_ANON_KEY in index.html script block.");
         }
         let cart = JSON.parse(localStorage.getItem('storify_cart')) || [];
@@ -5891,7 +5891,7 @@
         function handleLoginSubmit(event) {
             event.preventDefault();
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 showAuthMessage('error', 'Supabase is not configured. Please add SUPABASE_URL and SUPABASE_ANON_KEY in index.html.');
                 return;
             }
@@ -5905,7 +5905,7 @@
             btn.innerHTML = `<span class="spinner"></span> Signing In...`;
             btn.classList.add('loading');
 
-            supabase.auth.signInWithPassword({
+            supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password
             })
@@ -5943,7 +5943,7 @@
         function handleRegisterSubmit(event) {
             event.preventDefault();
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 showAuthMessage('error', 'Supabase is not configured. Please add SUPABASE_URL and SUPABASE_ANON_KEY in index.html.');
                 return;
             }
@@ -5970,7 +5970,7 @@
             btn.innerHTML = `<span class="spinner"></span> Creating Account...`;
             btn.classList.add('loading');
 
-            supabase.auth.signUp({
+            supabaseClient.auth.signUp({
                 email: email,
                 password: password,
                 options: {
@@ -6023,7 +6023,7 @@
         function handleAccountSubmit(event) {
             event.preventDefault();
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 showToast("Supabase is not configured.");
                 return;
             }
@@ -6046,7 +6046,7 @@
             btn.innerHTML = `<span class="spinner"></span> Saving Details...`;
             btn.classList.add('loading');
 
-            supabase.auth.updateUser({
+            supabaseClient.auth.updateUser({
                 data: {
                     name: name,
                     phone: phone,
@@ -6097,8 +6097,8 @@
         }
 
         function signOutAccount() {
-            if (supabase) {
-                supabase.auth.signOut();
+            if (supabaseClient) {
+                supabaseClient.auth.signOut();
             }
             account = null;
             accountEditMode = false;
@@ -6784,13 +6784,13 @@
                 </div>
             `;
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 console.warn("Supabase not configured. Loading mock reviews only.");
                 renderReviewsSection(productId, []);
                 return;
             }
 
-            supabase
+            supabaseClient
                 .from('reviews')
                 .select('id, name, rating, comment, created_at')
                 .eq('product_id', productId)
@@ -7020,7 +7020,7 @@
         function submitProductReview(event, productId) {
             event.preventDefault();
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 showToast("Supabase is not configured. Cannot submit review.");
                 return;
             }
@@ -7051,7 +7051,7 @@
             btn.innerHTML = `<span class="spinner" style="border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; width: 14px; height: 14px; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle;"></span> Submitting...`;
             btn.classList.add('loading');
 
-            supabase
+            supabaseClient
                 .from('reviews')
                 .insert([
                     {
