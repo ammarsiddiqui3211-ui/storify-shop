@@ -60,6 +60,8 @@
             }
         }
     </script>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
@@ -4692,11 +4694,19 @@
         }
 
         // ----------------------------------------------------
-        // CART AND CORE STATE & API CONFIG
+        // SUPABASE CLIENT INITIALIZATION
         // ----------------------------------------------------
-        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'login.php'
-            : 'https://storify-107u.onrender.com/login.php';
+        // CONFIG: Replace with your actual Supabase Project URL and Public Anon Key!
+        const SUPABASE_URL = "";
+        const SUPABASE_ANON_KEY = "";
+
+        const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            : null;
+
+        if (!supabase) {
+            console.warn("Supabase is not initialized. Please set SUPABASE_URL and SUPABASE_ANON_KEY in index.html script block.");
+        }
         let cart = JSON.parse(localStorage.getItem('storify_cart')) || [];
         let wishlist = JSON.parse(localStorage.getItem('storify_wishlist')) || [];
         let account = JSON.parse(localStorage.getItem('storify_account')) || null;
@@ -5856,6 +5866,11 @@
         function handleLoginSubmit(event) {
             event.preventDefault();
 
+            if (!supabase) {
+                showAuthMessage('error', 'Supabase is not configured. Please add SUPABASE_URL and SUPABASE_ANON_KEY in index.html.');
+                return;
+            }
+
             const btn = document.getElementById('loginSubmitBtn');
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -5865,43 +5880,48 @@
             btn.innerHTML = `<span class="spinner"></span> Signing In...`;
             btn.classList.add('loading');
 
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'login',
-                    email: email,
-                    password: password
-                })
+            supabase.auth.signInWithPassword({
+                email: email,
+                password: password
             })
-                .then(res => res.json())
-                .then(data => {
-                    btn.innerHTML = `Sign In`;
-                    btn.classList.remove('loading');
+            .then(({ data, error }) => {
+                btn.innerHTML = `Sign In`;
+                btn.classList.remove('loading');
 
-                    if (data.success) {
-                        account = data.user;
-                        saveAccount();
-                        closeAccountModal();
-                        updateAccountNavBtn();
-                        showView('account');
-                        showToast("Welcome back");
-                    } else {
-                        showAuthMessage('error', data.message);
-                    }
-                })
-                .catch(err => {
-                    btn.innerHTML = `Sign In`;
-                    btn.classList.remove('loading');
-                    showAuthMessage('error', 'Network error or PHP connection failed. Ensure your local server is running.');
-                    console.error(err);
-                });
+                if (error) {
+                    showAuthMessage('error', error.message);
+                } else if (data.user) {
+                    account = {
+                        id: data.user.id,
+                        name: data.user.user_metadata.name || '',
+                        email: data.user.email,
+                        phone: data.user.user_metadata.phone || '',
+                        address: data.user.user_metadata.address || '',
+                        city: data.user.user_metadata.city || '',
+                        zip: data.user.user_metadata.zip || ''
+                    };
+                    saveAccount();
+                    closeAccountModal();
+                    updateAccountNavBtn();
+                    showView('account');
+                    showToast("Welcome back");
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = `Sign In`;
+                btn.classList.remove('loading');
+                showAuthMessage('error', 'An error occurred during login. Please try again.');
+                console.error(err);
+            });
         }
 
         function handleRegisterSubmit(event) {
             event.preventDefault();
+
+            if (!supabase) {
+                showAuthMessage('error', 'Supabase is not configured. Please add SUPABASE_URL and SUPABASE_ANON_KEY in index.html.');
+                return;
+            }
 
             const btn = document.getElementById('registerSubmitBtn');
             const name = document.getElementById('registerName').value.trim();
@@ -5909,9 +5929,6 @@
             const phone = document.getElementById('registerPhone').value.trim();
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            const address = '';
-            const city = '';
-            const zip = '';
 
             if (password !== confirmPassword) {
                 showAuthMessage('error', 'Passwords do not match.');
@@ -5928,48 +5945,63 @@
             btn.innerHTML = `<span class="spinner"></span> Creating Account...`;
             btn.classList.add('loading');
 
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'register',
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    password: password,
-                    address: address,
-                    city: city,
-                    zip: zip
-                })
+            supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        name: name,
+                        phone: phone,
+                        address: '',
+                        city: '',
+                        zip: ''
+                    }
+                }
             })
-                .then(res => res.json())
-                .then(data => {
-                    btn.innerHTML = `Create Account`;
-                    btn.classList.remove('loading');
+            .then(({ data, error }) => {
+                btn.innerHTML = `Create Account`;
+                btn.classList.remove('loading');
 
-                    if (data.success) {
-                        account = data.user;
+                if (error) {
+                    showAuthMessage('error', error.message);
+                } else if (data.user) {
+                    if (data.session) {
+                        account = {
+                            id: data.user.id,
+                            name: data.user.user_metadata.name || '',
+                            email: data.user.email,
+                            phone: data.user.user_metadata.phone || '',
+                            address: data.user.user_metadata.address || '',
+                            city: data.user.user_metadata.city || '',
+                            zip: data.user.user_metadata.zip || ''
+                        };
                         saveAccount();
                         closeAccountModal();
                         updateAccountNavBtn();
                         showView('account');
                         showToast("Account created");
                     } else {
-                        showAuthMessage('error', data.message);
+                        showAuthMessage('success', 'Account created! Please check your email to verify your registration.');
+                        showToast("Verification email sent");
                     }
-                })
-                .catch(err => {
-                    btn.innerHTML = `Create Account`;
-                    btn.classList.remove('loading');
-                    showAuthMessage('error', 'Network error or PHP connection failed. Ensure your local server is running.');
-                    console.error(err);
-                });
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = `Create Account`;
+                btn.classList.remove('loading');
+                showAuthMessage('error', 'An error occurred during registration.');
+                console.error(err);
+            });
         }
+
 
         function handleAccountSubmit(event) {
             event.preventDefault();
+
+            if (!supabase) {
+                showToast("Supabase is not configured.");
+                return;
+            }
 
             const btn = document.getElementById('editSubmitBtn');
             const name = document.getElementById('accountName').value.trim();
@@ -5989,43 +6021,44 @@
             btn.innerHTML = `<span class="spinner"></span> Saving Details...`;
             btn.classList.add('loading');
 
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'update_profile',
+            supabase.auth.updateUser({
+                data: {
                     name: name,
-                    email: email,
                     phone: phone,
                     address: address,
                     city: city,
                     zip: zip
-                })
+                }
             })
-                .then(res => res.json())
-                .then(data => {
-                    btn.innerHTML = `Update Account`;
-                    btn.classList.remove('loading');
+            .then(({ data, error }) => {
+                btn.innerHTML = `Update Account`;
+                btn.classList.remove('loading');
 
-                    if (data.success) {
-                        account = data.user;
-                        saveAccount();
-                        accountEditMode = false;
-                        closeAccountModal();
-                        renderAccountPageView();
-                        showToast("Details updated");
-                    } else {
-                        showAuthMessage('error', data.message, 'edit-msg-block');
-                    }
-                })
-                .catch(err => {
-                    btn.innerHTML = `Update Account`;
-                    btn.classList.remove('loading');
-                    showAuthMessage('error', 'Network error. Could not update details on server.', 'edit-msg-block');
-                    console.error(err);
-                });
+                if (error) {
+                    showAuthMessage('error', error.message, 'edit-msg-block');
+                } else if (data.user) {
+                    account = {
+                        id: data.user.id,
+                        name: data.user.user_metadata.name || '',
+                        email: data.user.email,
+                        phone: data.user.user_metadata.phone || '',
+                        address: data.user.user_metadata.address || '',
+                        city: data.user.user_metadata.city || '',
+                        zip: data.user.user_metadata.zip || ''
+                    };
+                    saveAccount();
+                    accountEditMode = false;
+                    closeAccountModal();
+                    renderAccountPageView();
+                    showToast("Details updated");
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = `Update Account`;
+                btn.classList.remove('loading');
+                showAuthMessage('error', 'An error occurred while updating profile.', 'edit-msg-block');
+                console.error(err);
+            });
         }
 
         function editAccount() {
@@ -6039,6 +6072,9 @@
         }
 
         function signOutAccount() {
+            if (supabase) {
+                supabase.auth.signOut();
+            }
             account = null;
             accountEditMode = false;
             saveAccount();
@@ -6723,28 +6759,29 @@
                 </div>
             `;
 
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'get_reviews',
-                    product_id: productId
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                let dbReviews = [];
-                if (data.success && data.reviews) {
-                    dbReviews = data.reviews;
-                }
-                renderReviewsSection(productId, dbReviews);
-            })
-            .catch(err => {
-                console.error("Error loading reviews:", err);
+            if (!supabase) {
+                console.warn("Supabase not configured. Loading mock reviews only.");
                 renderReviewsSection(productId, []);
-            });
+                return;
+            }
+
+            supabase
+                .from('reviews')
+                .select('id, name, rating, comment, created_at')
+                .eq('product_id', productId)
+                .order('created_at', { ascending: false })
+                .then(({ data, error }) => {
+                    if (error) {
+                        console.error("Error loading reviews:", error);
+                        renderReviewsSection(productId, []);
+                    } else {
+                        renderReviewsSection(productId, data || []);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error loading reviews:", err);
+                    renderReviewsSection(productId, []);
+                });
         }
 
         function renderReviewsSection(productId, dbReviews) {
@@ -6958,6 +6995,11 @@
         function submitProductReview(event, productId) {
             event.preventDefault();
 
+            if (!supabase) {
+                showToast("Supabase is not configured. Cannot submit review.");
+                return;
+            }
+
             const btn = document.getElementById('submitReviewBtn');
             const ratingInput = document.getElementById('reviewRatingValue');
             const rating = parseInt(ratingInput ? ratingInput.value : '0');
@@ -6984,39 +7026,35 @@
             btn.innerHTML = `<span class="spinner" style="border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; width: 14px; height: 14px; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle;"></span> Submitting...`;
             btn.classList.add('loading');
 
-            fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'add_review',
-                    product_id: productId,
-                    name: name,
-                    email: email,
-                    rating: rating,
-                    comment: comment
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.innerHTML = `Submit Review`;
-                btn.classList.remove('loading');
+            supabase
+                .from('reviews')
+                .insert([
+                    {
+                        product_id: productId,
+                        name: name,
+                        email: email,
+                        rating: rating,
+                        comment: comment
+                    }
+                ])
+                .then(({ data, error }) => {
+                    btn.innerHTML = `Submit Review`;
+                    btn.classList.remove('loading');
 
-                if (data.success) {
-                    showToast("Review submitted successfully");
-                    toggleReviewForm();
-                    loadProductReviews(productId);
-                } else {
-                    showToast(data.message || "Failed to submit review");
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = `Submit Review`;
-                btn.classList.remove('loading');
-                showToast("Network error. Please try again.");
-                console.error(err);
-            });
+                    if (error) {
+                        showToast(error.message || "Failed to submit review");
+                    } else {
+                        showToast("Review submitted successfully");
+                        toggleReviewForm();
+                        loadProductReviews(productId);
+                    }
+                })
+                .catch(err => {
+                    btn.innerHTML = `Submit Review`;
+                    btn.classList.remove('loading');
+                    showToast("Network error. Please try again.");
+                    console.error(err);
+                });
         }
 
         // ----------------------------------------------------
