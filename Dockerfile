@@ -6,9 +6,8 @@ RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
-# Copy the PHP and environment files to the web server root
-COPY login.php /var/www/html/
-COPY .htaccess /var/www/html/
+# Copy all project files (HTML, PHP, assets, etc.) to the web server root
+COPY . /var/www/html/
 
 # We don't copy the actual .env file for security, 
 # because you will set the environment variables in the Render/Railway dashboard!

@@ -1,0 +1,8 @@
+.git
+.env
+.agents
+.vscode
+.idea
+*.log
+Dockerfile
+schema.sql
