@@ -2978,67 +2978,6 @@
             color: var(--primary);
         }
 
-        /* Perks Banner - Professional Cards Layout */
-        .account-perks-banner {
-            grid-column: 1 / -1;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-top: 36px;
-            background: var(--white);
-            border-radius: 24px;
-            padding: 0;
-            border: none;
-        }
-
-        .perk-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            padding: 28px;
-            background: #f8fafc;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            transition: border-color 0.25s ease, background-color 0.25s ease;
-        }
-
-        .perk-item:hover {
-            background: var(--white);
-            border-color: rgba(197, 160, 89, 0.2);
-        }
-
-        .perk-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: rgba(197, 160, 89, 0.1);
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .perk-icon svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .perk-info h5 {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 0 0 6px 0;
-            letter-spacing: -0.2px;
-        }
-
-        .perk-info p {
-            font-size: 12px;
-            color: var(--text-light);
-            margin: 0;
-            line-height: 1.5;
-        }
-
         @media (max-width: 992px) {
             .account-page-grid {
                 grid-template-columns: 1fr;
@@ -3046,11 +2985,6 @@
 
             #account-page-view {
                 padding: 24px 20px 40px;
-            }
-
-            .account-perks-banner {
-                grid-template-columns: 1fr;
-                gap: 18px;
             }
         }
 
@@ -6058,34 +5992,28 @@
                     </div>
                 </div>
 
-                <!-- Account Perks Banner -->
-                <div class="account-perks-banner">
-                    <div class="perk-item">
-                        <div class="perk-icon">
+                <!-- Account Perks Banner (Styled exactly like Home Features) -->
+                <div class="features" style="grid-column: 1 / -1; margin-top: 36px; border-top: 1px solid var(--border); padding-top: 36px; margin-bottom: 0;">
+                    <div class="feature">
+                        <div class="feature-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                         </div>
-                        <div class="perk-info">
-                            <h5>Flat Rate Shipping</h5>
-                            <p>Rs 250 flat-rate delivery active nationwide</p>
-                        </div>
+                        <h3 class="feature-title">Flat Rate Shipping</h3>
+                        <p class="feature-desc">Rs 250 flat-rate delivery active nationwide</p>
                     </div>
-                    <div class="perk-item">
-                        <div class="perk-icon">
+                    <div class="feature">
+                        <div class="feature-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         </div>
-                        <div class="perk-info">
-                            <h5>Secure Authentication</h5>
-                            <p>Powered by Supabase Auth encryption</p>
-                        </div>
+                        <h3 class="feature-title">Secure Authentication</h3>
+                        <p class="feature-desc">Powered by Supabase Auth encryption</p>
                     </div>
-                    <div class="perk-item">
-                        <div class="perk-icon">
+                    <div class="feature">
+                        <div class="feature-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         </div>
-                        <div class="perk-info">
-                            <h5>Verified Reviews</h5>
-                            <p>Write trusted feedback on all product styles</p>
-                        </div>
+                        <h3 class="feature-title">Verified Reviews</h3>
+                        <p class="feature-desc">Write trusted feedback on all product styles</p>
                     </div>
                 </div>
             `;
