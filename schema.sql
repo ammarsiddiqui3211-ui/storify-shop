@@ -381,9 +381,10 @@ BEGIN
   END IF;
 
   -- Non-admins cannot modify fields other than item_status and delivered_at
+  -- (Allow product_id to become NULL if the product has been deleted)
   IF (NEW.id IS DISTINCT FROM OLD.id OR
       NEW.order_id IS DISTINCT FROM OLD.order_id OR
-      NEW.product_id IS DISTINCT FROM OLD.product_id OR
+      (NEW.product_id IS DISTINCT FROM OLD.product_id AND (NEW.product_id IS NOT NULL OR EXISTS (SELECT 1 FROM public.products WHERE id = OLD.product_id))) OR
       NEW.seller_id IS DISTINCT FROM OLD.seller_id OR
       NEW.quantity IS DISTINCT FROM OLD.quantity OR
       NEW.price_at_purchase IS DISTINCT FROM OLD.price_at_purchase OR

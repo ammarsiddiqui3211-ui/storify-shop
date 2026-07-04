@@ -3095,10 +3095,6 @@
             .account-page-grid {
                 grid-template-columns: 1fr;
             }
-
-            #account-page-view {
-                padding: 24px 20px 40px;
-            }
         }
 
         @media (max-width: 576px) {
@@ -6311,14 +6307,14 @@
                 view.innerHTML = `
                     <!-- Premium Header Card (Seller Mode) -->
                     <div class="account-page-header-premium seller-header">
-                        <div class="account-premium-overlay" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(16, 185, 129, 0.4) 100%);"></div>
+                        <div class="account-premium-overlay" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(74, 144, 226, 0.3) 100%);"></div>
                         <div class="account-header-content">
-                            <div class="account-page-avatar-premium" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);">
+                            <div class="account-page-avatar-premium" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);">
                                 <span>${escapeHtml(initials)}</span>
-                                <div class="avatar-glow" style="background: rgba(16, 185, 129, 0.4);"></div>
+                                <div class="avatar-glow" style="background: rgba(74, 144, 226, 0.25);"></div>
                             </div>
                             <div class="account-page-header-info">
-                                <span class="account-membership-badge" style="background: #10b981; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">Storify Verified Seller</span>
+                                <span class="account-membership-badge" style="background: var(--accent); box-shadow: 0 2px 8px rgba(74, 144, 226, 0.25);">Storify Verified Seller</span>
                                 <h1>${escapeHtml(account.shop_name || account.name)}</h1>
                                 <p style="max-width: 600px;">Welcome to your vendor panel. Here you can list new products, manage your active stock, process customer shipments, and monitor your payout earnings.</p>
                             </div>
@@ -6946,7 +6942,7 @@
                                     <td style="padding: 12px 8px;">${escapeHtml(p.category)}</td>
                                     <td style="padding: 12px 8px; font-weight: 700; color: var(--text);">${formatPrice(p.price)}</td>
                                     <td style="padding: 12px 8px;">
-                                        <select onchange="updateProductStock(${p.id}, this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid var(--border); font-weight: 600; background: ${p.stock_status === 'available' ? '#e8f5e9' : '#ffebee'}; color: ${p.stock_status === 'available' ? '#2e7d32' : '#c62828'}; cursor: pointer;">
+                                        <select onchange="updateProductStock(${p.id}, this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid var(--border); font-weight: 600; background: ${p.stock_status === 'available' ? '#e3f2fd' : '#f1f5f9'}; color: ${p.stock_status === 'available' ? 'var(--accent-dark)' : '#475569'}; cursor: pointer;">
                                             <option value="available" ${p.stock_status === 'available' ? 'selected' : ''}>Available</option>
                                             <option value="sold_out" ${p.stock_status === 'sold_out' ? 'selected' : ''}>Sold Out</option>
                                         </select>
