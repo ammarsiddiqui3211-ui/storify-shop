@@ -6355,29 +6355,31 @@
                     <div class="account-page-header-premium seller-header">
                         <div class="account-premium-overlay" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(74, 144, 226, 0.3) 100%);"></div>
                         <div class="account-header-content">
-                            <div class="account-page-avatar-premium" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);">
-                                <span>${escapeHtml(initials)}</span>
-                                <div class="avatar-glow" style="background: rgba(74, 144, 226, 0.25);"></div>
+                            <div style="display: flex; align-items: center; gap: 32px; flex-wrap: wrap;">
+                                <div class="account-page-avatar-premium" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);">
+                                    <span>${escapeHtml(initials)}</span>
+                                    <div class="avatar-glow" style="background: rgba(74, 144, 226, 0.25);"></div>
+                                </div>
+                                <div class="account-page-header-info">
+                                    <span class="account-membership-badge" style="background: var(--accent); color: var(--white); box-shadow: 0 2px 8px rgba(74, 144, 226, 0.25);">Storify Verified Seller</span>
+                                    <h1>${escapeHtml(account.shop_name || account.name)}</h1>
+                                    <p style="max-width: 600px;">Welcome to your vendor panel. Here you can list new products, manage your active stock, process customer shipments, and monitor your payout earnings.</p>
+                                </div>
                             </div>
-                            <div class="account-page-header-info">
-                                <span class="account-membership-badge" style="background: var(--accent); color: var(--white); box-shadow: 0 2px 8px rgba(74, 144, 226, 0.25);">Storify Verified Seller</span>
-                                <h1>${escapeHtml(account.shop_name || account.name)}</h1>
-                                <p style="max-width: 600px;">Welcome to your vendor panel. Here you can list new products, manage your active stock, process customer shipments, and monitor your payout earnings.</p>
-                            </div>
+                            <button class="seller-signout-btn" onclick="signOutAccount()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Sign Out
+                            </button>
                         </div>
                     </div>
 
                     <!-- Tabbed Seller Dashboard Wrapper -->
                     <div class="seller-dashboard-container" style="margin-top: 30px;">
-                        <div class="seller-dashboard-tabs" style="display: flex; gap: 10px; border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 25px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; align-items: center;">
-                            <button class="seller-tab-btn ${activeSellerTab === 'add-product' ? 'active' : ''}" onclick="switchSellerTab('add-product')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'add-product' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'add-product' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;">Add Product</button>
-                            <button class="seller-tab-btn ${activeSellerTab === 'manage-products' ? 'active' : ''}" onclick="switchSellerTab('manage-products')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'manage-products' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'manage-products' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;">Manage Products</button>
-                            <button class="seller-tab-btn ${activeSellerTab === 'my-orders' ? 'active' : ''}" onclick="switchSellerTab('my-orders')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'my-orders' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'my-orders' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;">My Orders</button>
-                            <button class="seller-tab-btn ${activeSellerTab === 'earnings' ? 'active' : ''}" onclick="switchSellerTab('earnings')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'earnings' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'earnings' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;">Earnings</button>
-                            <button class="btn-premium-signout" onclick="signOutAccount()" style="margin-left: auto; padding: 10px 18px; font-weight: 600; border-radius: 8px; background: transparent; border: 1.5px solid #ef4444; color: #ef4444; display: flex; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                                Sign Out
-                            </button>
+                        <div class="seller-dashboard-tabs">
+                            <button class="seller-tab-btn ${activeSellerTab === 'add-product' ? 'active' : ''}" onclick="switchSellerTab('add-product')">Add Product</button>
+                            <button class="seller-tab-btn ${activeSellerTab === 'manage-products' ? 'active' : ''}" onclick="switchSellerTab('manage-products')">Manage Products</button>
+                            <button class="seller-tab-btn ${activeSellerTab === 'my-orders' ? 'active' : ''}" onclick="switchSellerTab('my-orders')">My Orders</button>
+                            <button class="seller-tab-btn ${activeSellerTab === 'earnings' ? 'active' : ''}" onclick="switchSellerTab('earnings')">Earnings</button>
                         </div>
                         <div class="seller-tab-content" id="sellerTabContent" style="background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
                             <!-- Loaded Dynamically -->
