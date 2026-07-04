@@ -3127,43 +3127,23 @@
             margin: 0 auto;
         }
 
-        /* Flat Category-like style for Seller Dashboard Tabs */
-        .seller-dashboard-tabs {
-            display: flex;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 25px;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-            gap: 16px;
-            width: 100%;
+        /* Dynamic dashboard modifications to categories bar */
+        .categories-bar.dashboard-active .categories-scroll-btn {
+            display: none !important;
         }
 
-        .seller-tab-btn {
-            flex: 1;
-            padding: 14px 0;
-            border: none;
-            background: transparent;
-            color: var(--text-light);
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            text-align: center;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            border-radius: 0;
+        .categories-bar.dashboard-active .categories {
+            justify-content: space-around !important;
+            overflow-x: hidden !important;
+            padding: 0 120px !important;
+            gap: 16px !important;
         }
 
-        .seller-tab-btn:hover {
-            color: var(--accent);
-        }
-
-        .seller-tab-btn.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-            font-weight: 600;
+        @media (max-width: 768px) {
+            .categories-bar.dashboard-active .categories {
+                padding: 0 16px !important;
+                gap: 8px !important;
+            }
         }
 
         /* Seller Sign Out Button in Premium Header Box */
@@ -3201,13 +3181,6 @@
         @media (max-width: 576px) {
             .seller-signout-btn {
                 margin: 15px auto 0 auto;
-            }
-            .seller-tab-btn {
-                font-size: 12px;
-                padding: 10px 0;
-            }
-            .seller-dashboard-tabs {
-                gap: 8px;
             }
         }
 
@@ -5887,6 +5860,7 @@
 
         // Parse URL query parameters and render the correct view
         function parseUrlAndRender() {
+            renderHeaderNavigation();
             const urlParams = new URLSearchParams(window.location.search);
             const page = urlParams.get('page') || 'home';
             const category = urlParams.get('category') || 'all';
@@ -6416,6 +6390,7 @@
         let selectedImageFiles = [];
 
         function renderAccountPageView() {
+            renderHeaderNavigation();
             const view = document.getElementById('account-page-view');
             if (!view || !account) return;
 
@@ -6457,12 +6432,6 @@
 
                     <!-- Tabbed Seller Dashboard Wrapper -->
                     <div class="seller-dashboard-container" style="margin-top: 30px;">
-                        <div class="seller-dashboard-tabs">
-                            <button class="seller-tab-btn ${activeSellerTab === 'add-product' ? 'active' : ''}" onclick="switchSellerTab('add-product')">Add Product</button>
-                            <button class="seller-tab-btn ${activeSellerTab === 'manage-products' ? 'active' : ''}" onclick="switchSellerTab('manage-products')">Manage</button>
-                            <button class="seller-tab-btn ${activeSellerTab === 'my-orders' ? 'active' : ''}" onclick="switchSellerTab('my-orders')">Orders</button>
-                            <button class="seller-tab-btn ${activeSellerTab === 'earnings' ? 'active' : ''}" onclick="switchSellerTab('earnings')">Earnings</button>
-                        </div>
                         <div class="seller-tab-content" id="sellerTabContent" style="background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
                             <!-- Loaded Dynamically -->
                         </div>
@@ -6594,8 +6563,61 @@
             renderBuyerOrdersSection();
         }
 
-        function switchSellerTab(tabId) {
+        function renderHeaderNavigation() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = urlParams.get('page') || 'home';
+            const categoriesBar = document.querySelector('.categories-bar');
+            const categoriesContainer = document.getElementById('categoriesContainer');
+            if (!categoriesBar || !categoriesContainer) return;
+
+            if (page === 'account') {
+                if (account && account.role === 'seller' && account.seller_status === 'approved') {
+                    // Show seller dashboard tabs in categories bar
+                    categoriesBar.style.display = 'block';
+                    categoriesBar.classList.add('dashboard-active');
+                    categoriesContainer.innerHTML = `
+                        <a href="#" class="category-link ${activeSellerTab === 'add-product' ? 'active' : ''}" onclick="switchSellerTab('add-product', event)">Add Product</a>
+                        <a href="#" class="category-link ${activeSellerTab === 'manage-products' ? 'active' : ''}" onclick="switchSellerTab('manage-products', event)">Manage</a>
+                        <a href="#" class="category-link ${activeSellerTab === 'my-orders' ? 'active' : ''}" onclick="switchSellerTab('my-orders', event)">Orders</a>
+                        <a href="#" class="category-link ${activeSellerTab === 'earnings' ? 'active' : ''}" onclick="switchSellerTab('earnings', event)">Earnings</a>
+                    `;
+                } else {
+                    // Hide categories bar for buyer or not approved seller on account page
+                    categoriesBar.style.display = 'none';
+                    categoriesBar.classList.remove('dashboard-active');
+                }
+            } else {
+                // Restore standard categories
+                categoriesBar.style.display = 'block';
+                categoriesBar.classList.remove('dashboard-active');
+                categoriesContainer.innerHTML = `
+                    <a href="#" class="category-link" data-category="all" onclick="filterCategory('all', event)">All</a>
+                    <a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>
+                    <a href="#" class="category-link" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
+                    <a href="#" class="category-link" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
+                    <a href="#" class="category-link" data-category="home-living" onclick="filterCategory('home-living', event)">Home & Living</a>
+                    <a href="#" class="category-link" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
+                    <a href="#" class="category-link" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
+                    <a href="#" class="category-link" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
+                    <a href="#" class="category-link" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
+                `;
+                // Re-sync category navigation active states
+                const category = urlParams.get('category') || 'all';
+                document.querySelectorAll('.category-link, #mobileNavCategories a').forEach(link => {
+                    const catAttr = link.getAttribute('data-category');
+                    if (catAttr === category) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        function switchSellerTab(tabId, event) {
+            if (event) event.preventDefault();
             activeSellerTab = tabId;
+            renderHeaderNavigation();
             renderAccountPageView();
         }
 
