@@ -5125,9 +5125,12 @@
                          
                          let catKey = item.category_key || '';
                          let catName = item.category || '';
-                         if (typeof CATEGORY_MAP !== 'undefined' && CATEGORY_MAP[catKey]) {
-                             catKey = CATEGORY_MAP[catKey].key;
-                             catName = CATEGORY_MAP[catKey].name;
+                         if (catKey && typeof CATEGORY_MAP !== 'undefined' && CATEGORY_MAP && Object.prototype.hasOwnProperty.call(CATEGORY_MAP, catKey)) {
+                             const mapped = CATEGORY_MAP[catKey];
+                             if (mapped) {
+                                 catKey = mapped.key || catKey;
+                                 catName = mapped.name || catName;
+                             }
                          }
 
                          return {
@@ -6314,7 +6317,7 @@
                                 <div class="avatar-glow" style="background: rgba(74, 144, 226, 0.25);"></div>
                             </div>
                             <div class="account-page-header-info">
-                                <span class="account-membership-badge" style="background: var(--accent); box-shadow: 0 2px 8px rgba(74, 144, 226, 0.25);">Storify Verified Seller</span>
+                                <span class="account-membership-badge" style="background: var(--accent); color: var(--white); box-shadow: 0 2px 8px rgba(74, 144, 226, 0.25);">Storify Verified Seller</span>
                                 <h1>${escapeHtml(account.shop_name || account.name)}</h1>
                                 <p style="max-width: 600px;">Welcome to your vendor panel. Here you can list new products, manage your active stock, process customer shipments, and monitor your payout earnings.</p>
                             </div>
