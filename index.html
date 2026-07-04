@@ -4215,6 +4215,35 @@
             white-space: nowrap;
             line-height: 1;
         }
+
+        /* Multi-Vendor Marketplace Styles */
+        .seller-tab-btn:hover {
+            background: var(--secondary) !important;
+            color: var(--primary) !important;
+        }
+        .seller-tab-btn.active:hover {
+            background: var(--accent) !important;
+            color: white !important;
+        }
+        .image-upload-zone:hover {
+            border-color: var(--accent) !important;
+            background: var(--border) !important;
+        }
+        .size-pill-label {
+            transition: all 0.2s ease;
+        }
+        .size-pill-label:hover {
+            border-color: var(--accent) !important;
+            background: var(--secondary) !important;
+        }
+        .seller-promo-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .seller-promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent) !important;
+        }
     </style>
 </head>
 
@@ -4526,9 +4555,9 @@
 
     <script>
         // ----------------------------------------------------
-        // PRODUCTS DATABASE
+        // PRODUCTS DATABASE (SEED AND FALLBACK)
         // ----------------------------------------------------
-        const products = [
+        const SEED_PRODUCTS = [
             {
                 id: 1,
                 name: "Premium Christian Dior Inspired Export Leftover Cotton Tee",
@@ -4968,10 +4997,12 @@
             ]
         };
 
-        products.forEach(product => {
+        SEED_PRODUCTS.forEach(product => {
             product.images = productImageSets[product.id] || [product.image];
             product.image = product.images[0];
         });
+
+        let products = [...SEED_PRODUCTS];
 
         function formatPrice(value) {
             const amount = Number(value || 0);
@@ -5001,6 +5032,111 @@
         let wishlist = JSON.parse(localStorage.getItem('storify_wishlist')) || [];
         let account = JSON.parse(localStorage.getItem('storify_account')) || null;
         let accountEditMode = false;
+
+        // --- SUPABASE INTEGRATION HELPERS ---
+        async function fetchProductsFromSupabase() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('public_products')
+                    .select('*')
+                    .order('id', { ascending: true });
+                
+                if (error) {
+                    console.error("Error fetching products from Supabase:", error);
+                } else if (data && data.length > 0) {
+                    products = data.map(item => {
+                        const seedMatch = typeof SEED_PRODUCTS !== 'undefined' ? SEED_PRODUCTS.find(sp => Number(sp.id) === Number(item.id)) : null;
+                        return {
+                            id: Number(item.id),
+                            name: item.name,
+                            description: item.description,
+                            category: item.category,
+                            categoryKey: item.category_key,
+                            currentPrice: Number(item.price),
+                            originalPrice: item.original_price ? Number(item.original_price) : null,
+                            featured: !!item.featured,
+                            gradient: item.gradient || null,
+                            image: (item.images && item.images.length > 0) ? item.images[0] : 'images/placeholder.png',
+                            images: item.images || [],
+                            colors: item.colors || [],
+                            sizes: item.sizes || [],
+                            specs: item.specs || {},
+                            verifiedBadge: !!item.verified_badge,
+                            stockStatus: item.stock_status || 'available',
+                            sold: item.stock_status === 'sold_out',
+                            rating: seedMatch ? Number(seedMatch.rating || 5) : 5,
+                            reviewCount: seedMatch ? Number(seedMatch.reviewCount || 0) : 0
+                        };
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load products from database:", err);
+            }
+        }
+
+        async function fetchUserProfile(user) {
+            if (!supabaseClient || !user) return;
+            try {
+                const { data: profile, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (error) {
+                    console.error("Failed to fetch user profile, using auth metadata fallback:", error);
+                    account = {
+                        id: user.id,
+                        name: user.user_metadata.name || '',
+                        email: user.email,
+                        phone: user.user_metadata.phone || '',
+                        address: user.user_metadata.address || '',
+                        city: user.user_metadata.city || '',
+                        zip: user.user_metadata.zip || '',
+                        role: 'buyer',
+                        seller_status: 'none',
+                        seller_score: 100
+                    };
+                } else {
+                    account = {
+                        id: profile.id,
+                        name: profile.name || user.user_metadata.name || '',
+                        email: user.email,
+                        phone: profile.phone || user.user_metadata.phone || '',
+                        address: profile.address || user.user_metadata.address || '',
+                        city: profile.city || user.user_metadata.city || '',
+                        zip: profile.zip || user.user_metadata.zip || '',
+                        role: profile.role || 'buyer',
+                        seller_status: profile.seller_status || 'none',
+                        shop_name: profile.shop_name || '',
+                        bank_account_details: profile.bank_account_details || '',
+                        seller_score: Number(profile.seller_score || 100)
+                    };
+                }
+                saveAccount();
+                updateAccountNavBtn();
+            } catch (err) {
+                console.error("Profile load exception:", err);
+            }
+        }
+
+        async function checkUserSession() {
+            if (!supabaseClient) return;
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (session && session.user) {
+                    await fetchUserProfile(session.user);
+                } else {
+                    account = null;
+                    saveAccount();
+                    updateAccountNavBtn();
+                }
+            } catch (err) {
+                console.error("Session check failed:", err);
+            }
+        }
+        // --- END SUPABASE HELPERS ---
 
         const soldProductIds = new Set(products.filter(product => product.sold).map(product => product.id));
         if (cart.some(item => soldProductIds.has(item.id))) {
@@ -5597,8 +5733,11 @@
                 }
             } else if (page === 'success') {
                 closeCartDrawer();
+                const ref = urlParams.get('ref');
                 const details = history.state && history.state.successDetails;
-                if (details) {
+                if (ref) {
+                    displaySuccessFromDatabase(ref);
+                } else if (details) {
                     displayView('success', null, null, details);
                 } else {
                     navigateToPage('home', {}, true);
@@ -5638,11 +5777,17 @@
 
         // Close Account Modal function (with history integration)
         function closeAccountModal() {
+            const accountView = document.getElementById('account-view');
+            if (accountView && accountView.style.display === 'flex') {
+                accountView.style.display = 'none';
+                document.body.style.overflow = '';
+                return;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('page') === 'account') {
                 window.history.back();
             } else {
-                const accountView = document.getElementById('account-view');
                 if (accountView) {
                     accountView.style.display = 'none';
                     document.body.style.overflow = '';
@@ -5949,6 +6094,12 @@
         }
 
         // Full-page account view for LOGGED-IN users
+        let activeSellerTab = 'add-product';
+        let addedSpecs = {};
+        let addedColors = [];
+        let addedSizes = [];
+        let selectedImageFiles = [];
+
         function renderAccountPageView() {
             const view = document.getElementById('account-page-view');
             if (!view || !account) return;
@@ -5966,6 +6117,47 @@
 
             const addressStr = [account.address, account.city, account.zip].filter(Boolean).join(', ') || 'No address saved';
 
+            // Check if user is an approved seller
+            if (account.role === 'seller' && account.seller_status === 'approved') {
+                view.innerHTML = `
+                    <!-- Premium Header Card (Seller Mode) -->
+                    <div class="account-page-header-premium seller-header">
+                        <div class="account-premium-overlay" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(16, 185, 129, 0.4) 100%);"></div>
+                        <div class="account-header-content">
+                            <div class="account-page-avatar-premium" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);">
+                                <span>${escapeHtml(initials)}</span>
+                                <div class="avatar-glow" style="background: rgba(16, 185, 129, 0.4);"></div>
+                            </div>
+                            <div class="account-page-header-info">
+                                <span class="account-membership-badge" style="background: #10b981; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">Storify Verified Seller</span>
+                                <h1>${escapeHtml(account.shop_name || account.name)}</h1>
+                                <p style="max-width: 600px;">Welcome to your vendor panel. Here you can list new products, manage your active stock, process customer shipments, and monitor your payout earnings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabbed Seller Dashboard Wrapper -->
+                    <div class="seller-dashboard-container" style="margin-top: 30px;">
+                        <div class="seller-dashboard-tabs" style="display: flex; gap: 10px; border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 25px; flex-wrap: wrap;">
+                            <button class="seller-tab-btn ${activeSellerTab === 'add-product' ? 'active' : ''}" onclick="switchSellerTab('add-product')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'add-product' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'add-product' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">Add Product</button>
+                            <button class="seller-tab-btn ${activeSellerTab === 'manage-products' ? 'active' : ''}" onclick="switchSellerTab('manage-products')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'manage-products' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'manage-products' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">Manage Products</button>
+                            <button class="seller-tab-btn ${activeSellerTab === 'my-orders' ? 'active' : ''}" onclick="switchSellerTab('my-orders')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'my-orders' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'my-orders' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">My Orders</button>
+                            <button class="seller-tab-btn ${activeSellerTab === 'earnings' ? 'active' : ''}" onclick="switchSellerTab('earnings')" style="padding: 12px 24px; border: none; background: ${activeSellerTab === 'earnings' ? 'var(--accent)' : 'transparent'}; color: ${activeSellerTab === 'earnings' ? '#fff' : 'var(--text-light)'}; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">Earnings</button>
+                            <button class="btn-premium-signout" onclick="signOutAccount()" style="margin-left: auto; padding: 10px 18px; font-weight: 600; border-radius: 8px; background: transparent; border: 1.5px solid #ef4444; color: #ef4444; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Sign Out
+                            </button>
+                        </div>
+                        <div class="seller-tab-content" id="sellerTabContent" style="background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
+                            <!-- Loaded Dynamically -->
+                        </div>
+                    </div>
+                `;
+                renderSellerDashboardContent();
+                return;
+            }
+
+            // Buyer Dashboard View
             view.innerHTML = `
                 <!-- Premium Header Card -->
                 <div class="account-page-header-premium">
@@ -5976,47 +6168,49 @@
                             <div class="avatar-glow"></div>
                         </div>
                         <div class="account-page-header-info">
-                            <span class="account-membership-badge">Storify Premium Club</span>
+                            <span class="account-membership-badge">${account.role === 'admin' ? 'Storify Administrator' : 'Storify Premium Club'}</span>
                             <h1>Welcome back, ${escapeHtml(account.name)}</h1>
-                            <p>Here you can view your personal details, track your wishlist, check shopping stats, and manage your shipping information.</p>
+                            <p>Here you can view your personal details, track your order history, manage your wishlist, and update shipping details.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Main Dashboard Grid -->
-                <div class="account-page-grid">
+                <div class="account-page-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px;">
                     <!-- Profile Card -->
-                    <div class="account-page-card-premium">
-                        <div class="card-header-premium">
-                            <div class="card-icon-wrapper">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div class="account-page-card-premium" style="background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div class="card-header-premium" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px;">
+                                <div class="card-icon-wrapper" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </div>
+                                <h3 style="font-size: 16px; font-weight: 700; color: var(--primary); margin: 0;">Personal Information</h3>
                             </div>
-                            <h3>Personal Information</h3>
+                            <div class="profile-details-list" style="display: flex; flex-direction: column; gap: 14px;">
+                                <div class="profile-detail-item">
+                                    <div class="detail-label" style="font-size: 12px; color: var(--text-light); font-weight: 600;">Full Name</div>
+                                    <div class="detail-value" style="font-size: 14px; font-weight: 700; color: var(--text);">${escapeHtml(account.name)}</div>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <div class="detail-label" style="font-size: 12px; color: var(--text-light); font-weight: 600;">Email Address</div>
+                                    <div class="detail-value" style="font-size: 14px; font-weight: 700; color: var(--text);">${escapeHtml(account.email)}</div>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <div class="detail-label" style="font-size: 12px; color: var(--text-light); font-weight: 600;">Phone Number</div>
+                                    <div class="detail-value" style="font-size: 14px; font-weight: 700; color: var(--text);">${escapeHtml(account.phone || 'Not added')}</div>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <div class="detail-label" style="font-size: 12px; color: var(--text-light); font-weight: 600;">Shipping Address</div>
+                                    <div class="detail-value" style="font-size: 14px; font-weight: 700; color: var(--text);">${escapeHtml(addressStr)}</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="profile-details-list">
-                            <div class="profile-detail-item">
-                                <div class="detail-label">Full Name</div>
-                                <div class="detail-value">${escapeHtml(account.name)}</div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="detail-label">Email Address</div>
-                                <div class="detail-value">${escapeHtml(account.email)}</div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="detail-label">Phone Number</div>
-                                <div class="detail-value">${escapeHtml(account.phone || 'Not added')}</div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="detail-label">Shipping Address</div>
-                                <div class="detail-value">${escapeHtml(addressStr)}</div>
-                            </div>
-                        </div>
-                        <div class="profile-actions-wrapper">
-                            <button class="btn-premium-edit" onclick="editAccount()">
+                        <div class="profile-actions-wrapper" style="display: flex; gap: 10px; margin-top: 25px; border-top: 1.5px solid var(--border); padding-top: 20px;">
+                            <button class="btn-premium-edit" onclick="editAccount()" style="flex: 1; padding: 12px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--text); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                 Edit Profile
                             </button>
-                            <button class="btn-premium-signout" onclick="signOutAccount()">
+                            <button class="btn-premium-signout" onclick="signOutAccount()" style="flex: 1; padding: 12px; border-radius: 8px; border: 1.5px solid #ef4444; background: transparent; color: #ef4444; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                 Sign Out
                             </button>
@@ -6024,90 +6218,1069 @@
                     </div>
 
                     <!-- Shopping Stats & Quick Links Card -->
-                    <div class="account-page-card-premium">
-                        <div class="card-header-premium">
-                            <div class="card-icon-wrapper">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
+                    <div class="account-page-card-premium" style="background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div class="card-header-premium" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px;">
+                                <div class="card-icon-wrapper" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
+                                </div>
+                                <h3 style="font-size: 16px; font-weight: 700; color: var(--primary); margin: 0;">Shopping Activity</h3>
                             </div>
-                            <h3>Shopping Activity</h3>
+                            <div class="shopping-stats-row" style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                <div class="stat-premium-box" style="flex: 1; padding: 15px; border-radius: 10px; background: var(--secondary); text-align: center;">
+                                    <div class="stat-value" style="font-size: 24px; font-weight: 800; color: var(--primary);">${cartCount}</div>
+                                    <div class="stat-label" style="font-size: 12px; color: var(--text-light); font-weight: 600;">In Cart</div>
+                                </div>
+                                <div class="stat-premium-box" style="flex: 1; padding: 15px; border-radius: 10px; background: var(--secondary); text-align: center;">
+                                    <div class="stat-value" style="font-size: 24px; font-weight: 800; color: var(--primary);">${wishlistCount}</div>
+                                    <div class="stat-label" style="font-size: 12px; color: var(--text-light); font-weight: 600;">In Wishlist</div>
+                                </div>
+                            </div>
+                            <div class="quick-actions-section">
+                                <h4 style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Quick Navigation</h4>
+                                <div class="quick-actions-buttons" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <button class="action-btn-premium" onclick="toggleCart()" style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--text); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
+                                        <span>View Cart Drawer</span>
+                                    </button>
+                                    <button class="action-btn-premium" onclick="showView('wishlist')" style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--text); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
+                                        <span>My Wishlist Page</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="shopping-stats-row">
-                            <div class="stat-premium-box">
-                                <div class="stat-value">${cartCount}</div>
-                                <div class="stat-label">In Cart</div>
-                            </div>
-                            <div class="stat-premium-box">
-                                <div class="stat-value">${wishlistCount}</div>
-                                <div class="stat-label">In Wishlist</div>
-                            </div>
-                        </div>
+                    </div>
 
-                        <div class="quick-actions-section">
-                            <h4>Quick Navigation</h4>
-                            <div class="quick-actions-buttons">
-                                <button class="action-btn-premium" onclick="toggleCart()">
-                                    <div class="action-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/></svg>
-                                    </div>
-                                    <span>View Cart</span>
-                                </button>
-                                <button class="action-btn-premium" onclick="showView('wishlist')">
-                                    <div class="action-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
-                                    </div>
-                                    <span>My Wishlist</span>
-                                </button>
-                                <button class="action-btn-premium" onclick="showView('home')">
-                                    <div class="action-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                                    </div>
-                                    <span>Explore Shop</span>
-                                </button>
+                    <!-- Become a Seller Promotion Card -->
+                    <div class="account-page-card-premium seller-promo-card" style="background: linear-gradient(135deg, #1e1b4b 0%, #1a1a2e 100%); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow); color: white; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; border: 2px solid rgba(74, 144, 226, 0.25);">
+                        <div style="z-index: 2;">
+                            <div class="card-header-premium" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1.5px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+                                <div class="card-icon-wrapper" style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #f59e0b); display: flex; align-items: center; justify-content: center; color: white;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                </div>
+                                <h3 style="font-size: 16px; font-weight: 700; color: white; margin: 0;">Sell on Storify</h3>
                             </div>
+                            <p style="font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 20px;">
+                                Register your business internally, list products securely, and ship directly to buyers. Your identity remains 100% hidden, and payments are held in escrow for buyer protection.
+                            </p>
                         </div>
+                        <button class="btn-premium-action" onclick="openBecomeSellerForm()" style="z-index: 2; width: 100%; padding: 14px; border-radius: 8px; border: none; background: linear-gradient(135deg, var(--accent), #f59e0b); color: white; font-weight: 700; font-size: 14px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.2); transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            Register as a Vendor
+                        </button>
                     </div>
                 </div>
 
-                <!-- Account Perks (Compact Single Row) -->
-                <div class="account-features-row">
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                        </div>
-                        <div class="account-feature-title">Flat Rate Shipping</div>
-                        <div class="account-feature-desc">Rs 250 flat-rate delivery nationwide</div>
+                <!-- Buyer Order History Section -->
+                <div id="buyerOrdersContainer" style="margin-top: 40px; background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
+                    <!-- Loaded Dynamically -->
+                </div>
+            `;
+            renderBuyerOrdersSection();
+        }
+
+        function switchSellerTab(tabId) {
+            activeSellerTab = tabId;
+            renderAccountPageView();
+        }
+
+        async function renderSellerDashboardContent() {
+            const container = document.getElementById('sellerTabContent');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 50px 0; color: var(--text-light);">
+                    <span class="spinner" style="border: 3px solid var(--accent); border-top-color: transparent; border-radius: 50%; width: 28px; height: 28px; animation: spin 0.8s linear infinite; display: inline-block; margin-bottom: 12px;"></span>
+                    <p style="font-weight:600;">Loading panel details...</p>
+                </div>
+            `;
+
+            if (activeSellerTab === 'add-product') {
+                renderAddProductTab(container);
+            } else if (activeSellerTab === 'manage-products') {
+                await renderManageProductsTab(container);
+            } else if (activeSellerTab === 'my-orders') {
+                await renderSellerOrdersTab(container);
+            } else if (activeSellerTab === 'earnings') {
+                await renderSellerEarningsTab(container);
+            }
+        }
+
+        // --- SELLER DASHBOARD HELPER METHODS ---
+        function openBecomeSellerForm() {
+            const view = document.getElementById('account-view');
+            if (!view || !account) return;
+
+            view.innerHTML = `
+                <div class="auth-card fade-in" onclick="event.stopPropagation()">
+                    <button class="close-auth-modal" onclick="closeAccountModal()" aria-label="Close modal">×</button>
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin: 0 0 6px 0;">Become a Seller</h2>
+                        <p style="font-size: 13px; color: var(--text-light); margin: 0;">Apply to become a seller on Storify. Your identity remains 100% hidden from buyers.</p>
                     </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+                    <div id="seller-apply-msg-block" class="auth-message"></div>
+
+                    <form id="sellerApplyForm" onsubmit="submitSellerApplication(event)">
+                        <div class="form-group">
+                            <label for="sellerShopName">Shop / Vendor Display Name *</label>
+                            <input type="text" id="sellerShopName" class="form-control" placeholder="e.g. Premium Hub" required>
                         </div>
-                        <div class="account-feature-title">Secure Auth</div>
-                        <div class="account-feature-desc">Supabase Auth encryption</div>
-                    </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <div class="form-group">
+                            <label for="sellerBankDetails">Bank Account Details (For Payouts) *</label>
+                            <textarea id="sellerBankDetails" class="form-control" placeholder="e.g. Bank Alfalah, Account Number: 1234-5678, Title: Ammar Siddiqui" style="height: 80px;" required></textarea>
                         </div>
-                        <div class="account-feature-title">Verified Reviews</div>
-                        <div class="account-feature-desc">Trusted product feedback</div>
-                    </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
+                        <button type="submit" id="sellerApplySubmitBtn" class="btn-premium" style="width: 100%; padding: 14px; margin-top: 10px;">Submit Application</button>
+                    </form>
+                </div>
+            `;
+            view.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        async function submitSellerApplication(event) {
+            event.preventDefault();
+            if (!supabaseClient) {
+                showToast("Supabase is not configured.");
+                return;
+            }
+
+            const btn = document.getElementById('sellerApplySubmitBtn');
+            const shopName = document.getElementById('sellerShopName').value.trim();
+            const bankDetails = document.getElementById('sellerBankDetails').value.trim();
+
+            if (!shopName || !bankDetails) {
+                showToast("Fill all fields");
+                return;
+            }
+
+            btn.innerHTML = `<span class="spinner"></span> Submitting...`;
+            btn.classList.add('loading');
+
+            try {
+                const { error } = await supabaseClient
+                    .from('profiles')
+                    .update({
+                        role: 'seller',
+                        seller_status: 'approved',
+                        shop_name: shopName,
+                        bank_account_details: bankDetails
+                    })
+                    .eq('id', account.id);
+
+                btn.innerHTML = `Submit Application`;
+                btn.classList.remove('loading');
+
+                if (error) {
+                    const msg = document.getElementById('seller-apply-msg-block');
+                    if (msg) {
+                        msg.innerHTML = `<span style="font-weight:800;color:#ef4444">Error:</span> <span>${escapeHtml(error.message)}</span>`;
+                        msg.style.display = 'flex';
+                    }
+                } else {
+                    showToast("Application auto-approved! Welcome as a seller.");
+                    closeAccountModal();
+                    const { data: { user } } = await supabaseClient.auth.getUser();
+                    await fetchUserProfile(user);
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                btn.innerHTML = `Submit Application`;
+                btn.classList.remove('loading');
+                console.error(err);
+                showToast("Failed to submit application");
+            }
+        }
+
+        function renderAddProductTab(container) {
+            addedSpecs = {};
+            addedColors = [];
+            addedSizes = [];
+            selectedImageFiles = [];
+
+            container.innerHTML = `
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">Add New Product</h3>
+                <form id="addProductForm" onsubmit="submitNewProduct(event)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="prodName">Product Title *</label>
+                            <input type="text" id="prodName" class="form-control" placeholder="e.g. Premium Cotton Polo Tee" required>
                         </div>
-                        <div class="account-feature-title">Easy Returns</div>
-                        <div class="account-feature-desc">30-day hassle-free policy</div>
-                    </div>
-                    <div class="account-feature-item">
-                        <div class="account-feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z" /><path d="M11 3 8 9l3 13M13 3l3 9-3 10M2 9h20" /></svg>
+                        <div class="form-group">
+                            <label for="prodCategory">Category *</label>
+                            <select id="prodCategory" class="form-control" required>
+                                <option value="Shirts">Shirts</option>
+                                <option value="Watches">Watches</option>
+                                <option value="Sports">Sports</option>
+                            </select>
                         </div>
-                        <div class="account-feature-title">Premium Quality</div>
-                        <div class="account-feature-desc">Curated premium products</div>
                     </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="prodPrice">Price (RS) *</label>
+                            <input type="number" id="prodPrice" class="form-control" placeholder="e.g. 1200" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prodOriginalPrice">Original Price (RS, Optional for discount)</label>
+                            <input type="number" id="prodOriginalPrice" class="form-control" placeholder="e.g. 1800">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodDescription">Description *</label>
+                        <textarea id="prodDescription" class="form-control" placeholder="Describe your product specs and features in detail..." style="height: 100px;" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Images * (Max 5)</label>
+                        <div class="image-upload-zone" id="imageDropzone" onclick="document.getElementById('productImageFiles').click()" style="border: 2px dashed var(--border); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; background: var(--secondary); transition: border-color 0.2s ease;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <p style="font-size: 14px; font-weight: 600; color: var(--text);">Click or Drag images here to upload</p>
+                            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">PNG, JPG, JPEG accepted</p>
+                            <input type="file" id="productImageFiles" multiple accept="image/*" style="display: none;" onchange="handleProductImageSelection(this.files)">
+                        </div>
+                        <div id="imagePreviewsContainer" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;"></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <div class="form-group">
+                            <label>Product Colors</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                                <input type="color" id="colorPicker" value="#4a90e2" style="width: 40px; height: 40px; border: none; cursor: pointer; border-radius: 6px; padding: 0;">
+                                <input type="text" id="colorHex" class="form-control" placeholder="#4A90E2" style="flex: 1;">
+                                <button type="button" class="btn-premium-edit" onclick="addColorField()" style="padding: 10px 16px;">+ Add</button>
+                            </div>
+                            <div id="colorsBuilderList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Sizes / Variants</label>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+                                ${['S', 'M', 'L', 'XL', 'XXL'].map(sz => `
+                                    <label class="size-pill-label" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                                        <input type="checkbox" name="sizesList" value="${sz}" style="margin: 0;" onchange="toggleSizeSelection('${sz}', this.checked)"> ${sz}
+                                    </label>
+                                `).join('')}
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="customSizeInput" class="form-control" placeholder="e.g. Steel Chain">
+                                <button type="button" class="btn-premium-edit" onclick="addCustomSize()" style="padding: 10px 16px;">+ Custom</button>
+                            </div>
+                            <div id="customSizesList" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Technical Specifications / Details</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="specKey" class="form-control" placeholder="e.g. Fabric" style="flex: 1;">
+                            <input type="text" id="specValue" class="form-control" placeholder="e.g. 100% Cotton" style="flex: 1;">
+                            <button type="button" class="btn-premium-edit" onclick="addSpecField()" style="padding: 10px 16px;">+ Add Spec</button>
+                        </div>
+                        <div id="specsBuilderList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                    </div>
+
+                    <button type="submit" id="prodSubmitBtn" class="btn-premium" style="width: 100%; padding: 15px; margin-top: 25px; font-weight:700;">List Product</button>
+                </form>
+            `;
+        }
+
+        function handleProductImageSelection(files) {
+            const maxFiles = 5;
+            if (selectedImageFiles.length + files.length > maxFiles) {
+                showToast("Max 5 images allowed");
+                return;
+            }
+            for (const file of files) {
+                selectedImageFiles.push(file);
+            }
+            renderImagePreviews();
+        }
+
+        function removeSelectedImage(idx) {
+            selectedImageFiles.splice(idx, 1);
+            renderImagePreviews();
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('imagePreviewsContainer');
+            if (!container) return;
+            container.innerHTML = selectedImageFiles.map((file, idx) => {
+                const url = URL.createObjectURL(file);
+                return `
+                    <div style="position: relative; width: 80px; height: 80px; border-radius: 8px; border: 1.5px solid var(--border); overflow: hidden; background: #fff;">
+                        <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <button type="button" onclick="removeSelectedImage(${idx})" style="position: absolute; top: 4px; right: 4px; background: rgba(239,68,68,0.9); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer;">×</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addColorField() {
+            const picker = document.getElementById('colorPicker');
+            const txt = document.getElementById('colorHex');
+            const hex = txt.value.trim() || picker.value;
+            if (!hex.startsWith('#') || hex.length < 4) {
+                showToast("Enter a valid hex code e.g. #FFFFFF");
+                return;
+            }
+            if (!addedColors.includes(hex)) {
+                addedColors.push(hex);
+            }
+            txt.value = '';
+            renderColorsBuilderList();
+        }
+
+        function isLightColor(hex) {
+            let c = hex.replace('#', '');
+            if (c.length === 3) {
+                c = c.split('').map(char => char + char).join('');
+            }
+            if (c.length !== 6) return false;
+            const r = parseInt(c.substring(0, 2), 16);
+            const g = parseInt(c.substring(2, 4), 16);
+            const b = parseInt(c.substring(4, 6), 16);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 186;
+        }
+
+        function removeColorField(hex) {
+            addedColors = addedColors.filter(c => c !== hex);
+            renderColorsBuilderList();
+        }
+
+        function renderColorsBuilderList() {
+            const container = document.getElementById('colorsBuilderList');
+            if (!container) return;
+            container.innerHTML = addedColors.map(c => `
+                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 50px; background: ${c}; color: ${isLightColor(c) ? '#000' : '#fff'}; font-size: 12px; font-weight: 600; border: 1px solid var(--border);">
+                    ${c}
+                    <button type="button" onclick="removeColorField('${c}')" style="background: none; border: none; color: inherit; font-size: 14px; cursor: pointer; padding: 0; font-weight: 800;">×</button>
+                </span>
+            `).join('');
+        }
+
+        function toggleSizeSelection(sz, checked) {
+            if (checked) {
+                if (!addedSizes.includes(sz)) addedSizes.push(sz);
+            } else {
+                addedSizes = addedSizes.filter(s => s !== sz);
+            }
+        }
+
+        function addCustomSize() {
+            const txt = document.getElementById('customSizeInput');
+            const sz = txt.value.trim();
+            if (!sz) return;
+            if (!addedSizes.includes(sz)) {
+                addedSizes.push(sz);
+            }
+            txt.value = '';
+            renderCustomSizesList();
+        }
+
+        function removeCustomSize(sz) {
+            addedSizes = addedSizes.filter(s => s !== sz);
+            const checkbox = document.querySelector(`input[name="sizesList"][value="${sz}"]`);
+            if (checkbox) checkbox.checked = false;
+            renderCustomSizesList();
+        }
+
+        function renderCustomSizesList() {
+            const container = document.getElementById('customSizesList');
+            if (!container) return;
+            container.innerHTML = addedSizes.filter(s => !['S', 'M', 'L', 'XL', 'XXL'].includes(s)).map(sz => `
+                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 50px; background: var(--secondary); color: var(--text); font-size: 12px; font-weight: 600; border: 1px solid var(--border);">
+                    ${sz}
+                    <button type="button" onclick="removeCustomSize('${escapeHtml(sz)}')" style="background: none; border: none; color: #ef4444; font-size: 14px; cursor: pointer; padding: 0; font-weight: 800;">×</button>
+                </span>
+            `).join('');
+        }
+
+        function addSpecField() {
+            const kInput = document.getElementById('specKey');
+            const vInput = document.getElementById('specValue');
+            const key = kInput.value.trim();
+            const val = vInput.value.trim();
+            if (!key || !val) {
+                showToast("Enter both Key and Value");
+                return;
+            }
+            addedSpecs[key] = val;
+            kInput.value = '';
+            vInput.value = '';
+            renderSpecsBuilderList();
+        }
+
+        function removeSpecField(key) {
+            delete addedSpecs[key];
+            renderSpecsBuilderList();
+        }
+
+        function renderSpecsBuilderList() {
+            const container = document.getElementById('specsBuilderList');
+            if (!container) return;
+            container.innerHTML = Object.entries(addedSpecs).map(([key, val]) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: var(--secondary); padding: 8px 15px; border-radius: 8px; font-size: 13px; border: 1px solid var(--border);">
+                    <span><strong>${escapeHtml(key)}:</strong> ${escapeHtml(val)}</span>
+                    <button type="button" onclick="removeSpecField('${escapeHtml(key)}')" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">×</button>
+                </div>
+            `).join('');
+        }
+
+        async function submitNewProduct(event) {
+            event.preventDefault();
+            if (!supabaseClient) return;
+
+            const btn = document.getElementById('prodSubmitBtn');
+            const name = document.getElementById('prodName').value.trim();
+            const category = document.getElementById('prodCategory').value;
+            const price = Number(document.getElementById('prodPrice').value);
+            const originalPrice = document.getElementById('prodOriginalPrice').value ? Number(document.getElementById('prodOriginalPrice').value) : null;
+            const description = document.getElementById('prodDescription').value.trim();
+
+            if (selectedImageFiles.length === 0) {
+                showToast("Please upload at least one image");
+                return;
+            }
+
+            btn.innerHTML = `<span class="spinner"></span> Uploading Media...`;
+            btn.classList.add('loading');
+
+            const imageUrls = [];
+            try {
+                for (const file of selectedImageFiles) {
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${account.id}/${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+
+                    const { data, error: uploadError } = await supabaseClient.storage
+                        .from('product-images')
+                        .upload(fileName, file);
+
+                    if (uploadError) {
+                        throw new Error(`Upload failed: ${uploadError.message}`);
+                    }
+
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from('product-images')
+                        .getPublicUrl(fileName);
+
+                    imageUrls.push(publicUrl);
+                }
+
+                btn.innerHTML = `<span class="spinner"></span> Saving Product...`;
+
+                const { error: insertError } = await supabaseClient
+                    .from('products')
+                    .insert([{
+                        name,
+                        description,
+                        price,
+                        original_price: originalPrice,
+                        category,
+                        category_key: category.toLowerCase(),
+                        images: imageUrls,
+                        colors: addedColors,
+                        sizes: addedSizes,
+                        specs: addedSpecs,
+                        seller_id: account.id,
+                        verified_badge: false,
+                        stock_status: 'available'
+                    }]);
+
+                btn.innerHTML = `List Product`;
+                btn.classList.remove('loading');
+
+                if (insertError) {
+                    showToast(`Error: ${insertError.message}`);
+                } else {
+                    showToast("Product listed successfully!");
+                    await fetchProductsFromSupabase();
+                    switchSellerTab('manage-products');
+                }
+
+            } catch (err) {
+                btn.innerHTML = `List Product`;
+                btn.classList.remove('loading');
+                console.error(err);
+                showToast(`Failed: ${err.message}`);
+            }
+        }
+
+        async function renderManageProductsTab(container) {
+            if (!supabaseClient) return;
+
+            const { data: prods, error } = await supabaseClient
+                .from('products')
+                .select('*')
+                .eq('seller_id', account.id)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = `<p style="color:#ef4444;">Failed to fetch products: ${escapeHtml(error.message)}</p>`;
+                return;
+            }
+
+            if (!prods || prods.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 0; color: var(--text-light);">
+                        <p style="font-weight:600; font-size:15px; margin-bottom:15px;">You have not listed any products yet.</p>
+                        <button class="btn-premium" onclick="switchSellerTab('add-product')" style="padding: 10px 20px;">List Your First Product</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">My Listed Products</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                        <thead>
+                            <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 13px;">
+                                <th style="padding: 12px 8px;">Image</th>
+                                <th style="padding: 12px 8px;">Product Name</th>
+                                <th style="padding: 12px 8px;">Category</th>
+                                <th style="padding: 12px 8px;">Price</th>
+                                <th style="padding: 12px 8px;">Stock Status</th>
+                                <th style="padding: 12px 8px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${prods.map(p => `
+                                <tr style="border-bottom: 1px solid var(--border); font-size: 14px;">
+                                    <td style="padding: 12px 8px;">
+                                        <img src="${p.images[0]}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid var(--border);">
+                                    </td>
+                                    <td style="padding: 12px 8px; font-weight: 600; color: var(--primary);">${escapeHtml(p.name)}</td>
+                                    <td style="padding: 12px 8px;">${escapeHtml(p.category)}</td>
+                                    <td style="padding: 12px 8px; font-weight: 700; color: var(--text);">${formatPrice(p.price)}</td>
+                                    <td style="padding: 12px 8px;">
+                                        <select onchange="updateProductStock(${p.id}, this.value)" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid var(--border); font-weight: 600; background: ${p.stock_status === 'available' ? '#e8f5e9' : '#ffebee'}; color: ${p.stock_status === 'available' ? '#2e7d32' : '#c62828'}; cursor: pointer;">
+                                            <option value="available" ${p.stock_status === 'available' ? 'selected' : ''}>Available</option>
+                                            <option value="sold_out" ${p.stock_status === 'sold_out' ? 'selected' : ''}>Sold Out</option>
+                                        </select>
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        <button onclick="deleteProduct(${p.id})" style="background: none; border: none; color: #ef4444; font-weight: 600; cursor: pointer; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px; border-radius:6px;" onmouseover="this.style.background='#ffebee'" onmouseout="this.style.background='transparent'">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
+
+        async function updateProductStock(prodId, status) {
+            if (!supabaseClient) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('products')
+                    .update({ stock_status: status })
+                    .eq('id', prodId);
+
+                if (error) {
+                    showToast(`Error: ${error.message}`);
+                } else {
+                    showToast("Stock status updated");
+                    await fetchProductsFromSupabase();
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to update status");
+            }
+        }
+
+        async function deleteProduct(prodId) {
+            if (!confirm("Are you sure you want to delete this product?")) return;
+            if (!supabaseClient) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('products')
+                    .delete()
+                    .eq('id', prodId);
+
+                if (error) {
+                    showToast(`Error: ${error.message}`);
+                } else {
+                    showToast("Product deleted successfully");
+                    await fetchProductsFromSupabase();
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to delete product");
+            }
+        }
+
+        async function renderSellerOrdersTab(container) {
+            if (!supabaseClient) return;
+
+            const { data: items, error } = await supabaseClient
+                .from('order_items')
+                .select(`
+                    id,
+                    quantity,
+                    price_at_purchase,
+                    item_status,
+                    created_at,
+                    order_id,
+                    product_id,
+                    orders (
+                        order_ref,
+                        shipping_address
+                    )
+                `)
+                .eq('seller_id', account.id)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = `<p style="color:#ef4444;">Failed to load orders: ${escapeHtml(error.message)}</p>`;
+                return;
+            }
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 0; color: var(--text-light);">
+                        <p style="font-weight:600;">No customer orders placed yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">Customer Orders</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                        <thead>
+                            <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 13px;">
+                                <th style="padding: 12px 8px;">Order Ref</th>
+                                <th style="padding: 12px 8px;">Product</th>
+                                <th style="padding: 12px 8px;">Qty</th>
+                                <th style="padding: 12px 8px;">Total</th>
+                                <th style="padding: 12px 8px;">Shipping Address</th>
+                                <th style="padding: 12px 8px;">Status</th>
+                                <th style="padding: 12px 8px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(item => {
+                                const prod = products.find(p => p.id === Number(item.product_id)) || {};
+                                const prodName = prod.name || `Product ID #${item.product_id}`;
+                                const total = Number(item.price_at_purchase) * Number(item.quantity);
+                                const orderRef = item.orders?.order_ref || 'N/A';
+                                const address = item.orders?.shipping_address || 'N/A';
+
+                                let statusBadge = '';
+                                if (item.item_status === 'pending_payment') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
+                                } else if (item.item_status === 'paid_escrow') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
+                                } else if (item.item_status === 'shipped') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
+                                } else if (item.item_status === 'return_window') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #f3e5f5; color: #4a148c;">Return Window</span>`;
+                                } else if (item.item_status === 'completed') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
+                                } else if (item.item_status === 'disputed') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #c62828;">Disputed</span>`;
+                                } else if (item.item_status === 'refunded') {
+                                    statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #b71c1c;">Refunded</span>`;
+                                }
+
+                                let actionBtn = '';
+                                if (item.item_status === 'paid_escrow') {
+                                    actionBtn = `<button class="btn-premium-edit" onclick="markItemShipped(${item.id})" style="padding: 6px 12px; font-size: 12px;">Ship Item</button>`;
+                                } else {
+                                    actionBtn = `<span style="color:var(--text-light); font-size: 12px; font-style:italic;">None</span>`;
+                                }
+
+                                return `
+                                    <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
+                                        <td style="padding: 12px 8px; font-weight:700; color:var(--primary);">${escapeHtml(orderRef)}</td>
+                                        <td style="padding: 12px 8px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(prodName)}">${escapeHtml(prodName)}</td>
+                                        <td style="padding: 12px 8px;">${item.quantity}</td>
+                                        <td style="padding: 12px 8px; font-weight:700;">${formatPrice(total)}</td>
+                                        <td style="padding: 12px 8px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(address)}">${escapeHtml(address)}</td>
+                                        <td style="padding: 12px 8px;">${statusBadge}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${actionBtn}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function markItemShipped(itemId) {
+            if (!supabaseClient) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('order_items')
+                    .update({ item_status: 'shipped' })
+                    .eq('id', itemId);
+
+                if (error) {
+                    showToast(`Error: ${error.message}`);
+                } else {
+                    showToast("Order item marked as shipped");
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to update status");
+            }
+        }
+
+        async function renderSellerEarningsTab(container) {
+            if (!supabaseClient) return;
+
+            const { data: items, error } = await supabaseClient
+                .from('order_items')
+                .select('quantity, price_at_purchase, item_status')
+                .eq('seller_id', account.id);
+
+            if (error) {
+                container.innerHTML = `<p style="color:#ef4444;">Failed to calculate earnings: ${escapeHtml(error.message)}</p>`;
+                return;
+            }
+
+            let pendingEscrow = 0;
+            let eligiblePayout = 0;
+
+            if (items) {
+                for (const item of items) {
+                    const itemAmt = Number(item.price_at_purchase) * Number(item.quantity);
+                    if (['paid_escrow', 'shipped', 'delivered', 'return_window', 'disputed'].includes(item.item_status)) {
+                        pendingEscrow += itemAmt;
+                    } else if (item.item_status === 'completed') {
+                        eligiblePayout += itemAmt;
+                    }
+                }
+            }
+
+            const { data: payouts, error: payoutsError } = await supabaseClient
+                .from('payouts')
+                .select('*')
+                .eq('seller_id', account.id)
+                .order('created_at', { ascending: false });
+
+            container.innerHTML = `
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">Earnings & Payouts</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                    <div style="padding: 20px; border-radius: 12px; background: #e3f2fd; border: 1.5px solid #bbdefb; color: #0d47a1;">
+                        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Held in Escrow</span>
+                        <h2 style="font-size: 28px; font-weight: 800; margin: 5px 0 0 0;">${formatPrice(pendingEscrow)}</h2>
+                        <p style="font-size: 11px; margin: 6px 0 0 0; opacity: 0.7;">Paid by buyer, currently locked until delivery returns window completes.</p>
+                    </div>
+                    <div style="padding: 20px; border-radius: 12px; background: #e8f5e9; border: 1.5px solid #c8e6c9; color: #1b5e20;">
+                        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Eligible for Payout</span>
+                        <h2 style="font-size: 28px; font-weight: 800; margin: 5px 0 0 0;">${formatPrice(eligiblePayout)}</h2>
+                        <p style="font-size: 11px; margin: 6px 0 0 0; opacity: 0.7;">Returned window completed without dispute. Disbursed manually by Storify weekly.</p>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 15px;">Payout History</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 13px;">
+                                <th style="padding: 12px 8px;">Date</th>
+                                <th style="padding: 12px 8px;">Period</th>
+                                <th style="padding: 12px 8px;">Amount</th>
+                                <th style="padding: 12px 8px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(!payouts || payouts.length === 0) ? `
+                                <tr>
+                                    <td colspan="4" style="padding: 20px 8px; text-align: center; color: var(--text-light);">No payouts disbursed yet.</td>
+                                </tr>
+                            ` : payouts.map(p => {
+                                const dateStr = new Date(p.created_at).toLocaleDateString();
+                                const rangeStr = `${new Date(p.period_start).toLocaleDateString()} - ${new Date(p.period_end).toLocaleDateString()}`;
+                                return `
+                                    <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
+                                        <td style="padding: 12px 8px;">${dateStr}</td>
+                                        <td style="padding: 12px 8px; color: var(--text-light);">${rangeStr}</td>
+                                        <td style="padding: 12px 8px; font-weight: 700;">${formatPrice(p.total_amount)}</td>
+                                        <td style="padding: 12px 8px;">
+                                            <span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: ${p.status === 'paid' ? '#e8f5e9' : '#fff8e1'}; color: ${p.status === 'paid' ? '#2e7d32' : '#b78103'};">
+                                                ${p.status.toUpperCase()}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function renderBuyerOrdersSection() {
+            const container = document.getElementById('buyerOrdersContainer');
+            if (!container) return;
+
+            if (!supabaseClient) {
+                container.innerHTML = `<p style="color:var(--text-light);">Supabase is not configured. Local order history unavailable.</p>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px 0; color: var(--text-light);">
+                    <span class="spinner" style="border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; margin-bottom: 8px;"></span>
+                    <p style="font-size:13px; font-weight:600;">Fetching your order history...</p>
+                </div>
+            `;
+
+            try {
+                const { data: items, error } = await supabaseClient
+                    .from('order_items')
+                    .select(`
+                        id,
+                        quantity,
+                        price_at_purchase,
+                        item_status,
+                        delivered_at,
+                        created_at,
+                        orders (
+                            order_ref,
+                            shipping_address,
+                            payment_method
+                        ),
+                        product_id
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    container.innerHTML = `<p style="color:#ef4444;">Failed to load order history: ${escapeHtml(error.message)}</p>`;
+                    return;
+                }
+
+                if (!items || items.length === 0) {
+                    container.innerHTML = `
+                        <h3 style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 12px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">Order History</h3>
+                        <p style="text-align: center; padding: 30px 0; color: var(--text-light); font-weight:600;">You have not placed any orders yet.</p>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">Order History</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                            <thead>
+                                <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 13px;">
+                                    <th style="padding: 12px 8px;">Order Ref</th>
+                                    <th style="padding: 12px 8px;">Product</th>
+                                    <th style="padding: 12px 8px;">Qty</th>
+                                    <th style="padding: 12px 8px;">Total</th>
+                                    <th style="padding: 12px 8px;">Purchase Date</th>
+                                    <th style="padding: 12px 8px;">Item Status</th>
+                                    <th style="padding: 12px 8px; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${items.map(item => {
+                                    const prod = products.find(p => p.id === Number(item.product_id)) || {};
+                                    const prodName = prod.name || `Product ID #${item.product_id}`;
+                                    const total = Number(item.price_at_purchase) * Number(item.quantity);
+                                    const orderRef = item.orders?.order_ref || 'N/A';
+                                    const dateStr = new Date(item.created_at).toLocaleDateString();
+
+                                    let statusBadge = '';
+                                    let actionHtml = '';
+
+                                    if (item.item_status === 'pending_payment') {
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
+                                        actionHtml = `
+                                            <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
+                                                <button class="btn-premium-edit" onclick="simulateSafepayWebhook('${escapeHtml(orderRef)}')" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:700; background:#f59e0b; border-color:#f59e0b; color:white;">Simulate Payment</button>
+                                            </div>
+                                        `;
+                                    } else if (item.item_status === 'paid_escrow') {
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
+                                        actionHtml = `<span style="color:var(--text-light); font-size:12px; font-style:italic;">Awaiting shipment...</span>`;
+                                    } else if (item.item_status === 'shipped') {
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
+                                        actionHtml = `<button class="btn-premium-edit" onclick="confirmItemDelivery(${item.id})" style="padding: 6px 12px; font-size: 11px; font-weight:700;">Confirm Delivery</button>`;
+                                    } else if (item.item_status === 'return_window') {
+                                        const deliveredDate = new Date(item.delivered_at);
+                                        const expiryDate = new Date(deliveredDate.getTime() + (3 * 24 * 60 * 60 * 1000));
+                                        const now = new Date();
+                                        const diff = expiryDate.getTime() - now.getTime();
+
+                                        let countdownStr = '';
+                                        if (diff <= 0) {
+                                            countdownStr = 'Window Expired';
+                                        } else {
+                                            const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+                                            const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                                            const mins = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+                                            countdownStr = `${days}d ${hours}h ${mins}m left`;
+                                        }
+
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #f3e5f5; color: #4a148c; display:block; text-align:center; margin-bottom:4px;">Return Window</span><span style="font-size:10px; color:var(--text-light); font-weight:600; display:block; text-align:center;">${countdownStr}</span>`;
+                                        
+                                        actionHtml = `
+                                            <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
+                                                <button class="btn-premium-signout" onclick="disputeOrderItem(${item.id})" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:700;">Dispute Order</button>
+                                                <button class="btn-premium-edit" onclick="triggerOrderItemAutocomplete(${item.id})" style="padding: 4px 10px; font-size: 10px; width:100%; text-align:center; background:#475569; border-color:#475569; color:#fff; font-weight:700;" title="Bypasses time check for testing (Simulates window expiry)">Simulate Complete</button>
+                                            </div>
+                                        `;
+                                    } else if (item.item_status === 'completed') {
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
+                                        actionHtml = `<span style="color:#2e7d32; font-size:12px; font-weight:600;">Payout released</span>`;
+                                    } else if (item.item_status === 'disputed') {
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #c62828;">Disputed</span>`;
+                                        actionHtml = `<span style="color:#c62828; font-size:12px; font-style:italic;">Storify support reviewing...</span>`;
+                                    } else if (item.item_status === 'refunded') {
+                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #b71c1c;">Refunded</span>`;
+                                        actionHtml = `<span style="color:#b71c1c; font-size:12px; font-weight:600;">Refund processed</span>`;
+                                    }
+
+                                    return `
+                                        <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
+                                            <td style="padding: 12px 8px; font-weight:700; color:var(--primary);">${escapeHtml(orderRef)}</td>
+                                            <td style="padding: 12px 8px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(prodName)}">${escapeHtml(prodName)}</td>
+                                            <td style="padding: 12px 8px;">${item.quantity}</td>
+                                            <td style="padding: 12px 8px; font-weight:700;">${formatPrice(total)}</td>
+                                            <td style="padding: 12px 8px; color:var(--text-light);">${dateStr}</td>
+                                            <td style="padding: 12px 8px; text-align:center;">${statusBadge}</td>
+                                            <td style="padding: 12px 8px; text-align: center;">${actionHtml}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p style="color:#ef4444;">Failed to fetch order history: ${escapeHtml(err.message)}</p>`;
+            }
+        }
+
+        async function confirmItemDelivery(itemId) {
+            if (!supabaseClient) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('order_items')
+                    .update({ 
+                        item_status: 'return_window',
+                        delivered_at: new Date().toISOString()
+                    })
+                    .eq('id', itemId);
+
+                if (error) {
+                    showToast(`Error: ${error.message}`);
+                } else {
+                    showToast("Delivery confirmed. 3-day return window started.");
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to confirm delivery");
+            }
+        }
+
+        async function disputeOrderItem(itemId) {
+            if (!confirm("Are you sure you want to dispute this item? This will halt vendor payout.")) return;
+            if (!supabaseClient) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('order_items')
+                    .update({ item_status: 'disputed' })
+                    .eq('id', itemId);
+
+                if (error) {
+                    showToast(`Error: ${error.message}`);
+                } else {
+                    showToast("Dispute opened. Storify team is checking it.");
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to open dispute");
+            }
+        }
+
+        async function triggerOrderItemAutocomplete(itemId) {
+            if (!supabaseClient) return;
+            showToast("Simulating autocomplete...");
+            try {
+                const { error } = await supabaseClient.rpc('auto_complete_order_item', {
+                    p_item_id: itemId,
+                    p_bypass_time_check_for_testing: true
+                });
+
+                if (error) {
+                    showToast(`Bypass failed: ${error.message} (Requires Admin account or app_settings table dev_mode='true')`);
+                } else {
+                    showToast("Simulation successful! Item status set to Completed.");
+                    renderAccountPageView();
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to run autocomplete");
+            }
+        }
+
+        async function simulateSafepayWebhook(orderRef) {
+            if (!supabaseClient) return;
+            showToast("Simulating Safepay payment webhook...");
+            try {
+                const { data: order, error } = await supabaseClient
+                    .from('orders')
+                    .select('tracker_token')
+                    .eq('order_ref', orderRef)
+                    .single();
+
+                if (error || !order || !order.tracker_token) {
+                    showToast("Failed to retrieve tracker token for order");
+                    return;
+                }
+
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/payment-webhook`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({
+                        event: 'payment.succeeded',
+                        data: {
+                            tracker: order.tracker_token,
+                            reference: 'SIM-REF-' + Math.floor(100000 + Math.random() * 900000),
+                            payment: {
+                                channel: 'jazzcash'
+                            }
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    showToast("Simulated payment settled successfully!");
+                    renderAccountPageView();
+                } else {
+                    const text = await response.text();
+                    showToast(`Simulation failed: ${text}`);
+                }
+            } catch (err) {
+                console.error("Webhook simulation failed:", err);
+                showToast("Simulated webhook failed to run");
+            }
+        }
+        // --- END SELLER DASHBOARD HELPER METHODS ---
 
         // Modal edit profile form for logged-in users
         function renderEditAccountModal() {
@@ -6237,20 +7410,11 @@
                     if (error) {
                         showAuthMessage('error', error.message);
                     } else if (data.user) {
-                        account = {
-                            id: data.user.id,
-                            name: data.user.user_metadata.name || '',
-                            email: data.user.email,
-                            phone: data.user.user_metadata.phone || '',
-                            address: data.user.user_metadata.address || '',
-                            city: data.user.user_metadata.city || '',
-                            zip: data.user.user_metadata.zip || ''
-                        };
-                        saveAccount();
-                        closeAccountModal();
-                        updateAccountNavBtn();
-                        showView('account');
-                        showToast("Welcome back");
+                        fetchUserProfile(data.user).then(() => {
+                            closeAccountModal();
+                            showView('account');
+                            showToast("Welcome back");
+                        });
                     }
                 })
                 .catch(err => {
@@ -6313,20 +7477,11 @@
                         showAuthMessage('error', error.message);
                     } else if (data.user) {
                         if (data.session) {
-                            account = {
-                                id: data.user.id,
-                                name: data.user.user_metadata.name || '',
-                                email: data.user.email,
-                                phone: data.user.user_metadata.phone || '',
-                                address: data.user.user_metadata.address || '',
-                                city: data.user.user_metadata.city || '',
-                                zip: data.user.user_metadata.zip || ''
-                            };
-                            saveAccount();
-                            closeAccountModal();
-                            updateAccountNavBtn();
-                            showView('account');
-                            showToast("Account created");
+                            fetchUserProfile(data.user).then(() => {
+                                closeAccountModal();
+                                showView('account');
+                                showToast("Account created");
+                            });
                         } else {
                             showAuthMessage('success', 'Account created! Please check your email to verify your registration.');
                             showToast("Verification email sent");
@@ -6377,23 +7532,32 @@
                     zip: zip
                 }
             })
-                .then(({ data, error }) => {
+                .then(async ({ data, error }) => {
+                    if (error) {
+                        btn.innerHTML = `Update Account`;
+                        btn.classList.remove('loading');
+                        showAuthMessage('error', error.message, 'edit-msg-block');
+                        return;
+                    }
+
+                    const { error: profileError } = await supabaseClient
+                        .from('profiles')
+                        .update({
+                            name: name,
+                            phone: phone,
+                            address: address,
+                            city: city,
+                            zip: zip
+                        })
+                        .eq('id', account.id);
+
                     btn.innerHTML = `Update Account`;
                     btn.classList.remove('loading');
 
-                    if (error) {
-                        showAuthMessage('error', error.message, 'edit-msg-block');
-                    } else if (data.user) {
-                        account = {
-                            id: data.user.id,
-                            name: data.user.user_metadata.name || '',
-                            email: data.user.email,
-                            phone: data.user.user_metadata.phone || '',
-                            address: data.user.user_metadata.address || '',
-                            city: data.user.user_metadata.city || '',
-                            zip: data.user.user_metadata.zip || ''
-                        };
-                        saveAccount();
+                    if (profileError) {
+                        showAuthMessage('error', profileError.message, 'edit-msg-block');
+                    } else {
+                        await fetchUserProfile(data.user);
                         accountEditMode = false;
                         closeAccountModal();
                         renderAccountPageView();
@@ -6782,26 +7946,17 @@
                             
                             <div class="form-section-title">Payment Method</div>
                             <div class="payment-methods">
-                                <div class="payment-method-card active" onclick="selectPaymentMethod(this)">
-                                    <input type="radio" name="payment_method" value="cod" checked>
+                                <div class="payment-method-card active">
+                                    <input type="radio" name="payment_method" value="safepay" checked>
                                     <div class="payment-method-text">
-                                        <span class="payment-method-name">Cash on Delivery (COD)</span>
-                                        <span class="payment-method-desc">Pay with cash when your package is delivered to your door.</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="payment-method-card disabled">
-                                    <span class="payment-badge">Coming Soon</span>
-                                    <input type="radio" name="payment_method" value="card" disabled style="opacity: 0.5;">
-                                    <div class="payment-method-text">
-                                        <span class="payment-method-name">Credit Card / PayPal</span>
-                                        <span class="payment-method-desc">Secure online payment via Stripe or PayPal checkout.</span>
+                                        <span class="payment-method-name">Secure Online Checkout (Safepay)</span>
+                                        <span class="payment-method-desc">Pay securely using Credit/Debit Card, JazzCash, or Easypaisa Sandbox.</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <button type="submit" class="place-order-btn" id="placeOrderBtn">
-                                Place Order (Cash on Delivery)
+                                Proceed to Secure Payment
                             </button>
                         </form>
                     </div>
@@ -6863,18 +8018,29 @@
         }
 
         // Form Submission + Fetch Mail API
-        function handleOrderSubmit(e) {
+        async function handleOrderSubmit(e) {
             e.preventDefault();
+
+            if (!account) {
+                showToast("Please sign in or register to complete checkout");
+                displayView('account');
+                return;
+            }
+
+            if (!supabaseClient) {
+                showToast("Supabase is not configured.");
+                return;
+            }
 
             const btn = document.getElementById('placeOrderBtn');
             if (btn.classList.contains('loading')) return;
 
-            const email = document.getElementById('custEmail').value;
-            const phone = document.getElementById('custPhone').value;
-            const name = document.getElementById('custName').value;
-            const address = document.getElementById('custAddress').value;
-            const city = document.getElementById('custCity').value;
-            const zip = document.getElementById('custZip').value;
+            const email = document.getElementById('custEmail').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const name = document.getElementById('custName').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+            const city = document.getElementById('custCity').value.trim();
+            const zip = document.getElementById('custZip').value.trim();
 
             if (!email || !phone || !name || !address || !city) {
                 showToast("Enter billing details");
@@ -6883,77 +8049,88 @@
 
             const orderRef = "STOR-" + Math.floor(100000 + Math.random() * 900000);
 
-            btn.innerHTML = `<span class="spinner"></span> Processing Order...`;
+            btn.innerHTML = `<span class="spinner"></span> Sinking Order...`;
             btn.classList.add('loading');
 
             let subtotal = 0;
-            let itemsDescription = [];
             cart.forEach(item => {
                 subtotal += item.price * item.quantity;
-                itemsDescription.push(`${item.name} x${item.quantity} (Size: ${item.size || 'N/A'}, Color: ${item.color || 'N/A'}) - ${formatPrice(item.price * item.quantity)}`);
             });
 
             const shipping = 250;
             const total = subtotal + shipping;
 
-            // Data for FormSubmit.co
-            const orderData = {
-                "Order Reference": `#${orderRef}`,
-                "Customer Name": name,
-                "Customer Email": email,
-                "Customer Phone": phone,
-                "Shipping Address": `${address}, ${city}, ${zip}`,
-                "Payment Method": "Cash on Delivery (COD)",
-                "Subtotal": `${formatPrice(subtotal)}`,
-                "Shipping Cost": `${formatPrice(shipping)}`,
-                "Total Amount": `${formatPrice(total)}`,
-                "Items Ordered": itemsDescription.join("\n"),
-                "_subject": `New Order Received - #${orderRef} by ${name}`,
-                "_template": "box",
-                "_honey": ""
-            };
+            try {
+                // 1. Insert order record (status defaults to pending_payment via DB trigger)
+                const { data: dbOrder, error: orderError } = await supabaseClient
+                    .from('orders')
+                    .insert([{
+                        order_ref: orderRef,
+                        buyer_id: account.id,
+                        shipping_address: `${address}, ${city}, ${zip}`,
+                        total_amount: total
+                    }])
+                    .select()
+                    .single();
 
-            fetch("https://formsubmit.co/ajax/storify.store.co@gmail.com", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(orderData)
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error("API submit error");
-                    return res.json();
-                })
-                .then(data => {
-                    cart = [];
-                    saveCart();
-                    renderCart();
+                if (orderError) {
+                    throw new Error(`Order save failed: ${orderError.message}`);
+                }
 
-                    showView('success', null, null, {
-                        orderRef: orderRef,
-                        name: name,
-                        email: email,
-                        address: `${address}, ${city}, ${zip}`,
-                        total: total
-                    });
-                })
-                .catch(error => {
-                    console.warn("Mail API fallback triggered:", error);
+                btn.innerHTML = `<span class="spinner"></span> Sinking Order Items...`;
 
-                    // Fallback for local testing or CORS blocking
-                    cart = [];
-                    saveCart();
-                    renderCart();
+                // 2. Insert individual line items
+                const orderItems = cart.map(item => ({
+                    order_id: dbOrder.id,
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    price_at_purchase: item.price
+                }));
 
-                    showView('success', null, null, {
-                        orderRef: orderRef,
-                        name: name,
-                        email: email,
-                        address: `${address}, ${city}, ${zip}`,
-                        total: total
-                    });
+                const { error: itemsError } = await supabaseClient
+                    .from('order_items')
+                    .insert(orderItems);
+
+                if (itemsError) {
+                    throw new Error(`Order items save failed: ${itemsError.message}`);
+                }
+
+                btn.innerHTML = `<span class="spinner"></span> Securing Checkout...`;
+
+                // 3. Call create-checkout-tracker Edge Function
+                const trackerResponse = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout-tracker`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({ order_id: dbOrder.id })
                 });
+
+                if (!trackerResponse.ok) {
+                    const errorMsg = await trackerResponse.text();
+                    throw new Error(`Edge function error: ${errorMsg}`);
+                }
+
+                const trackerData = await trackerResponse.json();
+                const trackerToken = trackerData?.token;
+
+                if (!trackerToken) {
+                    throw new Error("No payment tracker token received from server");
+                }
+
+                // 4. Redirect to Safepay sandbox checkout screen
+                const safepayRedirectUrl = `https://sandbox.getsafepay.com/checkout/pay?tracker=${trackerToken}&order_id=${orderRef}&source=custom&redirect_url=${encodeURIComponent(window.location.origin + window.location.pathname + '?page=success&ref=' + orderRef)}&cancel_url=${encodeURIComponent(window.location.origin + window.location.pathname + '?page=account')}`;
+                
+                showToast("Redirecting to Safepay secure payment...");
+                window.location.href = safepayRedirectUrl;
+
+            } catch (err) {
+                btn.innerHTML = `Place Order`;
+                btn.classList.remove('loading');
+                console.error("Order creation failed:", err);
+                showToast(`Order failed: ${err.message}`);
+            }
         }
 
         // Render Success Page
@@ -6963,36 +8140,71 @@
 
             view.innerHTML = `
                 <div class="order-success-card">
-                    <div class="success-icon-wrapper">✓</div>
+                    <div class="success-icon-wrapper" style="background: linear-gradient(135deg, var(--accent), #10b981); color:white; box-shadow: 0 4px 15px var(--accent-glow);">✓</div>
                     <h1 class="success-title">Order Confirmed!</h1>
-                    <p class="success-subtitle">Thank you for shopping with us, <strong>${details.name}</strong>. We've received your order. Cash will be collected on delivery. An invoice receipt has been dispatched to <strong>${details.email}</strong>.</p>
+                    <p class="success-subtitle">Thank you for shopping with us, <strong>${escapeHtml(details.name)}</strong>. Your payment has been successfully secured via Safepay escrow. Funds will be held safely until delivery is confirmed and the return window completes.</p>
                     
-                    <div class="success-details">
-                        <div class="success-details-title">Invoice Details</div>
+                    <div class="success-details" style="background: var(--secondary); padding: 20px; border-radius: 10px; margin-top:20px; border: 1px solid var(--border);">
+                        <div class="success-details-title" style="font-weight: 700; color: var(--primary); margin-bottom:12px;">Invoice Details</div>
                         
-                        <div class="details-row">
-                            <span class="details-label">Order Ref</span>
-                            <span class="details-val" style="color: var(--accent); font-family: monospace; font-size: 15px;">#${details.orderRef}</span>
+                        <div class="details-row" style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                            <span class="details-label" style="color:var(--text-light);">Order Ref</span>
+                            <span class="details-val" style="color: var(--accent); font-family: monospace; font-size: 15px; font-weight:700;">#${escapeHtml(details.orderRef)}</span>
                         </div>
-                        <div class="details-row">
-                            <span class="details-label">Shipping Address</span>
-                            <span class="details-val">${details.address}</span>
+                        <div class="details-row" style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                            <span class="details-label" style="color:var(--text-light);">Shipping Address</span>
+                            <span class="details-val" style="font-weight:600; text-align:right;">${escapeHtml(details.address)}</span>
                         </div>
-                        <div class="details-row">
-                            <span class="details-label">Payment Method</span>
-                            <span class="details-val">Cash on Delivery (COD)</span>
+                        <div class="details-row" style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                            <span class="details-label" style="color:var(--text-light);">Payment Method</span>
+                            <span class="details-val" style="font-weight:600; text-transform:uppercase;">Secured Escrow (Safepay)</span>
                         </div>
-                        <div class="details-row">
-                            <span class="details-label">Total Invoice</span>
-                            <span class="details-val">${formatPrice(details.total)}</span>
+                        <div class="details-row" style="display:flex; justify-content:space-between; border-top:1.5px solid var(--border); padding-top:8px;">
+                            <span class="details-label" style="color:var(--text-light); font-weight:700;">Total Paid</span>
+                            <span class="details-val" style="font-weight:800; color:var(--primary); font-size:16px;">${formatPrice(details.total)}</span>
                         </div>
                     </div>
                     
-                    <div class="success-actions">
-                        <button class="btn-primary-large" onclick="showView('home')">Continue Shopping</button>
+                    <div class="success-actions" style="margin-top:25px;">
+                        <button class="btn-premium" onclick="navigateToPage('home', {}, true)" style="width:100%; padding:14px; font-weight:700;">Continue Shopping</button>
                     </div>
                 </div>
             `;
+        }
+
+        async function displaySuccessFromDatabase(orderRef) {
+            if (!supabaseClient) return;
+            try {
+                const { data: order, error } = await supabaseClient
+                    .from('orders')
+                    .select('*')
+                    .eq('order_ref', orderRef)
+                    .single();
+                
+                if (error || !order) {
+                    showToast("Order not found");
+                    navigateToPage('home', {}, true);
+                    return;
+                }
+
+                const details = {
+                    orderRef: order.order_ref,
+                    name: account ? account.name : 'Valued Customer',
+                    email: account ? account.email : '',
+                    address: order.shipping_address,
+                    total: Number(order.total_amount)
+                };
+
+                // Clear cart locally
+                cart = [];
+                saveCart();
+                renderCart();
+
+                renderSuccessView(details);
+            } catch (err) {
+                console.error("Success fetch exception:", err);
+                navigateToPage('home', {}, true);
+            }
         }
 
         // ----------------------------------------------------
@@ -7407,7 +8619,13 @@
         // ----------------------------------------------------
         // APPLICATION INITIALIZATION
         // ----------------------------------------------------
-        function initializeApp() {
+        async function initializeApp() {
+            // Check session and load user profile
+            await checkUserSession();
+
+            // Fetch products from database
+            await fetchProductsFromSupabase();
+
             // Initial render based on URL routing
             parseUrlAndRender();
             renderCart();
