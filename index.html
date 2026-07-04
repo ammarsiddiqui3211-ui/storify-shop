@@ -1226,7 +1226,8 @@
             transition: color 0.3s ease;
         }
 
-        .mobile-nav-links a:hover {
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
             color: var(--accent);
         }
 
@@ -4339,15 +4340,15 @@
             </button>
         </div>
         <ul class="mobile-nav-links" id="mobileNavCategories">
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('electronics-tech', event)">Electronics & Tech</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('apparel-fashion', event)">Apparel & Fashion</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('home-living', event)">Home & Living</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('sports-outdoors', event)">Sports & Outdoors</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('stationery-office', event)">Stationery & Office</a></li>
+            <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>
+            <li><a href="#" data-category="featured" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
+            <li><a href="#" data-category="electronics-tech" onclick="toggleMobileMenu(); filterCategory('electronics-tech', event)">Electronics & Tech</a></li>
+            <li><a href="#" data-category="apparel-fashion" onclick="toggleMobileMenu(); filterCategory('apparel-fashion', event)">Apparel & Fashion</a></li>
+            <li><a href="#" data-category="home-living" onclick="toggleMobileMenu(); filterCategory('home-living', event)">Home & Living</a></li>
+            <li><a href="#" data-category="personal-care-beauty" onclick="toggleMobileMenu(); filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a></li>
+            <li><a href="#" data-category="sports-outdoors" onclick="toggleMobileMenu(); filterCategory('sports-outdoors', event)">Sports & Outdoors</a></li>
+            <li><a href="#" data-category="accessories-jewelry" onclick="toggleMobileMenu(); filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a></li>
+            <li><a href="#" data-category="stationery-office" onclick="toggleMobileMenu(); filterCategory('stationery-office', event)">Stationery & Office</a></li>
         </ul>
         <div class="mobile-nav-actions">
             <button id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account')" aria-label="Account">
@@ -4438,15 +4439,15 @@
             <div class="categories-wrapper">
                 <button class="categories-scroll-btn scroll-left" id="catScrollLeft" onclick="scrollCategories(-200)" aria-label="Scroll categories left">‹</button>
                 <div class="categories" id="categoriesContainer">
-                    <a href="#" class="category-link active" onclick="filterCategory('all', event)">All</a>
-                    <a href="#" class="category-link" onclick="filterCategory('featured', event)">Featured</a>
-                    <a href="#" class="category-link" onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
-                    <a href="#" class="category-link" onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
-                    <a href="#" class="category-link" onclick="filterCategory('home-living', event)">Home & Living</a>
-                    <a href="#" class="category-link" onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
-                    <a href="#" class="category-link" onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
-                    <a href="#" class="category-link" onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
-                    <a href="#" class="category-link" onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
+                    <a href="#" class="category-link active" data-category="all" onclick="filterCategory('all', event)">All</a>
+                    <a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>
+                    <a href="#" class="category-link" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
+                    <a href="#" class="category-link" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
+                    <a href="#" class="category-link" data-category="home-living" onclick="filterCategory('home-living', event)">Home & Living</a>
+                    <a href="#" class="category-link" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
+                    <a href="#" class="category-link" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
+                    <a href="#" class="category-link" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
+                    <a href="#" class="category-link" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
                 </div>
                 <button class="categories-scroll-btn scroll-right" id="catScrollRight" onclick="scrollCategories(200)" aria-label="Scroll categories right">›</button>
             </div>
@@ -5767,13 +5768,12 @@
             const productId = Number(urlParams.get('id')) || null;
 
             // Sync category navigation active states
-            document.querySelectorAll('.category-link').forEach(link => {
-                link.classList.remove('active');
-                const text = link.textContent.trim().toLowerCase();
-                if (category === 'all' && text === 'all') {
+            document.querySelectorAll('.category-link, #mobileNavCategories a').forEach(link => {
+                const catAttr = link.getAttribute('data-category');
+                if (catAttr === category) {
                     link.classList.add('active');
-                } else if (text === category || (category === 'home-living' && text === 'home & living')) {
-                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
                 }
             });
 
@@ -5984,10 +5984,10 @@
             // Desktop category bar
             const container = document.getElementById('categoriesContainer');
             if (container) {
-                let html = `<a href="#" class="category-link active" onclick="filterCategory('all', event)">All</a>`;
-                html += `<a href="#" class="category-link" onclick="filterCategory('featured', event)">Featured</a>`;
+                let html = `<a href="#" class="category-link active" data-category="all" onclick="filterCategory('all', event)">All</a>`;
+                html += `<a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>`;
                 MASTER_CATEGORIES.forEach(cat => {
-                    html += `<a href="#" class="category-link" onclick="filterCategory('${cat.key}', event)">${cat.name}</a>`;
+                    html += `<a href="#" class="category-link" data-category="${cat.key}" onclick="filterCategory('${cat.key}', event)">${cat.name}</a>`;
                 });
                 container.innerHTML = html;
                 updateCategoryScrollArrows();
@@ -5996,10 +5996,10 @@
             // Mobile nav categories
             const mobileNav = document.getElementById('mobileNavCategories');
             if (mobileNav) {
-                let html = `<li><a href="#" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>`;
-                html += `<li><a href="#" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>`;
+                let html = `<li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>`;
+                html += `<li><a href="#" data-category="featured" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>`;
                 MASTER_CATEGORIES.forEach(cat => {
-                    html += `<li><a href="#" onclick="toggleMobileMenu(); filterCategory('${cat.key}', event)">${cat.name}</a></li>`;
+                    html += `<li><a href="#" data-category="${cat.key}" onclick="toggleMobileMenu(); filterCategory('${cat.key}', event)">${cat.name}</a></li>`;
                 });
                 mobileNav.innerHTML = html;
             }
