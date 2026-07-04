@@ -392,6 +392,14 @@ BEGIN
     RAISE EXCEPTION 'Non-admins can only modify item_status and delivered_at';
   END IF;
 
+  -- If status is not changing, allow the update (e.g. product deletion setting product_id to NULL)
+  IF NEW.item_status IS NOT DISTINCT FROM OLD.item_status THEN
+    IF auth.uid() = OLD.seller_id AND NEW.delivered_at IS DISTINCT FROM OLD.delivered_at THEN
+      RAISE EXCEPTION 'Sellers cannot modify delivered_at';
+    END IF;
+    RETURN NEW;
+  END IF;
+
   -- Approve updates if explicitly bypassed by secure server-side functions
   IF current_setting('app.order_completion', true) = 'true' OR current_setting('app.payment_settlement', true) = 'true' THEN
     RETURN NEW;
