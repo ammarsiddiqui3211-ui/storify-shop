@@ -1298,7 +1298,46 @@
             }
 
             .categories-scroll-btn {
-                display: none !important;
+                top: 0 !important;
+                bottom: 0 !important;
+                width: 50px !important;
+                height: 100% !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                pointer-events: none !important;
+                font-size: 0 !important;
+                color: transparent !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                z-index: 3 !important;
+            }
+
+            .categories-scroll-btn:hover {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                color: transparent !important;
+            }
+
+            .categories-scroll-btn.scroll-left {
+                left: 0 !important;
+                transform: none !important;
+                background: linear-gradient(to right, var(--white) 15%, rgba(255, 255, 255, 0) 100%) !important;
+            }
+
+            .categories-scroll-btn.scroll-left:hover {
+                background: linear-gradient(to right, var(--white) 15%, rgba(255, 255, 255, 0) 100%) !important;
+            }
+
+            .categories-scroll-btn.scroll-right {
+                right: 0 !important;
+                transform: none !important;
+                background: linear-gradient(to left, var(--white) 15%, rgba(255, 255, 255, 0) 100%) !important;
+            }
+
+            .categories-scroll-btn.scroll-right:hover {
+                background: linear-gradient(to left, var(--white) 15%, rgba(255, 255, 255, 0) 100%) !important;
             }
         }
 
