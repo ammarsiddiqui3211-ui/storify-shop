@@ -303,6 +303,7 @@
             opacity: 1;
             visibility: visible;
             transition: none;
+            position: relative;
         }
 
         .categories-bar.animated {
@@ -317,6 +318,53 @@
             opacity: 0;
         }
 
+        .categories-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .categories-scroll-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .categories-scroll-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .categories-scroll-btn.scroll-left {
+            left: 4px;
+        }
+
+        .categories-scroll-btn.scroll-right {
+            right: 4px;
+        }
+
+        .categories-scroll-btn.visible {
+            display: flex;
+        }
+
         .categories {
             max-width: 1400px;
             margin: 0 auto;
@@ -324,6 +372,12 @@
             display: flex;
             gap: 36px;
             overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
         }
 
         .category-link {
@@ -4284,12 +4338,16 @@
                 <span style="display:block;width:22px;height:2px;background:var(--text);border-radius:2px;"></span>
             </button>
         </div>
-        <ul class="mobile-nav-links">
+        <ul class="mobile-nav-links" id="mobileNavCategories">
             <li><a href="#" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>
             <li><a href="#" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('shirts', event)">Shirts</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('watches', event)">Watches</a></li>
-            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('sports', event)">Sports</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('electronics-tech', event)">Electronics & Tech</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('apparel-fashion', event)">Apparel & Fashion</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('home-living', event)">Home & Living</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('sports-outdoors', event)">Sports & Outdoors</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a></li>
+            <li><a href="#" onclick="toggleMobileMenu(); filterCategory('stationery-office', event)">Stationery & Office</a></li>
         </ul>
         <div class="mobile-nav-actions">
             <button id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account')" aria-label="Account">
@@ -4377,12 +4435,20 @@
             </nav>
         </div>
         <div class="categories-bar">
-            <div class="categories">
-                <a href="#" class="category-link active" onclick="filterCategory('all', event)">All</a>
-                <a href="#" class="category-link" onclick="filterCategory('featured', event)">Featured</a>
-                <a href="#" class="category-link" onclick="filterCategory('shirts', event)">Shirts</a>
-                <a href="#" class="category-link" onclick="filterCategory('watches', event)">Watches</a>
-                <a href="#" class="category-link" onclick="filterCategory('sports', event)">Sports</a>
+            <div class="categories-wrapper">
+                <button class="categories-scroll-btn scroll-left" id="catScrollLeft" onclick="scrollCategories(-200)" aria-label="Scroll categories left">‹</button>
+                <div class="categories" id="categoriesContainer">
+                    <a href="#" class="category-link active" onclick="filterCategory('all', event)">All</a>
+                    <a href="#" class="category-link" onclick="filterCategory('featured', event)">Featured</a>
+                    <a href="#" class="category-link" onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
+                    <a href="#" class="category-link" onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
+                    <a href="#" class="category-link" onclick="filterCategory('home-living', event)">Home & Living</a>
+                    <a href="#" class="category-link" onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
+                    <a href="#" class="category-link" onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
+                    <a href="#" class="category-link" onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
+                    <a href="#" class="category-link" onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
+                </div>
+                <button class="categories-scroll-btn scroll-right" id="catScrollRight" onclick="scrollCategories(200)" aria-label="Scroll categories right">›</button>
             </div>
         </div>
     </header>
@@ -4394,16 +4460,16 @@
                 <div class="hero-slide active">
                     <img src="images/banners/banner 1.png" alt="Storify shirt collection banner">
                 </div>
-                <div class="hero-slide clickable" onclick="filterCategory('shirts')" role="button"
-                    aria-label="Shop shirts category">
+                <div class="hero-slide clickable" onclick="filterCategory('apparel-fashion')" role="button"
+                    aria-label="Shop apparel & fashion category">
                     <img src="images/banners/banner 2.png" alt="Storify cotton shirts banner">
                 </div>
-                <div class="hero-slide clickable" onclick="filterCategory('watches')" role="button"
-                    aria-label="Shop watches category">
+                <div class="hero-slide clickable" onclick="filterCategory('accessories-jewelry')" role="button"
+                    aria-label="Shop accessories & jewelry category">
                     <img src="images/banners/banner 3.png" alt="Storify featured products banner">
                 </div>
-                <div class="hero-slide clickable" onclick="filterCategory('sports')" role="button"
-                    aria-label="Shop sports category">
+                <div class="hero-slide clickable" onclick="filterCategory('sports-outdoors')" role="button"
+                    aria-label="Shop sports & outdoors category">
                     <img src="images/banners/banner 4.png" alt="Storify sports collection banner">
                 </div>
             </div>
@@ -5000,6 +5066,18 @@
         SEED_PRODUCTS.forEach(product => {
             product.images = productImageSets[product.id] || [product.image];
             product.image = product.images[0];
+            
+            // Normalize old categories to master categories
+            const oldKey = product.categoryKey;
+            const mapping = {
+                'shirts': { key: 'apparel-fashion', name: 'Apparel & Fashion' },
+                'watches': { key: 'accessories-jewelry', name: 'Accessories & Jewelry' },
+                'sports': { key: 'sports-outdoors', name: 'Sports & Outdoors' }
+            };
+            if (mapping[oldKey]) {
+                product.categoryKey = mapping[oldKey].key;
+                product.category = mapping[oldKey].name;
+            }
         });
 
         let products = [...SEED_PRODUCTS];
@@ -5044,16 +5122,24 @@
                 
                 if (error) {
                     console.error("Error fetching products from Supabase:", error);
-                } else if (data && data.length > 0) {
-                    products = data.map(item => {
-                        const seedMatch = typeof SEED_PRODUCTS !== 'undefined' ? SEED_PRODUCTS.find(sp => Number(sp.id) === Number(item.id)) : null;
-                        return {
-                            id: Number(item.id),
-                            name: item.name,
-                            description: item.description,
-                            category: item.category,
-                            categoryKey: item.category_key,
-                            currentPrice: Number(item.price),
+                 } else if (data && data.length > 0) {
+                     products = data.map(item => {
+                         const seedMatch = typeof SEED_PRODUCTS !== 'undefined' ? SEED_PRODUCTS.find(sp => Number(sp.id) === Number(item.id)) : null;
+                         
+                         let catKey = item.category_key || '';
+                         let catName = item.category || '';
+                         if (typeof CATEGORY_MAP !== 'undefined' && CATEGORY_MAP[catKey]) {
+                             catKey = CATEGORY_MAP[catKey].key;
+                             catName = CATEGORY_MAP[catKey].name;
+                         }
+
+                         return {
+                             id: Number(item.id),
+                             name: item.name,
+                             description: item.description,
+                             category: catName,
+                             categoryKey: catKey,
+                             currentPrice: Number(item.price),
                             originalPrice: item.original_price ? Number(item.original_price) : null,
                             featured: !!item.featured,
                             gradient: item.gradient || null,
@@ -5858,6 +5944,101 @@
             }, 4500);
         }
 
+        // --- DYNAMIC CATEGORY HELPERS ---
+        const MASTER_CATEGORIES = [
+            { key: 'electronics-tech', name: 'Electronics & Tech' },
+            { key: 'apparel-fashion', name: 'Apparel & Fashion' },
+            { key: 'home-living', name: 'Home & Living' },
+            { key: 'personal-care-beauty', name: 'Personal Care & Beauty' },
+            { key: 'sports-outdoors', name: 'Sports & Outdoors' },
+            { key: 'accessories-jewelry', name: 'Accessories & Jewelry' },
+            { key: 'stationery-office', name: 'Stationery & Office' }
+        ];
+
+        const CATEGORY_MAP = {
+            'shirts': { key: 'apparel-fashion', name: 'Apparel & Fashion' },
+            'watches': { key: 'accessories-jewelry', name: 'Accessories & Jewelry' },
+            'sports': { key: 'sports-outdoors', name: 'Sports & Outdoors' }
+        };
+
+        function getUniqueCategories() {
+            const catMap = {};
+            MASTER_CATEGORIES.forEach(cat => {
+                catMap[cat.key] = cat.name;
+            });
+            products.forEach(p => {
+                if (p.category && p.categoryKey && !catMap[p.categoryKey]) {
+                    catMap[p.categoryKey] = p.category;
+                }
+            });
+            return catMap;
+        }
+
+        function getUniqueCategoryOptions() {
+            return MASTER_CATEGORIES.map(cat =>
+                `<option value="${cat.key}">${cat.name}</option>`
+            ).join('');
+        }
+
+        function rebuildCategoryBars() {
+            // Desktop category bar
+            const container = document.getElementById('categoriesContainer');
+            if (container) {
+                let html = `<a href="#" class="category-link active" onclick="filterCategory('all', event)">All</a>`;
+                html += `<a href="#" class="category-link" onclick="filterCategory('featured', event)">Featured</a>`;
+                MASTER_CATEGORIES.forEach(cat => {
+                    html += `<a href="#" class="category-link" onclick="filterCategory('${cat.key}', event)">${cat.name}</a>`;
+                });
+                container.innerHTML = html;
+                updateCategoryScrollArrows();
+            }
+
+            // Mobile nav categories
+            const mobileNav = document.getElementById('mobileNavCategories');
+            if (mobileNav) {
+                let html = `<li><a href="#" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>`;
+                html += `<li><a href="#" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>`;
+                MASTER_CATEGORIES.forEach(cat => {
+                    html += `<li><a href="#" onclick="toggleMobileMenu(); filterCategory('${cat.key}', event)">${cat.name}</a></li>`;
+                });
+                mobileNav.innerHTML = html;
+            }
+        }
+
+        function scrollCategories(amount) {
+            const container = document.getElementById('categoriesContainer');
+            if (container) {
+                container.scrollBy({ left: amount, behavior: 'smooth' });
+                setTimeout(updateCategoryScrollArrows, 350);
+            }
+        }
+
+        function updateCategoryScrollArrows() {
+            const container = document.getElementById('categoriesContainer');
+            const leftBtn = document.getElementById('catScrollLeft');
+            const rightBtn = document.getElementById('catScrollRight');
+            if (!container || !leftBtn || !rightBtn) return;
+
+            const isOverflowing = container.scrollWidth > container.clientWidth;
+            if (!isOverflowing) {
+                leftBtn.classList.remove('visible');
+                rightBtn.classList.remove('visible');
+                return;
+            }
+
+            if (container.scrollLeft > 10) {
+                leftBtn.classList.add('visible');
+            } else {
+                leftBtn.classList.remove('visible');
+            }
+
+            if (container.scrollLeft + container.clientWidth < container.scrollWidth - 10) {
+                rightBtn.classList.add('visible');
+            } else {
+                rightBtn.classList.remove('visible');
+            }
+        }
+
         // Category Filtering from Navigation
         function filterCategory(catKey, event) {
             if (event) event.preventDefault();
@@ -5945,23 +6126,33 @@
 
             // If we are in "All" view and not searching, show category sections stacked
             if (filter === 'all' && searchQuery === '') {
-                // 1. Shirts Section (Limit to 8 for preview on homepage)
-                const shirts = products.filter(p => p.categoryKey === 'shirts');
-                const displayedShirts = shirts.slice(0, 8);
-                const shirtsSection = createProductSectionHTML('Shirts', displayedShirts, 'shirts', true);
-                container.appendChild(shirtsSection);
+                const renderedKeys = new Set();
+                MASTER_CATEGORIES.forEach(cat => {
+                    const catProducts = products.filter(p => p.categoryKey === cat.key);
+                    if (catProducts.length > 0) {
+                        const section = createProductSectionHTML(cat.name, catProducts, cat.key, catProducts.length > 8);
+                        container.appendChild(section);
+                        renderedKeys.add(cat.key);
+                    }
+                });
 
-                // 2. Watches Section
-                const watches = products.filter(p => p.categoryKey === 'watches');
-                const displayedWatches = watches.slice(0, 8);
-                const watchesSection = createProductSectionHTML('Watches', displayedWatches, 'watches', true);
-                container.appendChild(watchesSection);
+                // Fallback for other categories that might exist
+                const categoryMap = {};
+                products.forEach(p => {
+                    const key = p.categoryKey;
+                    if (key && !renderedKeys.has(key)) {
+                        if (!categoryMap[key]) {
+                            categoryMap[key] = { name: p.category || key, products: [] };
+                        }
+                        categoryMap[key].products.push(p);
+                    }
+                });
 
-                // 3. Sports Section
-                const sports = products.filter(p => p.categoryKey === 'sports');
-                const displayedSports = sports.slice(0, 8);
-                const sportsSection = createProductSectionHTML('Sports', displayedSports, 'sports', true);
-                container.appendChild(sportsSection);
+                Object.keys(categoryMap).forEach(key => {
+                    const cat = categoryMap[key];
+                    const section = createProductSectionHTML(cat.name, cat.products, key, cat.products.length > 8);
+                    container.appendChild(section);
+                });
             } else {
                 // Single Category or Search Results section layout
                 const filtered = products.filter(p => {
@@ -5978,12 +6169,10 @@
                     title = `Search Results for "${searchQuery}"`;
                 } else if (filter === 'featured') {
                     title = 'Featured Products';
-                } else if (filter === 'shirts') {
-                    title = 'Shirts';
-                } else if (filter === 'watches') {
-                    title = 'Watches';
-                } else if (filter === 'sports') {
-                    title = 'Sports';
+                } else {
+                    // Dynamically resolve category title from products
+                    const cats = getUniqueCategories();
+                    title = cats[filter] || filter.charAt(0).toUpperCase() + filter.slice(1);
                 }
 
                 const section = createProductSectionHTML(title, filtered, filter, false);
@@ -6409,9 +6598,7 @@
                         <div class="form-group">
                             <label for="prodCategory">Category *</label>
                             <select id="prodCategory" class="form-control" required>
-                                <option value="Shirts">Shirts</option>
-                                <option value="Watches">Watches</option>
-                                <option value="Sports">Sports</option>
+                                ${getUniqueCategoryOptions()}
                             </select>
                         </div>
                     </div>
@@ -6635,7 +6822,9 @@
 
             const btn = document.getElementById('prodSubmitBtn');
             const name = document.getElementById('prodName').value.trim();
-            const category = document.getElementById('prodCategory').value;
+            const categoryKey = document.getElementById('prodCategory').value;
+            const matchedCat = MASTER_CATEGORIES.find(c => c.key === categoryKey);
+            const category = matchedCat ? matchedCat.name : categoryKey;
             const price = Number(document.getElementById('prodPrice').value);
             const originalPrice = document.getElementById('prodOriginalPrice').value ? Number(document.getElementById('prodOriginalPrice').value) : null;
             const description = document.getElementById('prodDescription').value.trim();
@@ -6679,7 +6868,7 @@
                         price,
                         original_price: originalPrice,
                         category,
-                        category_key: category.toLowerCase(),
+                        category_key: categoryKey,
                         images: imageUrls,
                         colors: addedColors,
                         sizes: addedSizes,
@@ -6697,6 +6886,7 @@
                 } else {
                     showToast("Product listed successfully!");
                     await fetchProductsFromSupabase();
+                    rebuildCategoryBars();
                     switchSellerTab('manage-products');
                 }
 
@@ -6788,6 +6978,7 @@
                 } else {
                     showToast("Stock status updated");
                     await fetchProductsFromSupabase();
+                    rebuildCategoryBars();
                     renderAccountPageView();
                 }
             } catch (err) {
@@ -6811,6 +7002,7 @@
                 } else {
                     showToast("Product deleted successfully");
                     await fetchProductsFromSupabase();
+                    rebuildCategoryBars();
                     renderAccountPageView();
                 }
             } catch (err) {
@@ -8626,10 +8818,18 @@
             // Fetch products from database
             await fetchProductsFromSupabase();
 
+            // Rebuild category navigation from loaded products
+            rebuildCategoryBars();
+
             // Initial render based on URL routing
             parseUrlAndRender();
             renderCart();
             updateAccountNavBtn();
+
+            // Update scroll arrows on resize
+            window.addEventListener('resize', updateCategoryScrollArrows);
+            const catContainer = document.getElementById('categoriesContainer');
+            if (catContainer) catContainer.addEventListener('scroll', updateCategoryScrollArrows);
 
             // Handle browser Back / Forward navigation
             window.addEventListener('popstate', (e) => {
