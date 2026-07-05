@@ -15,9 +15,10 @@ serve(async (req) => {
 
   try {
     // 1. Parse request payload
-    const { type, order_id } = await req.json()
-    if (!type || !order_id) {
-      return new Response(JSON.stringify({ error: 'Missing type or order_id in request body' }), {
+    const body = await req.json()
+    const { type, order_id, seller_id } = body
+    if (!type || (!order_id && !seller_id)) {
+      return new Response(JSON.stringify({ error: 'Missing type, order_id or seller_id in request body' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -28,7 +29,176 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // 3. Fetch Order Data (including buyer_id to verify ownership)
+    // Retrieve Resend Secrets early
+    const resendApiKey = Deno.env.get('RESEND_API_KEY')
+    const fromEmail = Deno.env.get('RESEND_FROM_EMAIL')
+    const toEmail = Deno.env.get('RESEND_TO_EMAIL')
+
+    if (!resendApiKey || !fromEmail) {
+      console.error("Missing Resend secrets configuration in Supabase project")
+      return new Response(JSON.stringify({ error: 'Server configuration error' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // 3. Handle seller application approved/rejected emails (admin triggered)
+    if (type === 'seller_approved' || type === 'seller_rejected') {
+      const authHeader = req.headers.get('Authorization')
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ error: 'Unauthorized: Missing user token' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      const token = authHeader.substring(7)
+
+      // Verify JWT and get caller user details
+      const { data: { user: callerUser }, error: callerError } = await supabase.auth.getUser(token)
+      if (callerError || !callerUser) {
+        console.error("Failed to verify caller JWT:", callerError)
+        return new Response(JSON.stringify({ error: 'Unauthorized: Invalid user session' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      // Check if caller is admin
+      const { data: callerProfile, error: callerProfileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', callerUser.id)
+        .single()
+      
+      if (callerProfileError || !callerProfile || callerProfile.role !== 'admin') {
+        console.error("Forbidden access: caller is not an admin", callerProfileError)
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin role required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      // Fetch seller profile details
+      const { data: sellerProfile, error: sellerProfileError } = await supabase
+        .from('profiles')
+        .select('name, shop_name')
+        .eq('id', seller_id)
+        .single()
+
+      if (sellerProfileError || !sellerProfile) {
+        console.error(`Seller profile not found for ID: ${seller_id}`, sellerProfileError)
+        return new Response(JSON.stringify({ error: 'Seller profile not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      // Fetch seller auth user details (for email)
+      const { data: authUser, error: authUserError } = await supabase.auth.admin.getUserById(seller_id)
+      if (authUserError || !authUser?.user) {
+        console.error(`Auth user details not found for seller ID: ${seller_id}`, authUserError)
+        return new Response(JSON.stringify({ error: 'Seller email not found in auth' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      const sellerEmail = authUser.user.email
+      if (!sellerEmail) {
+        return new Response(JSON.stringify({ error: 'Seller email is blank' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      let emailSubject = ''
+      let emailHtml = ''
+
+      if (type === 'seller_approved') {
+        emailSubject = `[Storify] Your Seller Application has been Approved!`
+        emailHtml = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+            <h2 style="color: #4A90E2; border-bottom: 2px solid #4A90E2; padding-bottom: 10px;">Application Approved!</h2>
+            <p style="color: #333; font-size: 14px; line-height: 1.6;">
+              Hello <strong>${sellerProfile.name || 'Seller'}</strong>,
+            </p>
+            <p style="color: #333; font-size: 14px; line-height: 1.6;">
+              Congratulations! Your application to become a vendor on Storify has been <strong>approved</strong>.
+            </p>
+            <div style="background-color: #f0f8ff; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #4A90E2;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 4px 0; font-weight: bold; color: #555; width: 35%;">Shop Name:</td>
+                  <td style="padding: 4px 0; color: #333; font-weight: bold;">${sellerProfile.shop_name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 4px 0; font-weight: bold; color: #555;">Status:</td>
+                  <td style="padding: 4px 0; color: #2e7d32; font-weight: bold;">Approved</td>
+                </tr>
+              </table>
+            </div>
+            <p style="color: #333; font-size: 14px; line-height: 1.6;">
+              You can now access your dedicated seller portal to upload products, view orders, and manage settings.
+            </p>
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="https://shop.storify.services/seller.html" style="background-color: #4A90E2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);">Go to Seller Portal</a>
+            </div>
+            <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #888888; border-top: 1px solid #e0e0e0; padding-top: 15px;">
+              This email was generated automatically by the Storify Shop platform.
+            </div>
+          </div>
+        `
+      } else {
+        emailSubject = `[Storify] Update on your Seller Application`
+        emailHtml = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+            <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">Application Reviewed</h2>
+            <p style="color: #333; font-size: 14px; line-height: 1.6;">
+              Hello <strong>${sellerProfile.name || 'Seller'}</strong>,
+            </p>
+            <p style="color: #333; font-size: 14px; line-height: 1.6;">
+              Thank you for applying to become a seller on Storify. After reviewing the details provided for your shop (<strong>${sellerProfile.shop_name}</strong>), we regret to inform you that we are unable to approve your application at this time.
+            </p>
+            <p style="color: #333; font-size: 14px; line-height: 1.6;">
+              If you have any questions or would like to submit additional information, please contact our support team.
+            </p>
+            <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #888888; border-top: 1px solid #e0e0e0; padding-top: 15px;">
+              This email was generated automatically by the Storify Shop platform.
+            </div>
+          </div>
+        `
+      }
+
+      // Send email via Resend
+      const resendResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resendApiKey}`
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: sellerEmail,
+          subject: emailSubject,
+          html: emailHtml
+        })
+      })
+
+      if (!resendResponse.ok) {
+        const errorText = await resendResponse.text()
+        console.error(`[Error] Resend API invocation failed with status ${resendResponse.status}: ${errorText}`)
+        throw new Error(`Resend API failed: ${errorText}`)
+      }
+
+      const resendData = await resendResponse.json()
+      return new Response(JSON.stringify({ success: true, message: 'Seller email sent successfully', id: resendData?.id }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // 4. Continue with existing order logic
+    // Fetch Order Data (including buyer_id to verify ownership)
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .select('*, profiles(name, phone)')
@@ -59,7 +229,7 @@ serve(async (req) => {
     const displayBuyerPhone = order.shipping_phone || order.profiles?.phone || 'N/A'
     const displayBuyerEmail = order.shipping_email || buyerEmail
 
-    // 4. Validate request based on notification type
+    // 5. Validate request based on notification type
     if (type === 'new_order') {
       const authHeader = req.headers.get('Authorization')
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
