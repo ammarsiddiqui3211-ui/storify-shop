@@ -253,6 +253,9 @@ CREATE TABLE IF NOT EXISTS public.orders (
   payment_reference text UNIQUE, -- Gateway transaction ID (UNIQUE)
   tracker_token text UNIQUE, -- Safepay tracker token
   total_amount numeric NOT NULL,
+  shipping_name text,
+  shipping_phone text,
+  shipping_email text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -554,6 +557,31 @@ BEGIN
   UPDATE public.order_items
   SET item_status = 'paid_escrow'
   WHERE order_id = v_order_id;
+
+  -- Asynchronously trigger payment received notification to platform owner
+  DECLARE
+    v_anon_key text;
+    v_webhook_secret text;
+  BEGIN
+    SELECT decrypted_secret INTO v_anon_key FROM vault.decrypted_secrets WHERE name = 'anon_key';
+    SELECT decrypted_secret INTO v_webhook_secret FROM vault.decrypted_secrets WHERE name = 'internal_webhook_secret';
+
+    PERFORM net.http_post(
+      url := 'https://goguiruuirltoiofmvuj.supabase.co/functions/v1/send-owner-notification',
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer ' || v_anon_key,
+        'x-internal-webhook-secret', v_webhook_secret
+      ),
+      body := jsonb_build_object(
+        'type', 'payment_received',
+        'order_id', v_order_id
+      )
+    );
+  EXCEPTION WHEN OTHERS THEN
+    -- Prevent failures in notifications from rolling back the payment transaction
+    RAISE WARNING 'Failed to trigger payment received email notification: %', SQLERRM;
+  END;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
