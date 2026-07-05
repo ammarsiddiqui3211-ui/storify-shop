@@ -9,6 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        html {
+            scrollbar-gutter: stable;
+        }
+
         :root {
             --primary: #1a1a2e;
             --secondary: #f0f4f8;
@@ -41,6 +45,16 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            font-weight: 400;
+        }
+
+        /* Global font-weight override: use regular/medium instead of bold */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500 !important;
+        }
+
+        *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+            font-weight: 400 !important;
         }
 
         /* Top Bar & Header */
@@ -59,9 +73,9 @@
 
         .header-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -137,7 +151,7 @@
             padding: 40px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         /* 1. Auth View Styles */
@@ -735,6 +749,79 @@
             position: relative;
         }
 
+        /* ========== Mobile Bottom Navigation ========== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+            z-index: 2000;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 8px;
+        }
+
+        .mobile-bottom-nav .bnav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .mobile-bottom-nav .bnav-item.active {
+            color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .mobile-bottom-nav .bnav-item .bnav-dot {
+            display: none;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            position: absolute;
+            bottom: 4px;
+        }
+
+        .mobile-bottom-nav .bnav-item.active .bnav-dot {
+            display: block;
+        }
+
+        .mobile-bottom-nav .bnav-item svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .mobile-bottom-nav .bnav-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: var(--danger);
+            color: white;
+            font-size: 9px;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
         /* Responsive Layout Media Queries */
         @media (max-width: 992px) {
             .dashboard-container {
@@ -751,6 +838,25 @@
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px;
+                padding-bottom: 80px;
+            }
+
+            .sidebar {
+                display: none !important;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .dashboard-content {
+                border-radius: 12px;
+                padding: 20px;
+                min-height: auto;
             }
         }
 
@@ -778,8 +884,8 @@
 <body>
     <header class="header">
         <div class="header-container">
-            <a href="index.html" class="logo">
-                <img src="images/favicon/favicon.png" alt="Storify Logo">
+            <a href="seller.html" class="logo" onclick="handleLogoClick(event)">
+                <img src="images/logo/header.png" alt="Storify Logo">
                 <span class="header-title-badge">Seller Portal</span>
             </a>
             <div class="user-nav" id="userNav">
@@ -827,6 +933,13 @@
         // Bulk selection list for products
         let selectedProductIds = [];
 
+        function handleLogoClick(event) {
+            if (user && profile && profile.seller_status === 'approved') {
+                event.preventDefault();
+                switchTab('overview');
+            }
+        }
+
         // Initialize Application
         async function initApp() {
             if (!supabaseClient) {
@@ -834,35 +947,46 @@
                 return;
             }
 
-            // Restore/Listen to auth state
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                user = session.user;
-                await fetchProfile();
-            } else {
-                user = null;
-                profile = null;
-            }
-
-            // Setup auth change listener
-            supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            try {
+                // Restore/Listen to auth state
+                const { data: { session } } = await supabaseClient.auth.getSession();
                 if (session) {
                     user = session.user;
                     await fetchProfile();
                 } else {
                     user = null;
                     profile = null;
-                    products = [];
-                    orderItems = [];
-                    payouts = [];
-                    reviews = [];
-                    showAuthForm = false; // Reset to landing page on logout
                 }
-                renderView();
-            });
+
+                // Setup auth change listener
+                supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                    try {
+                        if (session) {
+                            user = session.user;
+                            await fetchProfile();
+                        } else {
+                            user = null;
+                            profile = null;
+                            products = [];
+                            orderItems = [];
+                            payouts = [];
+                            reviews = [];
+                            showAuthForm = false; // Reset to landing page on logout
+                        }
+                        renderView();
+                    } catch (innerErr) {
+                        console.error("Auth change error:", innerErr);
+                    }
+                });
+            } catch (err) {
+                console.warn("localStorage/Supabase access error (likely file:// origin restrictions):", err);
+                user = null;
+                profile = null;
+            }
 
             renderView();
         }
+
 
         async function fetchProfile() {
             if (!user) return;
@@ -1325,6 +1449,7 @@
             // Count new orders (item_status = 'paid_escrow')
             const newOrdersCount = orderItems.filter(i => i.item_status === 'paid_escrow').length;
             const badgeHTML = newOrdersCount > 0 ? `<span class="sidebar-item-badge">${newOrdersCount}</span>` : '';
+            const mobileBadgeHTML = newOrdersCount > 0 ? `<span class="bnav-badge">${newOrdersCount}</span>` : '';
 
             container.innerHTML = `
                 <div class="dashboard-container">
@@ -1363,6 +1488,31 @@
                         <!-- Loaded dynamically based on tab -->
                     </section>
                 </div>
+
+                <!-- Mobile Bottom Navigation -->
+                <nav class="mobile-bottom-nav">
+                    <button class="bnav-item ${currentTab === 'overview' ? 'active' : ''}" onclick="switchTab('overview')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                        <span class="bnav-dot"></span>
+                    </button>
+                    <button class="bnav-item ${currentTab === 'manage' ? 'active' : ''}" onclick="switchTab('manage')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span class="bnav-dot"></span>
+                    </button>
+                    <button class="bnav-item ${currentTab === 'orders' ? 'active' : ''}" onclick="switchTab('orders')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        ${mobileBadgeHTML}
+                        <span class="bnav-dot"></span>
+                    </button>
+                    <button class="bnav-item ${currentTab === 'earnings' ? 'active' : ''}" onclick="switchTab('earnings')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <span class="bnav-dot"></span>
+                    </button>
+                    <button class="bnav-item ${currentTab === 'settings' ? 'active' : ''}" onclick="switchTab('settings')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <span class="bnav-dot"></span>
+                    </button>
+                </nav>
             `;
 
             renderTabContent();
@@ -1372,6 +1522,7 @@
             currentTab = tabId;
             selectedProductIds = []; // clear selection
             renderView();
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
         // Switch panel content based on tab
@@ -1496,7 +1647,7 @@
                 </div>
 
                 <h3 style="font-size:15px; font-weight:700; color:var(--primary); margin-bottom:15px;">Recent Customer Shipments</h3>
-                <div class="table-responsive">
+                <div class="table-responsive" style="margin-bottom: 25px;">
                     <table>
                         <thead>
                             <tr>
@@ -1509,9 +1660,9 @@
                         </thead>
                         <tbody>
                             ${orderItems.slice(0, 5).map(item => {
-                const prodName = products.find(p => p.id === item.product_id)?.name || `Product ID #${item.product_id}`;
-                const total = Number(item.price_at_purchase) * Number(item.quantity);
-                return `
+                                const prodName = products.find(p => p.id === item.product_id)?.name || `Product ID #${item.product_id}`;
+                                const total = Number(item.price_at_purchase) * Number(item.quantity);
+                                return `
                                     <tr>
                                         <td style="font-weight:700; color:var(--primary);">#${escapeHtml(item.orders?.order_ref || 'N/A')}</td>
                                         <td style="font-weight:600; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(prodName)}">${escapeHtml(prodName)}</td>
@@ -1520,7 +1671,7 @@
                                         <td><span class="badge ${getBadgeClass(item.item_status)}">${item.item_status}</span></td>
                                     </tr>
                                 `;
-            }).join('')}
+                            }).join('')}
                             ${orderItems.length === 0 ? `
                                 <tr>
                                     <td colspan="5" style="text-align:center; color:var(--text-light); padding: 20px 0;">No active shipments listed.</td>
@@ -1528,6 +1679,34 @@
                             ` : ''}
                         </tbody>
                     </table>
+                </div>
+
+                <h3 style="font-size:15px; font-weight:700; color:var(--primary); margin-bottom:15px;">Product Reviews</h3>
+                <div class="reviews-list" style="display: flex; flex-direction: column; gap: 15px;">
+                    ${reviews.slice(0, 5).map(r => {
+                        const prod = products.find(p => p.id === r.product_id) || {};
+                        const prodName = prod.name || `Product ID #${r.product_id}`;
+                        const initials = (r.name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2);
+                        return `
+                            <div style="background: var(--secondary); border: 1px solid var(--border); border-radius: 12px; padding: 18px; display: flex; gap: 15px;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size:13px; font-weight:700; color:white; flex-shrink:0;">${initials}</div>
+                                <div style="flex:1;">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+                                        <div>
+                                            <span style="font-weight:700; color:var(--primary); font-size:13px;">${escapeHtml(r.name)}</span>
+                                            <span style="font-size:11px; color:var(--text-light); margin-left: 8px;">on product: <strong>${escapeHtml(prodName)}</strong></span>
+                                        </div>
+                                        <span style="font-size:11px; color:var(--text-light);">${new Date(r.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <div style="color: var(--warning); font-size:14px; margin-bottom:6px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                                    <p style="font-size:12.5px; color: var(--text); line-height: 1.5;">${escapeHtml(r.comment)}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${reviews.length === 0 ? `
+                        <div style="text-align:center; padding: 40px 0; color:var(--text-light); font-weight:600;">No reviews written for your items yet.</div>
+                    ` : ''}
                 </div>
             `;
         }

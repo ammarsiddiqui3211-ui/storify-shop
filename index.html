@@ -6820,6 +6820,16 @@
             `;
 
             try {
+                // Refresh session to avoid JWT expired errors
+                const { error: refreshError } = await supabaseClient.auth.refreshSession();
+                if (refreshError) {
+                    console.warn("Session refresh failed:", refreshError.message);
+                    // If refresh fails, sign out and prompt re-login
+                    await supabaseClient.auth.signOut();
+                    container.innerHTML = `<p style="color:#ef4444;">Your session has expired. Please sign in again.</p>`;
+                    return;
+                }
+
                 const { data: items, error } = await supabaseClient
                     .from('order_items')
                     .select(`
