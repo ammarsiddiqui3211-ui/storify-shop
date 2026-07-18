@@ -700,7 +700,7 @@ CREATE POLICY "Allow approved sellers to upload product-images" ON storage.objec
 ALTER TABLE public.products ALTER COLUMN id RESTART WITH 1;
 
 -- ----------------------------------------------------
-11. DEDICATED ADMIN DASHBOARD SCHEMA ADDITIONS
+-- 11. DEDICATED ADMIN DASHBOARD SCHEMA ADDITIONS
 -- ----------------------------------------------------
 
 -- Add is_hidden column to products
