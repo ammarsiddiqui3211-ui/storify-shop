@@ -4729,78 +4729,7 @@
         // ----------------------------------------------------
         // PRODUCTS DATABASE (SEED AND FALLBACK)
         // ----------------------------------------------------
-        const SEED_PRODUCTS = [];
-
-        const productImageSets = {
-            1: [
-                "images/products/shirts/Item 1/1.png",
-                "images/products/shirts/Item 1/2.png"
-            ],
-            2: [
-                "images/products/shirts/Item 2/1.png",
-                "images/products/shirts/Item 2/2.png",
-                "images/products/shirts/Item 2/3.png",
-                "images/products/shirts/Item 2/4.png",
-                "images/products/shirts/Item 2/5.png"
-            ],
-            3: [
-                "images/products/shirts/Item 3/1.png",
-                "images/products/shirts/Item 3/2.png"
-            ],
-            4: [
-                "images/products/shirts/Item 4/1.png",
-                "images/products/shirts/Item 4/2.png"
-            ],
-            5: ["images/products/shirts/Item 5/1.png"],
-            6: ["images/products/shirts/Item 6/1.png"],
-            7: ["images/products/shirts/Item 7/1.png"],
-            8: ["images/products/shirts/Item 8/1.png"],
-            9: ["images/products/shirts/Item 9/1.png"],
-            11: ["images/products/watches/Item 1/1.png",
-                "images/products/watches/Item 1/2.PNG"
-            ],
-            12: ["images/products/watches/Item 2/1.jpg",
-                "images/products/watches/Item 2/2.PNG"
-            ],
-            13: ["images/products/watches/Item 3/1.jpeg",
-                "images/products/watches/Item 3/2.jpeg",
-                "images/products/watches/Item 3/3.jpeg",
-                "images/products/watches/Item 3/4.jpeg"
-            ],
-            14: ["images/products/watches/Item 4/1.jfif",
-                "images/products/watches/Item 4/2.jfif"
-            ],
-            15: ["images/products/sports/football/Trionda/1.jpeg",
-                "images/products/sports/football/Trionda/2.jpeg",
-                "images/products/sports/football/Trionda/3.jpeg",
-                "images/products/sports/football/Trionda/4.jpeg",
-                "images/products/sports/football/Trionda/5.jpeg"
-            ],
-            16: ["images/products/watches/Item 5/1.png",
-                "images/products/watches/Item 5/2.jpg",
-                "images/products/watches/Item 5/3.png",
-                "images/products/watches/Item 5/4.png"
-            ]
-        };
-
-        SEED_PRODUCTS.forEach(product => {
-            product.images = productImageSets[product.id] || [product.image];
-            product.image = product.images[0];
-            
-            // Normalize old categories to master categories
-            const oldKey = product.categoryKey;
-            const mapping = {
-                'shirts': { key: 'apparel-fashion', name: 'Apparel & Fashion' },
-                'watches': { key: 'accessories-jewelry', name: 'Accessories & Jewelry' },
-                'sports': { key: 'sports-outdoors', name: 'Sports & Outdoors' }
-            };
-            if (mapping[oldKey]) {
-                product.categoryKey = mapping[oldKey].key;
-                product.category = mapping[oldKey].name;
-            }
-        });
-
-        let products = [...SEED_PRODUCTS];
+        let products = [];
 
         function formatPrice(value) {
             const amount = Number(value || 0);
@@ -4844,8 +4773,6 @@
                     console.error("Error fetching products from Supabase:", error);
                  } else if (data && data.length > 0) {
                      products = data.map(item => {
-                         const seedMatch = typeof SEED_PRODUCTS !== 'undefined' ? SEED_PRODUCTS.find(sp => Number(sp.id) === Number(item.id)) : null;
-                         
                          let catKey = item.category_key || '';
                          let catName = item.category || '';
                          if (catKey && typeof CATEGORY_MAP !== 'undefined' && CATEGORY_MAP && Object.prototype.hasOwnProperty.call(CATEGORY_MAP, catKey)) {
@@ -4874,8 +4801,8 @@
                             verifiedBadge: !!item.verified_badge,
                             stockStatus: item.stock_status || 'available',
                             sold: item.stock_status === 'sold_out',
-                            rating: seedMatch ? Number(seedMatch.rating || 5) : 5,
-                            reviewCount: seedMatch ? Number(seedMatch.reviewCount || 0) : 0
+                            rating: 5,
+                            reviewCount: 0
                         };
                     });
                 }
