@@ -368,12 +368,13 @@
         .categories {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 40px;
+            padding: 12px 40px;
             display: flex;
-            gap: 36px;
+            gap: 10px;
             overflow-x: auto;
             scroll-behavior: smooth;
             scrollbar-width: none;
+            align-items: center;
         }
 
         .categories::-webkit-scrollbar {
@@ -381,21 +382,34 @@
         }
 
         .category-link {
-            padding: 16px 0;
-            color: var(--text);
+            padding: 6px 16px;
+            color: var(--text-light);
+            background: rgba(15, 23, 42, 0.04);
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 12.5px;
+            font-weight: 600;
             white-space: nowrap;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
+            border-radius: 50px;
+            border: 1px solid transparent;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .category-link:hover,
-        .category-link.active {
+        .category-link:hover {
             color: var(--accent);
-            border-bottom-color: var(--accent);
+            background: rgba(74, 144, 226, 0.08);
+            border-color: rgba(74, 144, 226, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .category-link.active {
+            color: #ffffff !important;
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 4px 12px var(--accent-glow);
         }
 
         /* Hero Section */
@@ -1406,8 +1420,8 @@
             }
 
             .categories {
-                padding: 0 16px;
-                gap: 20px;
+                padding: 10px 16px;
+                gap: 8px;
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
             }
@@ -1417,8 +1431,8 @@
             }
 
             .category-link {
-                font-size: 13px;
-                padding: 12px 0;
+                font-size: 11.5px;
+                padding: 5px 12px;
             }
 
             .hero {
