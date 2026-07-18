@@ -686,9 +686,11 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('product-images', 'product-images', true)
 ON CONFLICT (id) DO NOTHING;
 
+DROP POLICY IF EXISTS "Allow public read access to product-images" ON storage.objects;
 CREATE POLICY "Allow public read access to product-images" ON storage.objects
   FOR SELECT TO public USING (bucket_id = 'product-images');
 
+DROP POLICY IF EXISTS "Allow approved sellers to upload product-images" ON storage.objects;
 CREATE POLICY "Allow approved sellers to upload product-images" ON storage.objects
   FOR INSERT TO authenticated WITH CHECK (
     bucket_id = 'product-images' AND
