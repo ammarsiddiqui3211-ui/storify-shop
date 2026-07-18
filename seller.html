@@ -1225,10 +1225,34 @@
                     .select('*')
                     .eq('id', user.id)
                     .single();
-                if (!error) {
+                if (!error && data) {
                     profile = data;
                     if (profile.role === 'seller' && profile.seller_status === 'approved') {
                         await loadDashboardData();
+                    }
+                } else {
+                    console.warn("Profile not found or error, attempting to auto-create profile:", error);
+                    // Try to insert a default profile if it's missing (e.g. database reset)
+                    const { data: newProfile, error: insertError } = await supabaseClient
+                        .from('profiles')
+                        .insert({
+                            id: user.id,
+                            role: 'buyer',
+                            seller_status: 'none',
+                            seller_score: 100,
+                            name: user.user_metadata?.name || '',
+                            phone: user.user_metadata?.phone || '',
+                            address: user.user_metadata?.address || '',
+                            city: user.user_metadata?.city || '',
+                            zip: user.user_metadata?.zip || ''
+                        })
+                        .select()
+                        .single();
+                    
+                    if (!insertError && newProfile) {
+                        profile = newProfile;
+                    } else {
+                        console.error("Failed to auto-create profile:", insertError);
                     }
                 }
             } catch (err) {
@@ -1317,7 +1341,7 @@
             }
 
             // 2. Logged In, but role not seller or status 'none'
-            if (profile && (profile.role !== 'seller' || profile.seller_status === 'none')) {
+            if (!profile || (profile.role !== 'seller' || profile.seller_status === 'none')) {
                 renderRegistrationView(container);
                 return;
             }
