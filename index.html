@@ -6394,7 +6394,6 @@
 
         // Full-page account view for LOGGED-IN users
         let activeSellerTab = 'account';
-        let activeAdminTab = 'sellers';
         let addedSpecs = {};
         let addedColors = [];
         let addedSizes = [];
@@ -6418,11 +6417,6 @@
 
             const addressStr = [account.address, account.city, account.zip].filter(Boolean).join(', ') || 'No address saved';
 
-            // Admin Panel View
-            if (account.role === 'admin') {
-                renderAdminPageView(view, initials);
-                return;
-            }
 
             // Buyer Dashboard View
             view.innerHTML = `
@@ -6519,7 +6513,25 @@
                         </div>
                     </div>
 
-                    <!-- Become a Seller Promotion Card -->
+                    <!-- Become a Seller Promotion Card or Admin Dashboard Card -->
+                    ${account.role === 'admin' ? `
+                    <div class="account-page-card-premium admin-panel-card" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow); color: white; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(245, 158, 11, 0.25); position: relative; overflow: hidden;">
+                        <div style="z-index: 2;">
+                            <div class="card-header-premium" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1.5px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+                                <div class="card-icon-wrapper" style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; color: white;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                                </div>
+                                <h3 style="font-size: 16px; font-weight: 700; color: white; margin: 0;">Admin Control Panel</h3>
+                            </div>
+                            <p style="font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 20px;">
+                                Access the dedicated Storify admin dashboard to manage sellers, approve applications, toggle product badges, adjust scores, and manage payouts.
+                            </p>
+                        </div>
+                        <a href="admin.html" class="btn-premium-action" style="z-index: 2; width: 100%; padding: 14px; border-radius: 8px; border: none; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 700; font-size: 14px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.2); transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); text-align: center; text-decoration: none; display: block;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            Go to Admin Dashboard
+                        </a>
+                    </div>
+                    ` : `
                     <div class="account-page-card-premium seller-promo-card" style="background: linear-gradient(135deg, #1e1b4b 0%, #1a1a2e 100%); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow); color: white; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; border: 2px solid rgba(74, 144, 226, 0.25);">
                         <div style="z-index: 2;">
                             <div class="card-header-premium" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1.5px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
@@ -6536,6 +6548,7 @@
                             Go to Seller Portal
                         </a>
                     </div>
+                    `}
                 </div>
 
                 <!-- Buyer Order History Section -->
@@ -6593,215 +6606,6 @@
 
 
 
-        async function renderAdminPageView(view, initials) {
-            view.innerHTML = `
-                <!-- Premium Header Card (Admin Mode) -->
-                <div class="account-page-header-premium admin-header" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);">
-                    <div class="account-premium-overlay" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(74, 144, 226, 0.2) 100%);"></div>
-                    <div class="account-header-content">
-                        <div class="account-page-avatar-premium" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-weight: 800; font-size: 20px;">${escapeHtml(initials)}</span>
-                        </div>
-                        <div class="account-page-header-info" style="flex: 1; margin-left: 20px;">
-                            <span class="account-membership-badge" style="background: #f59e0b; color: var(--white); font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 6px;">Storify Administrator</span>
-                            <h1 style="color: white; font-size: 24px; font-weight: 800; margin-top: 8px;">${escapeHtml(account.name)}</h1>
-                            <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 4px;">Administrative control panel. Manage vendor applications, approve new sellers, and monitor system parameters.</p>
-                        </div>
-                        <button class="seller-signout-btn" onclick="signOutAccount()" style="border-color: rgba(255,255,255,0.3); color: white; background: none; border: 1.5px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                            Sign Out
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Admin Tab Bar -->
-                <div style="display: flex; border-bottom: 2px solid var(--border); margin-top: 30px; gap: 10px;">
-                    <button class="category-link ${activeAdminTab === 'sellers' ? 'active' : ''}" onclick="switchAdminTab('sellers', event)" style="background:none; border:none; padding: 12px 20px; font-weight:700; font-size:14px; cursor:pointer; color: ${activeAdminTab === 'sellers' ? 'var(--accent)' : 'var(--text-light)'}; border-bottom: ${activeAdminTab === 'sellers' ? '2px solid var(--accent)' : 'none'}; margin-bottom: -2px;">
-                        Sellers Management
-                    </button>
-                </div>
-
-                <div id="adminTabContent" style="margin-top: 25px; background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
-                    <!-- Loaded dynamically -->
-                </div>
-            `;
-
-            renderAdminTabContent();
-        }
-
-        function switchAdminTab(tabId, event) {
-            if (event) event.preventDefault();
-            activeAdminTab = tabId;
-            renderAccountPageView();
-        }
-
-        async function renderAdminTabContent() {
-            const container = document.getElementById('adminTabContent');
-            if (!container) return;
-
-            container.innerHTML = `
-                <div style="text-align: center; padding: 30px 0; color: var(--text-light);">
-                    <span class="spinner" style="border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; margin-bottom: 10px;"></span>
-                    <p style="font-size:12px; font-weight:600;">Loading admin panel details...</p>
-                </div>
-            `;
-
-            if (activeAdminTab === 'sellers') {
-                await renderAdminSellersTab(container);
-            }
-        }
-
-        async function renderAdminSellersTab(container) {
-            if (!supabaseClient) return;
-
-            const { data: profiles, error } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .neq('seller_status', 'none')
-                .order('updated_at', { ascending: false });
-
-            if (error) {
-                container.innerHTML = `<p style="color:var(--danger);">Failed to load sellers: ${escapeHtml(error.message)}</p>`;
-                return;
-            }
-
-            const pending = profiles.filter(p => p.seller_status === 'pending');
-            const approved = profiles.filter(p => p.seller_status === 'approved');
-            const other = profiles.filter(p => p.seller_status === 'rejected' || p.seller_status === 'suspended');
-
-            container.innerHTML = `
-                <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>Vendor Applications</span>
-                    <span style="font-size:12px; font-weight:600; padding:4px 8px; background:var(--secondary); border-radius:100px; color:var(--text-light)">${pending.length} Pending</span>
-                </h3>
-                
-                <div style="overflow-x: auto; margin-bottom: 30px;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
-                        <thead>
-                            <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                <th style="padding: 12px 10px; background: var(--secondary);">Shop Name</th>
-                                <th style="padding: 12px 10px; background: var(--secondary);">Owner Details</th>
-                                <th style="padding: 12px 10px; background: var(--secondary);">Payout Details</th>
-                                <th style="padding: 12px 10px; background: var(--secondary);">Status</th>
-                                <th style="padding: 12px 10px; background: var(--secondary); text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${pending.map(p => `
-                                <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
-                                    <td style="padding: 14px 10px; font-weight:700; color:var(--primary);">${escapeHtml(p.shop_name)}</td>
-                                    <td style="padding: 14px 10px; line-height: 1.45;">
-                                        <strong>${escapeHtml(p.name)}</strong><br>
-                                        📞 ${escapeHtml(p.phone)}
-                                    </td>
-                                    <td style="padding: 14px 10px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(p.bank_account_details)}">${escapeHtml(p.bank_account_details)}</td>
-                                    <td style="padding: 14px 10px;">
-                                        <span class="badge badge-pending" style="display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; background: #fff8e1; color: #b78103; text-transform:uppercase;">Pending</span>
-                                    </td>
-                                    <td style="padding: 14px 10px; text-align: center; white-space: nowrap;">
-                                        <button class="btn" style="padding: 6px 12px; font-size: 11px; margin-right: 8px; background:var(--accent); color:white; border:none; cursor:pointer; font-weight:700; border-radius:6px;" onclick="setSellerStatus('${p.id}', 'approved')">Approve</button>
-                                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px; cursor:pointer; font-weight:700; border-radius:6px;" onclick="setSellerStatus('${p.id}', 'rejected')">Reject</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                            ${pending.length === 0 ? `
-                                <tr>
-                                    <td colspan="5" style="text-align: center; color: var(--text-light); padding: 20px 0;">No pending seller applications.</td>
-                                </tr>
-                            ` : ''}
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3 style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 15px; border-top: 1.5px solid var(--border); padding-top: 25px;">Active & Suspended Sellers</h3>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
-                        <thead>
-                            <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                <th style="padding: 12px 10px; background: var(--secondary);">Shop Name</th>
-                                <th style="padding: 12px 10px; background: var(--secondary);">Owner Details</th>
-                                <th style="padding: 12px 10px; background: var(--secondary);">Payout Details</th>
-                                <th style="padding: 12px 10px; background: var(--secondary);">Status</th>
-                                <th style="padding: 12px 10px; background: var(--secondary); text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${[...approved, ...other].map(p => `
-                                <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
-                                    <td style="padding: 14px 10px; font-weight:700; color:var(--primary);">${escapeHtml(p.shop_name)}</td>
-                                    <td style="padding: 14px 10px; line-height: 1.45;">
-                                        <strong>${escapeHtml(p.name)}</strong><br>
-                                        📞 ${escapeHtml(p.phone)}
-                                    </td>
-                                    <td style="padding: 14px 10px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(p.bank_account_details)}">${escapeHtml(p.bank_account_details)}</td>
-                                    <td style="padding: 14px 10px;">
-                                        ${p.seller_status === 'approved' 
-                                            ? `<span class="badge badge-completed" style="display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; background: #e8f5e9; color: #2e7d32; text-transform:uppercase;">Approved</span>` 
-                                            : p.seller_status === 'suspended'
-                                                ? `<span class="badge badge-disputed" style="display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; background: #ffebee; color: #c62828; text-transform:uppercase;">Suspended</span>`
-                                                : `<span class="badge" style="display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; background: #eceff1; color: #37474f; text-transform:uppercase;">Rejected</span>`
-                                        }
-                                    </td>
-                                    <td style="padding: 14px 10px; text-align: center;">
-                                        ${p.seller_status === 'approved'
-                                            ? `<button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px; cursor:pointer; font-weight:700; border-radius:6px;" onclick="setSellerStatus('${p.id}', 'suspended')">Suspend</button>`
-                                            : p.seller_status === 'suspended'
-                                                ? `<button class="btn" style="padding: 6px 12px; font-size: 11px; background:var(--accent); color:white; border:none; cursor:pointer; font-weight:700; border-radius:6px;" onclick="setSellerStatus('${p.id}', 'approved')">Unsuspend</button>`
-                                                : `<button class="btn" style="padding: 6px 12px; font-size: 11px; background:var(--accent); color:white; border:none; cursor:pointer; font-weight:700; border-radius:6px;" onclick="setSellerStatus('${p.id}', 'approved')">Approve</button>`
-                                        }
-                                    </td>
-                                </tr>
-                            `).join('')}
-                            ${[...approved, ...other].length === 0 ? `
-                                <tr>
-                                    <td colspan="5" style="text-align: center; color: var(--text-light); padding: 20px 0;">No active/suspended sellers.</td>
-                                </tr>
-                            ` : ''}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        async function setSellerStatus(sellerId, newStatus) {
-            if (!confirm(`Are you sure you want to set status to ${newStatus}?`)) return;
-            try {
-                const updatePayload = { seller_status: newStatus };
-                if (newStatus === 'approved') {
-                    updatePayload.role = 'seller';
-                }
-                const { error } = await supabaseClient
-                    .from('profiles')
-                    .update(updatePayload)
-                    .eq('id', sellerId);
-
-                if (error) throw error;
-                showToast(`Seller status updated to ${newStatus}!`);
-
-                if (newStatus === 'approved' || newStatus === 'rejected') {
-                    supabaseClient.auth.getSession().then(({ data: { session } }) => {
-                        const token = session?.access_token || SUPABASE_ANON_KEY;
-                        fetch(`${SUPABASE_URL}/functions/v1/send-owner-notification`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({
-                                type: newStatus === 'approved' ? 'seller_approved' : 'seller_rejected',
-                                seller_id: sellerId
-                            })
-                        }).catch(err => {
-                            console.error("Failed to send seller notification email:", err);
-                        });
-                    });
-                }
-
-                renderAccountPageView();
-            } catch (err) {
-                alert("Operation failed: " + err.message);
-            }
-        }
 
         async function renderBuyerOrdersSection() {
             const container = document.getElementById('buyerOrdersContainer');

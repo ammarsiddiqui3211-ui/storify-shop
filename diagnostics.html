@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storify Admin Diagnostics</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 40px;
+            background: #0f172a;
+            color: #38bdf8;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #f1f5f9;
+            margin-top: 0;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 6px;
+            border: 1px solid #1e293b;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .warning { color: #fbbf24; }
+        pre {
+            margin: 0;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        button {
+            padding: 10px 20px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #0369a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Storify Admin Diagnostics</h1>
+        
+        <div class="section">
+            <div class="section-title">Supabase Connection</div>
+            <div id="connection-status">Connecting...</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Auth Session Status</div>
+            <div id="auth-status">Checking...</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Local Storage Cache</div>
+            <div id="local-cache">Checking...</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Database Profile Role</div>
+            <div id="db-profile">Checking...</div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="runDiagnostics()">Rerun Diagnostics</button>
+            <button onclick="makeMeAdmin()" style="background: #e11d48;">Promote My User to Admin</button>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://goguiruuirltoiofmvuj.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvZ3VpcnV1aXJsdG9pb2ZtdnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMDU4MTYsImV4cCI6MjA5ODY4MTgxNn0.N8BCHCsDet0Bpxhe7P9iK0U6vs6NbsChdgNEI8OAFzc";
+        let supabaseClient = null;
+
+        async function init() {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                document.getElementById('connection-status').innerHTML = `<span class="success">Connected to Supabase endpoint!</span>`;
+                await runDiagnostics();
+            } catch (err) {
+                document.getElementById('connection-status').innerHTML = `<span class="error">Failed to connect: ${err.message}</span>`;
+            }
+        }
+
+        async function runDiagnostics() {
+            if (!supabaseClient) return;
+
+            // Check Session
+            let session = null;
+            let user = null;
+            try {
+                const res = await supabaseClient.auth.getSession();
+                session = res.data.session;
+                user = session ? session.user : null;
+
+                if (session) {
+                    document.getElementById('auth-status').innerHTML = `
+                        <span class="success">Active session found!</span><br>
+                        <strong>User ID:</strong> ${user.id}<br>
+                        <strong>Email:</strong> ${user.email}
+                    `;
+                } else {
+                    document.getElementById('auth-status').innerHTML = `<span class="warning">No active session found. Please log in on the main storefront (index.html).</span>`;
+                }
+            } catch (err) {
+                document.getElementById('auth-status').innerHTML = `<span class="error">Error getting session: ${err.message}</span>`;
+            }
+
+            // Check Local Storage Cache
+            try {
+                const cacheStr = localStorage.getItem('storify_account');
+                if (cacheStr) {
+                    const cache = JSON.parse(cacheStr);
+                    document.getElementById('local-cache').innerHTML = `
+                        <strong>Cache Found:</strong><br>
+                        <pre>${JSON.stringify(cache, null, 2)}</pre>
+                    `;
+                } else {
+                    document.getElementById('local-cache').innerHTML = `<span class="warning">No storify_account local storage cache found.</span>`;
+                }
+            } catch (err) {
+                document.getElementById('local-cache').innerHTML = `<span class="error">Error reading local cache: ${err.message}</span>`;
+            }
+
+            // Check Database Profile Role
+            if (user) {
+                try {
+                    const { data: profile, error } = await supabaseClient
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (error) {
+                        document.getElementById('db-profile').innerHTML = `<span class="error">Failed to fetch profile: ${error.message}</span>`;
+                    } else if (profile) {
+                        const isRoleAdmin = profile.role === 'admin';
+                        document.getElementById('db-profile').innerHTML = `
+                            <strong>Profile Details:</strong><br>
+                            <strong>Role:</strong> <span class="${isRoleAdmin ? 'success' : 'warning'}">${profile.role}</span> ${isRoleAdmin ? '(Validated!)' : '(Must be admin)'}<br>
+                            <strong>Seller Status:</strong> ${profile.seller_status}<br>
+                            <strong>Full JSON:</strong><br>
+                            <pre>${JSON.stringify(profile, null, 2)}</pre>
+                        `;
+                    }
+                } catch (err) {
+                    document.getElementById('db-profile').innerHTML = `<span class="error">Profile check exception: ${err.message}</span>`;
+                }
+            } else {
+                document.getElementById('db-profile').innerHTML = `<span class="warning">Sign in on the storefront to test database profile role.</span>`;
+            }
+        }
+
+        async function makeMeAdmin() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                alert("Please log in on the storefront first!");
+                return;
+            }
+
+            const userId = session.user.id;
+            
+            // Try updating from client-side
+            try {
+                const { error } = await supabaseClient
+                    .from('profiles')
+                    .update({ role: 'admin' })
+                    .eq('id', userId);
+
+                if (error) {
+                    throw error;
+                }
+
+                alert("Successfully promoted your profile role to 'admin'!");
+                
+                // Clear local storage so index.html forces refetch
+                localStorage.removeItem('storify_account');
+                
+                await runDiagnostics();
+            } catch (err) {
+                console.error(err);
+                alert("Could not update role directly from client due to RLS/trigger controls:\n\n" + err.message + "\n\nPlease run the SQL UPDATE script inside your Supabase dashboard SQL editor instead.");
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

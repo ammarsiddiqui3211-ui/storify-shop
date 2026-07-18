@@ -1091,10 +1091,72 @@
         let reviews = [];
 
         // Global variables for Add Product variant builders
+        let addedProductTitle = '';
+        let addedProductCategory = 'Apparel & Fashion';
+        let addedProductPrice = '';
+        let addedProductOriginalPrice = '';
+        let addedProductDescription = '';
         let addedSpecs = {};
         let addedColors = [];
         let addedSizes = [];
         let selectedImageFiles = [];
+
+        // Save state to sessionStorage
+        function saveAddProductState() {
+            try {
+                const state = {
+                    title: addedProductTitle,
+                    category: addedProductCategory,
+                    price: addedProductPrice,
+                    originalPrice: addedProductOriginalPrice,
+                    description: addedProductDescription,
+                    specs: addedSpecs,
+                    colors: addedColors,
+                    sizes: addedSizes
+                };
+                sessionStorage.setItem('addProductState', JSON.stringify(state));
+            } catch (e) {
+                console.error("Failed to save add product state:", e);
+            }
+        }
+
+        // Load state from sessionStorage
+        function loadAddProductState() {
+            try {
+                const saved = sessionStorage.getItem('addProductState');
+                if (saved) {
+                    const state = JSON.parse(saved);
+                    addedProductTitle = state.title || '';
+                    addedProductCategory = state.category || 'Apparel & Fashion';
+                    addedProductPrice = state.price || '';
+                    addedProductOriginalPrice = state.originalPrice || '';
+                    addedProductDescription = state.description || '';
+                    addedSpecs = state.specs || {};
+                    addedColors = state.colors || [];
+                    addedSizes = state.sizes || [];
+                }
+            } catch (e) {
+                console.error("Failed to load add product state:", e);
+            }
+        }
+
+        // Clear state on successful list
+        function clearAddProductState() {
+            addedProductTitle = '';
+            addedProductCategory = 'Apparel & Fashion';
+            addedProductPrice = '';
+            addedProductOriginalPrice = '';
+            addedProductDescription = '';
+            addedSpecs = {};
+            addedColors = [];
+            addedSizes = [];
+            selectedImageFiles = [];
+            try {
+                sessionStorage.removeItem('addProductState');
+            } catch (e) {
+                console.error("Failed to clear add product state:", e);
+            }
+        }
 
         // Bulk selection list for products
         let selectedProductIds = [];
@@ -1108,6 +1170,7 @@
 
         // Initialize Application
         async function initApp() {
+            loadAddProductState();
             if (!supabaseClient) {
                 document.getElementById('loadingState').innerHTML = `<p style="color:var(--danger)">Supabase failed to initialize. Please check configurations.</p>`;
                 return;
@@ -1888,32 +1951,30 @@
         // ==========================================
         // 4B. TAB: ADD PRODUCT
         // ==========================================
-        function renderAddProductTab(container) {
-            addedSpecs = {};
-            addedColors = [];
-            addedSizes = [];
-            selectedImageFiles = [];
-
-            container.innerHTML = `
-                <div class="dashboard-header">
+        function getAddProductFormHTML(isMobileForm = false) {
+            const formStyle = isMobileForm ? 'style="margin-bottom: 40px; border-bottom: 2px dashed var(--border); padding-bottom: 30px;"' : '';
+            const titleStyle = isMobileForm ? 'style="margin-top: 10px;"' : '';
+            
+            return `
+                <div class="dashboard-header" ${titleStyle}>
                     <h2 class="dashboard-title">Add New Product</h2>
                 </div>
-                <form id="addProductForm" onsubmit="handleProductSubmit(event)">
+                <form id="addProductForm" onsubmit="handleProductSubmit(event)" ${formStyle}>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
                         <div class="form-group">
                             <label for="prodName">Product Title *</label>
-                            <input type="text" id="prodName" class="form-control" placeholder="e.g. Premium Cotton Polo Tee" required>
+                            <input type="text" id="prodName" class="form-control" placeholder="e.g. Premium Cotton Polo Tee" required value="${escapeHtml(addedProductTitle)}" oninput="addedProductTitle = this.value; saveAddProductState();">
                         </div>
                         <div class="form-group">
                             <label for="prodCategory">Category *</label>
-                            <select id="prodCategory" class="form-control" required>
-                                <option value="Apparel & Fashion" data-key="apparel-fashion">Apparel & Fashion</option>
-                                <option value="Electronics & Tech" data-key="electronics-tech">Electronics & Tech</option>
-                                <option value="Home & Living" data-key="home-living">Home & Living</option>
-                                <option value="Personal Care & Beauty" data-key="personal-care-beauty">Personal Care & Beauty</option>
-                                <option value="Sports & Outdoors" data-key="sports-outdoors">Sports & Outdoors</option>
-                                <option value="Accessories & Jewelry" data-key="accessories-jewelry">Accessories & Jewelry</option>
-                                <option value="Stationery & Office" data-key="stationery-office">Stationery & Office</option>
+                            <select id="prodCategory" class="form-control" required onchange="addedProductCategory = this.value; saveAddProductState();">
+                                <option value="Apparel & Fashion" data-key="apparel-fashion" ${addedProductCategory === 'Apparel & Fashion' ? 'selected' : ''}>Apparel & Fashion</option>
+                                <option value="Electronics & Tech" data-key="electronics-tech" ${addedProductCategory === 'Electronics & Tech' ? 'selected' : ''}>Electronics & Tech</option>
+                                <option value="Home & Living" data-key="home-living" ${addedProductCategory === 'Home & Living' ? 'selected' : ''}>Home & Living</option>
+                                <option value="Personal Care & Beauty" data-key="personal-care-beauty" ${addedProductCategory === 'Personal Care & Beauty' ? 'selected' : ''}>Personal Care & Beauty</option>
+                                <option value="Sports & Outdoors" data-key="sports-outdoors" ${addedProductCategory === 'Sports & Outdoors' ? 'selected' : ''}>Sports & Outdoors</option>
+                                <option value="Accessories & Jewelry" data-key="accessories-jewelry" ${addedProductCategory === 'Accessories & Jewelry' ? 'selected' : ''}>Accessories & Jewelry</option>
+                                <option value="Stationery & Office" data-key="stationery-office" ${addedProductCategory === 'Stationery & Office' ? 'selected' : ''}>Stationery & Office</option>
                             </select>
                         </div>
                     </div>
@@ -1921,17 +1982,17 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
                         <div class="form-group">
                             <label for="prodPrice">Price (RS) *</label>
-                            <input type="number" id="prodPrice" class="form-control" placeholder="e.g. 1200" required>
+                            <input type="number" id="prodPrice" class="form-control" placeholder="e.g. 1200" required value="${escapeHtml(addedProductPrice)}" oninput="addedProductPrice = this.value; saveAddProductState();">
                         </div>
                         <div class="form-group">
                             <label for="prodOriginalPrice">Original Price (RS, Optional for discount)</label>
-                            <input type="number" id="prodOriginalPrice" class="form-control" placeholder="e.g. 1800">
+                            <input type="number" id="prodOriginalPrice" class="form-control" placeholder="e.g. 1800" value="${escapeHtml(addedProductOriginalPrice)}" oninput="addedProductOriginalPrice = this.value; saveAddProductState();">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="prodDescription">Description *</label>
-                        <textarea id="prodDescription" class="form-control" placeholder="Describe your product specs and features in detail..." style="height: 100px; resize:none;" required></textarea>
+                        <textarea id="prodDescription" class="form-control" placeholder="Describe your product specs and features in detail..." style="height: 100px; resize:none;" required oninput="addedProductDescription = this.value; saveAddProductState();">${escapeHtml(addedProductDescription)}</textarea>
                     </div>
 
                     <div class="form-group">
@@ -1960,7 +2021,7 @@
                             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
                                 ${['S', 'M', 'L', 'XL', 'XXL'].map(sz => `
                                     <label style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
-                                        <input type="checkbox" value="${sz}" onchange="toggleSize(this.value, this.checked)">
+                                        <input type="checkbox" value="${sz}" onchange="toggleSize(this.value, this.checked)" ${addedSizes.includes(sz) ? 'checked' : ''}>
                                         <span>${sz}</span>
                                     </label>
                                 `).join('')}
@@ -1983,21 +2044,29 @@
             `;
         }
 
-        function handleImageSelect(files) {
+        function initAddProductForm(isMobileForm = false) {
+            renderColors();
+            renderSpecs();
+            renderImagePreviews();
+        }
+
+        function renderAddProductTab(container) {
+            container.innerHTML = getAddProductFormHTML(false);
+            initAddProductForm(false);
+        }
+
+        function renderImagePreviews() {
             const container = document.getElementById('imagePreviews');
             if (!container) return;
-
-            Array.from(files).forEach(file => {
-                if (selectedImageFiles.length >= 5) return;
-                selectedImageFiles.push(file);
-
+            container.innerHTML = '';
+            selectedImageFiles.forEach((file, idx) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const div = document.createElement('div');
                     div.style.position = 'relative';
                     div.innerHTML = `
                         <img src="${e.target.result}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1.5px solid var(--border);">
-                        <button type="button" onclick="removeImage(${selectedImageFiles.length - 1})" style="position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--danger); color: white; border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+                        <button type="button" onclick="removeImage(${idx})" style="position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--danger); color: white; border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
                     `;
                     container.appendChild(div);
                 };
@@ -2005,25 +2074,17 @@
             });
         }
 
+        function handleImageSelect(files) {
+            Array.from(files).forEach(file => {
+                if (selectedImageFiles.length >= 5) return;
+                selectedImageFiles.push(file);
+            });
+            renderImagePreviews();
+        }
+
         function removeImage(index) {
             selectedImageFiles.splice(index, 1);
-            const container = document.getElementById('imagePreviews');
-            if (container) {
-                container.innerHTML = '';
-                selectedImageFiles.forEach((file, idx) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const div = document.createElement('div');
-                        div.style.position = 'relative';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1.5px solid var(--border);">
-                            <button type="button" onclick="removeImage(${idx})" style="position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--danger); color: white; border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
-                        `;
-                        container.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
+            renderImagePreviews();
         }
 
         function addColor() {
@@ -2034,12 +2095,14 @@
             if (color && !addedColors.includes(color)) {
                 addedColors.push(color);
                 hex.value = '';
+                saveAddProductState();
                 renderColors();
             }
         }
 
         function removeColor(color) {
             addedColors = addedColors.filter(c => c !== color);
+            saveAddProductState();
             renderColors();
         }
 
@@ -2061,6 +2124,7 @@
             } else {
                 addedSizes = addedSizes.filter(s => s !== size);
             }
+            saveAddProductState();
         }
 
         function addSpec() {
@@ -2073,12 +2137,14 @@
                 addedSpecs[key] = val;
                 kInput.value = '';
                 vInput.value = '';
+                saveAddProductState();
                 renderSpecs();
             }
         }
 
         function removeSpec(key) {
             delete addedSpecs[key];
+            saveAddProductState();
             renderSpecs();
         }
 
@@ -2153,6 +2219,7 @@
                 if (insertError) throw insertError;
 
                 alert("Product listed successfully!");
+                clearAddProductState();
                 await loadDashboardData();
                 switchTab('manage');
             } catch (err) {
@@ -2183,99 +2250,7 @@
 
             let addProductFormHTML = '';
             if (isMobile) {
-                // Initialize form states
-                addedSpecs = addedSpecs || {};
-                addedColors = addedColors || [];
-                addedSizes = addedSizes || [];
-                selectedImageFiles = selectedImageFiles || [];
-
-                addProductFormHTML = `
-                    <div class="dashboard-header" style="margin-top: 10px;">
-                        <h2 class="dashboard-title">Add New Product</h2>
-                    </div>
-                    <form id="addProductForm" onsubmit="handleProductSubmit(event)" style="margin-bottom: 40px; border-bottom: 2px dashed var(--border); padding-bottom: 30px;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-                            <div class="form-group">
-                                <label for="prodName">Product Title *</label>
-                                <input type="text" id="prodName" class="form-control" placeholder="e.g. Premium Cotton Polo Tee" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="prodCategory">Category *</label>
-                                <select id="prodCategory" class="form-control" required>
-                                    <option value="Apparel & Fashion" data-key="apparel-fashion">Apparel & Fashion</option>
-                                    <option value="Electronics & Tech" data-key="electronics-tech">Electronics & Tech</option>
-                                    <option value="Home & Living" data-key="home-living">Home & Living</option>
-                                    <option value="Personal Care & Beauty" data-key="personal-care-beauty">Personal Care & Beauty</option>
-                                    <option value="Sports & Outdoors" data-key="sports-outdoors">Sports & Outdoors</option>
-                                    <option value="Accessories & Jewelry" data-key="accessories-jewelry">Accessories & Jewelry</option>
-                                    <option value="Stationery & Office" data-key="stationery-office">Stationery & Office</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-                            <div class="form-group">
-                                <label for="prodPrice">Price (RS) *</label>
-                                <input type="number" id="prodPrice" class="form-control" placeholder="e.g. 1200" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="prodOriginalPrice">Original Price (RS, Optional for discount)</label>
-                                <input type="number" id="prodOriginalPrice" class="form-control" placeholder="e.g. 1800">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="prodDescription">Description *</label>
-                            <textarea id="prodDescription" class="form-control" placeholder="Describe your product specs and features in detail..." style="height: 100px; resize:none;" required></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Product Images * (Max 5)</label>
-                            <div style="border: 2px dashed var(--border); border-radius: 8px; padding: 25px; text-align: center; cursor: pointer; background: var(--secondary);" onclick="document.getElementById('productImageFiles').click()">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2" style="margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                <p style="font-size: 13px; font-weight: 600;">Click to upload images</p>
-                                <input type="file" id="productImageFiles" multiple accept="image/*" style="display: none;" onchange="handleImageSelect(this.files)">
-                            </div>
-                            <div id="imagePreviews" style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;"></div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 20px;">
-                            <div class="form-group">
-                                <label>Product Colors</label>
-                                <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center;">
-                                    <input type="color" id="colorPicker" value="#4a90e2" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;">
-                                    <input type="text" id="colorHex" class="form-control" placeholder="#4A90E2" style="flex: 1;">
-                                    <button type="button" class="btn" onclick="addColor()">+ Add</button>
-                                </div>
-                                <div id="colorsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Product Sizes / Variants</label>
-                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
-                                    ${['S', 'M', 'L', 'XL', 'XXL'].map(sz => `
-                                        <label style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
-                                            <input type="checkbox" value="${sz}" onchange="toggleSize(this.value, this.checked)">
-                                            <span>${sz}</span>
-                                        </label>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-top: 20px;">
-                            <label>Technical Specifications / Details</label>
-                            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                                <input type="text" id="specKey" class="form-control" placeholder="e.g. Fabric" style="flex: 1;">
-                                <input type="text" id="specVal" class="form-control" placeholder="e.g. 100% Cotton" style="flex: 1.5;">
-                                <button type="button" class="btn" onclick="addSpec()">+ Add Spec</button>
-                            </div>
-                            <div id="specsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
-                        </div>
-
-                        <button type="submit" id="addProdSubmitBtn" class="btn-submit" style="margin-top: 25px;">List Product</button>
-                    </form>
-                `;
+                addProductFormHTML = getAddProductFormHTML(true);
             }
 
             container.innerHTML = `
@@ -2358,6 +2333,9 @@
                     </table>
                 </div>
             `;
+            if (isMobile) {
+                initAddProductForm(true);
+            }
         }
 
         function filterManageSearch(val) {
