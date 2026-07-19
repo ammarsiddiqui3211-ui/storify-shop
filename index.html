@@ -100,11 +100,39 @@
         .header {
             background: var(--white);
             border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
+            position: relative;
             z-index: 1000;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.95);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        }
+
+        .header.sticky-scrolled-down {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(0);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header.sticky-scrolled-down .categories-bar {
+            display: none !important;
+        }
+
+        .header.sticky-scrolled-up {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(-100%);
+            box-shadow: none;
+            pointer-events: none;
+        }
+
+        .header.sticky-scrolled-up .categories-bar {
+            display: none !important;
         }
 
         .top-bar {
@@ -124,7 +152,7 @@
         }
 
         .nav-container {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 0 40px;
         }
@@ -172,7 +200,7 @@
 
         .search-input {
             width: 100%;
-            padding: 14px 50px 14px 20px;
+            padding: 14px 50px 14px 48px;
             border: 2px solid var(--border);
             border-radius: 50px;
             font-size: 15px;
@@ -186,6 +214,172 @@
             border-color: var(--accent);
             background: var(--white);
             box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        /* Search Bar Filter Icon */
+        .search-filter-icon {
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 2;
+        }
+
+        .search-filter-icon:hover {
+            background: rgba(74, 144, 226, 0.1);
+            color: var(--accent);
+        }
+
+        .search-filter-icon.active {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Search Filter Panel */
+        .search-filter-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+            z-index: 200;
+            padding: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .search-filter-panel.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .sfp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sfp-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sfp-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-light);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .sfp-close:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .sfp-group {
+            padding: 12px 18px 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .sfp-group:last-of-type {
+            border-bottom: none;
+        }
+
+        .sfp-group-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .sfp-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .sfp-options a {
+            display: inline-block;
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.15s ease;
+            font-weight: 500;
+        }
+
+        .sfp-options a:hover {
+            border-color: var(--accent);
+            background: rgba(74, 144, 226, 0.06);
+            color: var(--accent);
+        }
+
+        .sfp-options a.sfp-selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--white);
+        }
+
+        .sfp-footer {
+            padding: 10px 18px 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sfp-reset-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .sfp-reset-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.04);
         }
 
         .search-btn {
@@ -241,6 +435,19 @@
         .nav-btn:hover {
             background: var(--secondary);
             color: var(--primary);
+        }
+
+        .nav-btn.active,
+        .mobile-nav-actions button.active {
+            color: #ffffff !important;
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        .nav-btn.active .cart-count {
+            background: var(--white) !important;
+            color: var(--accent) !important;
         }
 
         .cart-btn {
@@ -319,8 +526,8 @@
         }
 
         .categories-wrapper {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
             position: relative;
             display: flex;
             align-items: center;
@@ -366,8 +573,8 @@
         }
 
         .categories {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
             padding: 12px 40px;
             display: flex;
             gap: 10px;
@@ -402,7 +609,6 @@
             color: var(--accent);
             background: rgba(74, 144, 226, 0.08);
             border-color: rgba(74, 144, 226, 0.15);
-            transform: translateY(-1px);
         }
 
         .category-link.active {
@@ -414,7 +620,7 @@
 
         /* Hero Section */
         .hero {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 40px auto;
             padding: 0 40px;
         }
@@ -597,7 +803,7 @@
 
         /* Main Content */
         .container {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 60px 40px;
         }
@@ -803,7 +1009,7 @@
 
         .current-price {
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 500;
             color: var(--primary);
         }
 
@@ -821,7 +1027,7 @@
             padding: 8px;
             border-radius: 6px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             letter-spacing: 0.5px;
@@ -899,7 +1105,7 @@
         }
 
         .footer-content {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -935,7 +1141,7 @@
         }
 
         .footer-bottom {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             padding-top: 30px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -1385,8 +1591,96 @@
             }
 
             .search-input {
-                padding: 10px 42px 10px 16px;
+                padding: 10px 42px 10px 40px;
                 font-size: 14px;
+            }
+
+            .search-filter-icon {
+                left: 4px;
+                width: 30px;
+                height: 30px;
+            }
+
+            .search-filter-icon svg {
+                width: 15px;
+                height: 15px;
+            }
+
+            .search-filter-panel {
+                position: fixed !important;
+                top: 70px !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                border-radius: 0 !important;
+                z-index: 9999 !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                background: #ffffff !important;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
+                border: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                transform: none !important;
+                transition: opacity 0.2s ease, visibility 0.2s ease !important;
+            }
+
+            .search-filter-panel.open {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            .sfp-header {
+                position: sticky;
+                top: 0;
+                background: #ffffff;
+                z-index: 2;
+                padding: 10px 16px 8px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sfp-title {
+                font-size: 14px;
+            }
+
+            .sfp-close {
+                font-size: 22px;
+                width: 28px;
+                height: 28px;
+            }
+
+            .sfp-group {
+                padding: 8px 16px 6px;
+            }
+
+            .sfp-group-label {
+                font-size: 10px;
+                margin-bottom: 5px;
+            }
+
+            .sfp-options {
+                gap: 5px;
+            }
+
+            .sfp-options a {
+                padding: 5px 11px;
+                font-size: 12px;
+            }
+
+            .sfp-footer {
+                position: sticky;
+                bottom: 0;
+                background: #ffffff;
+                padding: 8px 16px 12px;
+                border-top: 1px solid var(--border);
+            }
+
+            .sfp-reset-btn {
+                padding: 5px 12px;
+                font-size: 12px;
             }
 
             .search-btn {
@@ -2712,7 +3006,7 @@
 
         /* Full-page Account View (for logged-in users) */
         #account-page-view {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 40px 40px 60px;
         }
@@ -4435,6 +4729,337 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
             border-color: var(--accent) !important;
         }
+
+        /* Graphic Categories Section */
+        .graphic-categories-section {
+            margin-bottom: 40px;
+        }
+
+        .graphic-categories-section .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .graphic-categories-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            padding: 8px 4px 20px 4px;
+            margin: 0 -4px;
+        }
+
+        .graphic-categories-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-card {
+            width: 100%;
+            height: 110px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            text-decoration: none;
+        }
+
+        .category-card img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+
+        .category-card-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card[data-category="all"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.9) 0%, rgba(13, 148, 136, 0.35) 100%);
+        }
+        .category-card[data-category="featured"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.9) 0%, rgba(109, 40, 217, 0.35) 100%);
+        }
+        .category-card[data-category="electronics-tech"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(3, 105, 161, 0.9) 0%, rgba(3, 105, 161, 0.35) 100%);
+        }
+        .category-card[data-category="apparel-fashion"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(190, 24, 74, 0.9) 0%, rgba(190, 24, 74, 0.35) 100%);
+        }
+        .category-card[data-category="home-living"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(180, 83, 9, 0.9) 0%, rgba(180, 83, 9, 0.35) 100%);
+        }
+        .category-card[data-category="personal-care-beauty"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(219, 39, 119, 0.9) 0%, rgba(219, 39, 119, 0.35) 100%);
+        }
+        .category-card[data-category="sports-outdoors"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(4, 120, 87, 0.9) 0%, rgba(4, 120, 87, 0.35) 100%);
+        }
+        .category-card[data-category="accessories-jewelry"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(194, 65, 12, 0.9) 0%, rgba(194, 65, 12, 0.35) 100%);
+        }
+        .category-card[data-category="stationery-office"] .category-card-overlay {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(51, 65, 85, 0.35) 100%);
+        }
+
+        .category-card-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-card-title {
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+            max-width: 130px;
+        }
+
+        .category-card-icon {
+            color: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .category-card:hover .category-card-icon {
+            transform: translateX(3px);
+        }
+
+        .category-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent), 0 8px 24px var(--accent-glow);
+            transform: scale(1.02);
+        }
+        
+        .category-card.active .category-card-overlay {
+            opacity: 0.95;
+        }
+
+        @media (max-width: 768px) {
+            .graphic-categories-list {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            .category-card {
+                height: 90px;
+                padding: 12px;
+                border-radius: 12px;
+            }
+            .category-card-title {
+                font-size: 14px;
+            }
+            .category-card-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+            .graphic-categories-section .section-title {
+                font-size: 20px;
+                margin-bottom: 14px;
+            }
+        }
+
+        .container.filtered-view {
+            padding-top: 20px;
+        }
+
+        /* Filter Bar Section */
+        .filter-bar-section {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 16px 0;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .filter-pills-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill-dropdown {
+            position: relative;
+        }
+
+        .filter-pill-btn {
+            background: var(--white);
+            color: var(--text);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .filter-pill-btn:hover {
+            border-color: var(--accent);
+            background: rgba(74, 144, 226, 0.04);
+            color: var(--accent);
+        }
+
+        .filter-pill-btn svg {
+            transition: transform 0.2s ease;
+        }
+
+        .filter-pill-dropdown.active .filter-pill-btn svg {
+            transform: rotate(180deg);
+        }
+
+        .filter-pill-dropdown.active .filter-pill-btn {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .filter-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background: var(--white);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 180px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            padding: 6px;
+        }
+
+        .filter-pill-dropdown.active .filter-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .filter-dropdown-menu a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 13.5px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .filter-dropdown-menu a:hover {
+            background: rgba(74, 144, 226, 0.06);
+            color: var(--accent);
+        }
+
+        .filter-dropdown-menu a.selected {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .filter-icon-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(74, 144, 226, 0.08);
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-icon-indicator:hover {
+            background: var(--accent);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+
+        .filter-pill-dropdown:last-child .filter-dropdown-menu {
+            left: auto;
+            right: 0;
+        }
+
+        @media (max-width: 768px) {
+            #priceFilterPill {
+                display: none !important;
+            }
+            .filter-bar-section {
+                padding: 12px 0 !important;
+                margin-bottom: 16px !important;
+                gap: 8px !important;
+                overflow: visible !important;
+            }
+            .filter-pills-container {
+                flex-wrap: nowrap !important;
+                overflow: visible !important;
+                scrollbar-width: none !important;
+                gap: 8px !important;
+                flex-grow: 1 !important;
+                padding-bottom: 0 !important;
+            }
+            .filter-pills-container::-webkit-scrollbar {
+                display: none !important;
+            }
+            .filter-pill-btn {
+                padding: 6px 12px !important;
+                font-size: 12px !important;
+                white-space: nowrap !important;
+            }
+            .filter-pill-btn span {
+                display: inline-block !important;
+                max-width: 110px !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                vertical-align: middle !important;
+            }
+            .filter-icon-indicator {
+                width: 32px !important;
+                height: 32px !important;
+                flex-shrink: 0 !important;
+            }
+        }
     </style>
 </head>
 
@@ -4476,63 +5101,68 @@
             </button>
         </div>
         <ul class="mobile-nav-links" id="mobileNavCategories">
-            <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>
-            <li><a href="#" data-category="featured"
-                    onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
-            <li><a href="#" data-category="electronics-tech"
-                    onclick="toggleMobileMenu(); filterCategory('electronics-tech', event)">Electronics & Tech</a></li>
-            <li><a href="#" data-category="apparel-fashion"
-                    onclick="toggleMobileMenu(); filterCategory('apparel-fashion', event)">Apparel & Fashion</a></li>
-            <li><a href="#" data-category="home-living"
-                    onclick="toggleMobileMenu(); filterCategory('home-living', event)">Home & Living</a></li>
-            <li><a href="#" data-category="personal-care-beauty"
-                    onclick="toggleMobileMenu(); filterCategory('personal-care-beauty', event)">Personal Care &
-                    Beauty</a></li>
-            <li><a href="#" data-category="sports-outdoors"
-                    onclick="toggleMobileMenu(); filterCategory('sports-outdoors', event)">Sports & Outdoors</a></li>
-            <li><a href="#" data-category="accessories-jewelry"
-                    onclick="toggleMobileMenu(); filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
-            </li>
-            <li><a href="#" data-category="stationery-office"
-                    onclick="toggleMobileMenu(); filterCategory('stationery-office', event)">Stationery & Office</a>
-            </li>
+            <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">Home</a></li>
+            <li><a href="#" data-category="categories" onclick="toggleMobileMenu(); goToAllCategories(event)">All Categories</a></li>
+            <li><a href="seller.html" target="_blank" onclick="toggleMobileMenu();">Sell</a></li>
+            <li><a href="#" id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account', null, event)"><span class="account-btn-text">Login / Sign Up</span></a></li>
+            <li><a href="#" id="mobileWishlistBtn" onclick="toggleMobileMenu(); showView('wishlist', null, event)">Wishlist</a></li>
+            <li><a href="#" id="mobileCartBtn" onclick="toggleMobileMenu(); toggleCart(); if(event)event.preventDefault();">Cart <span class="cart-count" id="mobileCartCount" style="margin-left: 6px; display: inline-block; position: static; background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; vertical-align: middle;">0</span></a></li>
         </ul>
-        <div class="mobile-nav-actions">
-            <button id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account')" aria-label="Account">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span class="account-btn-text">Login / Sign Up</span>
-            </button>
-            <button onclick="toggleMobileMenu(); showView('wishlist')" aria-label="Wishlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path
-                        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z" />
-                </svg>
-                Wishlist
-            </button>
-            <button onclick="toggleMobileMenu(); toggleCart();" aria-label="Cart">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="9" cy="21" r="1" />
-                    <circle cx="20" cy="21" r="1" />
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                </svg>
-                Cart
-            </button>
-        </div>
     </div>
 
     <!-- Header -->
     <header class="header">
         <div class="nav-container">
             <nav class="nav-main">
-                <a href="#" class="logo"><img src="images/logo/header.png" alt="Storify Logo"></a>
+                <a href="#" class="logo" onclick="filterCategory('all', event)"><img src="images/logo/header.png" alt="Storify Logo"></a>
                 <div class="search-bar">
+                    <button class="search-filter-icon" id="searchFilterToggle" onclick="toggleSearchFilterPanel(event)" title="Filters" aria-label="Toggle Filters">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    </button>
                     <input type="text" class="search-input" placeholder="Search for products, brands, and more...">
+                    <!-- Search Filter Panel -->
+                    <div class="search-filter-panel" id="searchFilterPanel">
+                        <div class="sfp-header">
+                            <span class="sfp-title"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filters</span>
+                            <button class="sfp-close" onclick="closeSearchFilterPanel(event)">&times;</button>
+                        </div>
+                        <div class="sfp-group">
+                            <div class="sfp-group-label">Category</div>
+                            <div class="sfp-options">
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('electronics-tech', event)">Electronics &amp; Tech</a>
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('apparel-fashion', event)">Apparel &amp; Fashion</a>
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('home-living', event)">Home &amp; Living</a>
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('personal-care-beauty', event)">Personal Care &amp; Beauty</a>
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('sports-outdoors', event)">Sports &amp; Outdoors</a>
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('accessories-jewelry', event)">Accessories &amp; Jewelry</a>
+                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('stationery-office', event)">Stationery &amp; Office</a>
+                            </div>
+                        </div>
+                        <div class="sfp-group">
+                            <div class="sfp-group-label">Price Range</div>
+                            <div class="sfp-options">
+                                <a href="#" onclick="applyDropdownFilter('price', 'all', 'All Prices', event); closeSearchFilterPanel(event)">All Prices</a>
+                                <a href="#" onclick="applyDropdownFilter('price', 'under-500', 'Under Rs. 500', event); closeSearchFilterPanel(event)">Under Rs. 500</a>
+                                <a href="#" onclick="applyDropdownFilter('price', '500-1500', 'Rs. 500 - Rs. 1500', event); closeSearchFilterPanel(event)">Rs. 500 - Rs. 1500</a>
+                                <a href="#" onclick="applyDropdownFilter('price', 'over-1500', 'Over Rs. 1500', event); closeSearchFilterPanel(event)">Over Rs. 1500</a>
+                            </div>
+                        </div>
+                        <div class="sfp-group">
+                            <div class="sfp-group-label">Sort By</div>
+                            <div class="sfp-options">
+                                <a href="#" onclick="applyDropdownFilter('sort', 'default', 'Sort: Default', event); closeSearchFilterPanel(event)">Default</a>
+                                <a href="#" onclick="applyDropdownFilter('sort', 'price-low', 'Price: Low to High', event); closeSearchFilterPanel(event)">Price: Low to High</a>
+                                <a href="#" onclick="applyDropdownFilter('sort', 'price-high', 'Price: High to Low', event); closeSearchFilterPanel(event)">Price: High to Low</a>
+                                <a href="#" onclick="applyDropdownFilter('sort', 'name-asc', 'Name: A to Z', event); closeSearchFilterPanel(event)">Name: A to Z</a>
+                            </div>
+                        </div>
+                        <div class="sfp-footer">
+                            <button class="sfp-reset-btn" onclick="resetAllDropdownFilters(); closeSearchFilterPanel(event)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                Reset All Filters
+                            </button>
+                        </div>
+                    </div>
                     <button class="search-btn">
                         <span class="search-text">Search</span>
                         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -4551,7 +5181,7 @@
                         </svg>
                         <span class="account-btn-text">Login / Sign Up</span>
                     </button>
-                    <button class="nav-btn" onclick="showView('wishlist')" aria-label="Wishlist">
+                    <button class="nav-btn" id="desktopWishlistBtn" onclick="showView('wishlist')" aria-label="Wishlist">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                             style="vertical-align:middle;margin-right:6px">
@@ -4560,7 +5190,7 @@
                         </svg>
                         Wishlist
                     </button>
-                    <button class="nav-btn cart-btn" onclick="toggleCart()" aria-label="Cart">
+                    <button class="nav-btn cart-btn" id="desktopCartBtn" onclick="toggleCart()" aria-label="Cart">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                             style="vertical-align:middle;margin-right:6px">
@@ -4585,23 +5215,19 @@
                     aria-label="Scroll categories left">‹</button>
                 <div class="categories" id="categoriesContainer">
                     <a href="#" class="category-link active" data-category="all"
-                        onclick="filterCategory('all', event)">All</a>
+                        onclick="filterCategory('all', event)">Home</a>
+                    <a href="#" class="category-link" data-category="categories" onclick="goToAllCategories(event)">All Categories</a>
                     <a href="#" class="category-link" data-category="featured"
                         onclick="filterCategory('featured', event)">Featured</a>
-                    <a href="#" class="category-link" data-category="electronics-tech"
-                        onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
-                    <a href="#" class="category-link" data-category="apparel-fashion"
-                        onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
-                    <a href="#" class="category-link" data-category="home-living"
-                        onclick="filterCategory('home-living', event)">Home & Living</a>
-                    <a href="#" class="category-link" data-category="personal-care-beauty"
-                        onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
-                    <a href="#" class="category-link" data-category="sports-outdoors"
-                        onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
-                    <a href="#" class="category-link" data-category="accessories-jewelry"
-                        onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
-                    <a href="#" class="category-link" data-category="stationery-office"
-                        onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
+                    <a href="#" class="category-link" data-category="best-sellers"
+                        onclick="filterCategory('best-sellers', event)">Best Sellers</a>
+                    <a href="#" class="category-link" data-category="deals"
+                        onclick="filterCategory('deals', event)">Deals</a>
+                    <a href="#" class="category-link" data-category="sales"
+                        onclick="filterCategory('sales', event)">Sales</a>
+                    <a href="#" class="category-link" data-category="new-arrivals"
+                        onclick="filterCategory('new-arrivals', event)">New Arrivals</a>
+                    <a href="seller.html" target="_blank" class="category-link">Sell</a>
                 </div>
                 <button class="categories-scroll-btn scroll-right" id="catScrollRight" onclick="scrollCategories(200)"
                     aria-label="Scroll categories right">›</button>
@@ -4652,6 +5278,94 @@
     <main class="container">
         <!-- Home View -->
         <div id="home-view" class="fade-in">
+            <!-- Shop By Category Cards Section -->
+            <div class="graphic-categories-section" id="graphicCategoriesSection">
+                <h2 class="section-title">Categories</h2>
+                <div class="graphic-categories-list">
+                    <a href="#" class="category-card active" data-category="all" onclick="filterCategory('all', event)">
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=60" alt="All Products">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">All Products</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M12 2v4"/><path d="M21 12H12"/><path d="M8 12H3"/><path d="M10 10v4"/><path d="M21 20h-9"/><path d="M8 20H3"/><path d="M10 18v4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60" alt="Electronics & Tech">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Electronics & Tech</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&auto=format&fit=crop&q=60" alt="Apparel & Fashion">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Apparel & Fashion</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="home-living" onclick="filterCategory('home-living', event)">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60" alt="Home & Living">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Home & Living</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">
+                        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60" alt="Personal Care & Beauty">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Personal Care & Beauty</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">
+                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60" alt="Sports & Outdoors">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Sports & Outdoors</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">
+                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60" alt="Accessories & Jewelry">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Accessories & Jewelry</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60" alt="Stationery & Office">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Stationery & Office</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
             <!-- Dynamic Products Container -->
             <div id="productsContainer"></div>
 
@@ -4707,6 +5421,95 @@
                     </div>
                     <h3 class="feature-title">Premium Quality</h3>
                     <p class="feature-desc">Curated selection of premium products</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories View -->
+        <div id="categories-view" class="fade-in" style="display: none;">
+            <div class="graphic-categories-section">
+                <h2 class="section-title">Categories</h2>
+                <div class="graphic-categories-list">
+                    <a href="#" class="category-card" data-category="all" onclick="filterCategory('all', event)">
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=60" alt="All Products">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">All Products</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M12 2v4"/><path d="M21 12H12"/><path d="M8 12H3"/><path d="M10 10v4"/><path d="M21 20h-9"/><path d="M8 20H3"/><path d="M10 18v4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60" alt="Electronics & Tech">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Electronics & Tech</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&auto=format&fit=crop&q=60" alt="Apparel & Fashion">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Apparel & Fashion</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="home-living" onclick="filterCategory('home-living', event)">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60" alt="Home & Living">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Home & Living</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">
+                        <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop&q=60" alt="Personal Care & Beauty">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Personal Care & Beauty</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">
+                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60" alt="Sports & Outdoors">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Sports & Outdoors</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">
+                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60" alt="Accessories & Jewelry">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Accessories & Jewelry</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
+                    <a href="#" class="category-card" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60" alt="Stationery & Office">
+                        <div class="category-card-overlay"></div>
+                        <div class="category-card-content">
+                            <span class="category-card-title">Stationery & Office</span>
+                            <span class="category-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -5005,7 +5808,6 @@
         // Render Cart items in Sidebar
         function renderCart() {
             const cartItems = document.getElementById('cartItems');
-            const badge = document.getElementById('cartCount');
             const totalVal = document.getElementById('cartTotalValue');
 
             if (!cartItems) return;
@@ -5024,7 +5826,7 @@
                     </div>
                 `;
                 if (totalVal) totalVal.textContent = 'Rs 0';
-                if (badge) badge.textContent = '0';
+                document.querySelectorAll('.cart-count').forEach(b => b.textContent = '0');
                 return;
             }
 
@@ -5068,7 +5870,7 @@
                 cartItems.appendChild(itemHTML);
             });
 
-            if (badge) badge.textContent = totalItems;
+            document.querySelectorAll('.cart-count').forEach(b => b.textContent = totalItems);
             if (totalVal) totalVal.textContent = formatPrice(totalPrice);
             refreshAccountIfVisible();
         }
@@ -5363,6 +6165,10 @@
             wishlistView.style.display = 'none';
             checkoutView.style.display = 'none';
             successView.style.display = 'none';
+            const categoriesView = document.getElementById('categories-view');
+            if (categoriesView) {
+                categoriesView.style.display = 'none';
+            }
 
             if (viewName === 'home') {
                 const isSearching = searchQuery.trim() !== '';
@@ -5400,6 +6206,13 @@
                 if (hero) hero.style.display = 'none';
                 successView.style.display = 'block';
                 renderSuccessView(successDetails);
+            }
+            else if (viewName === 'categories') {
+                if (hero) hero.style.display = 'none';
+                const categoriesView = document.getElementById('categories-view');
+                if (categoriesView) {
+                    categoriesView.style.display = 'block';
+                }
             }
 
             // Scroll to top
@@ -5473,12 +6286,47 @@
             const productId = Number(urlParams.get('id')) || null;
 
             // Sync category navigation active states
-            document.querySelectorAll('.category-link, #mobileNavCategories a').forEach(link => {
+            document.querySelectorAll('.category-link, #mobileNavCategories a, .category-card').forEach(link => {
                 const catAttr = link.getAttribute('data-category');
                 if (catAttr === category) {
                     link.classList.add('active');
                 } else {
                     link.classList.remove('active');
+                }
+            });
+
+            // Sync header buttons active states
+            const accountBtns = [document.getElementById('desktopAccountBtn'), document.getElementById('mobileAccountBtn')];
+            const wishlistBtns = [document.getElementById('desktopWishlistBtn'), document.getElementById('mobileWishlistBtn')];
+            const cartBtns = [document.getElementById('desktopCartBtn'), document.getElementById('mobileCartBtn')];
+
+            accountBtns.forEach(btn => {
+                if (btn) {
+                    if (page === 'account') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            wishlistBtns.forEach(btn => {
+                if (btn) {
+                    if (page === 'wishlist') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            cartBtns.forEach(btn => {
+                if (btn) {
+                    if (page === 'cart') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
                 }
             });
 
@@ -5488,15 +6336,37 @@
                 searchInput.value = search;
             }
 
+            // Toggle container filtered-view layout class
+            const isHomeFiltered = (page === 'home' && (category !== 'all' || search !== ''));
+            const isCategoriesPage = (page === 'categories');
+            const mainContainer = document.querySelector('main.container');
+            if (mainContainer) {
+                mainContainer.classList.toggle('filtered-view', isHomeFiltered || isCategoriesPage);
+            }
+
             // Handle views
             if (page === 'home') {
                 closeCartDrawer();
                 displayView('home', null, null, null, search);
-                renderProductGrid(category, search);
+                
+                const price = urlParams.get('price') || 'all';
+                const sort = urlParams.get('sort') || 'default';
+                const isFilteredView = (category !== 'all' || search !== '');
+                const isSpecialCategory = ['featured', 'best-sellers', 'deals', 'sales', 'new-arrivals'].includes(category);
+                const showFilterBar = isFilteredView && !isSpecialCategory;
+
                 const hero = document.getElementById('hero-section');
                 if (hero) {
-                    hero.style.display = (category === 'all' && search === '') ? 'block' : 'none';
+                    hero.style.display = isFilteredView ? 'none' : 'block';
                 }
+
+                const categoriesSec = document.querySelector('.graphic-categories-section');
+                if (categoriesSec) {
+                    categoriesSec.style.display = isFilteredView ? 'none' : 'block';
+                }
+
+
+                renderProductGrid(category, search, price, sort);
             } else if (page === 'product') {
                 closeCartDrawer();
                 displayView('product', productId);
@@ -5514,6 +6384,9 @@
             } else if (page === 'account') {
                 closeCartDrawer();
                 displayView('account');
+            } else if (page === 'categories') {
+                closeCartDrawer();
+                displayView('categories');
             } else if (page === 'checkout') {
                 closeCartDrawer();
                 if (cart.length === 0) {
@@ -5536,12 +6409,201 @@
             }
         }
 
+        // --- DROPDOWN FILTER HELPERS ---
+        function toggleFilterDropdown(dropdownId) {
+            if (window.event) window.event.stopPropagation();
+            const dropdown = document.getElementById(dropdownId);
+            if (!dropdown) return;
+            const parent = dropdown.parentElement;
+            const isAlreadyActive = parent.classList.contains('active');
+            
+            // Close all dropdowns first
+            document.querySelectorAll('.filter-pill-dropdown').forEach(p => p.classList.remove('active'));
+            
+            if (!isAlreadyActive) {
+                parent.classList.add('active');
+            }
+        }
+
+        // --- SEARCH BAR FILTER PANEL ---
+        function toggleSearchFilterPanel(e) {
+            if (e) e.stopPropagation();
+            const panel = document.getElementById('searchFilterPanel');
+            const btn = document.getElementById('searchFilterToggle');
+            if (!panel) return;
+            const isOpen = panel.classList.contains('open');
+            if (isOpen) {
+                panel.classList.remove('open');
+                if (btn) btn.classList.remove('active');
+                // On mobile, move panel back into search bar
+                if (window.innerWidth <= 768) {
+                    const searchBar = document.querySelector('.search-bar');
+                    if (searchBar && panel.parentElement === document.body) {
+                        searchBar.appendChild(panel);
+                    }
+                }
+            } else {
+                // On mobile, move panel to body to escape header's backdrop-filter containing block
+                if (window.innerWidth <= 768) {
+                    if (panel.parentElement !== document.body) {
+                        document.body.appendChild(panel);
+                    }
+                }
+                panel.classList.add('open');
+                if (btn) btn.classList.add('active');
+                syncSearchFilterPanelSelection();
+            }
+        }
+
+        function closeSearchFilterPanel(e) {
+            if (e) e.stopPropagation();
+            const panel = document.getElementById('searchFilterPanel');
+            const btn = document.getElementById('searchFilterToggle');
+            if (panel) {
+                panel.classList.remove('open');
+                // On mobile, move panel back into search bar
+                if (window.innerWidth <= 768) {
+                    const searchBar = document.querySelector('.search-bar');
+                    if (searchBar && panel.parentElement === document.body) {
+                        searchBar.appendChild(panel);
+                    }
+                }
+            }
+            if (btn) btn.classList.remove('active');
+        }
+
+        function syncSearchFilterPanelSelection() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category') || 'all';
+            const price = urlParams.get('price') || 'all';
+            const sort = urlParams.get('sort') || 'default';
+
+            const panel = document.getElementById('searchFilterPanel');
+            if (!panel) return;
+            panel.querySelectorAll('.sfp-options a').forEach(a => a.classList.remove('sfp-selected'));
+
+            panel.querySelectorAll('.sfp-options a').forEach(a => {
+                const onclick = a.getAttribute('onclick') || '';
+                // Match category links (uses filterCategory('catKey'))
+                if (onclick.includes('filterCategory') && onclick.includes("'" + category + "'")) a.classList.add('sfp-selected');
+                // Match price links
+                if (onclick.includes("'price'") && onclick.includes("'" + price + "'")) a.classList.add('sfp-selected');
+                // Match sort links
+                if (onclick.includes("'sort'") && onclick.includes("'" + sort + "'")) a.classList.add('sfp-selected');
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', function() {
+            document.querySelectorAll('.filter-pill-dropdown').forEach(p => p.classList.remove('active'));
+            closeSearchFilterPanel();
+        });
+
+        function applyDropdownFilter(type, value, labelText, event) {
+            if (event) event.preventDefault();
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set(type, value);
+            
+            // Build parameters object for navigateToPage
+            const params = {};
+            urlParams.forEach((val, key) => {
+                if (key !== 'page') {
+                    params[key] = val;
+                }
+            });
+            
+            navigateToPage(urlParams.get('page') || 'home', params);
+        }
+
+        function resetAllDropdownFilters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('price', 'all');
+            urlParams.set('sort', 'default');
+            const params = {};
+            urlParams.forEach((val, key) => {
+                if (key !== 'page') {
+                    params[key] = val;
+                }
+            });
+            navigateToPage(urlParams.get('page') || 'home', params);
+        }
+
+        function syncFilterBarLabels(category, price, sort) {
+            // Sync Category Label
+            const catLabel = document.getElementById('active-category-label');
+            if (catLabel) {
+                const catNames = {
+                    'all': 'Category: All',
+                    'featured': 'Featured',
+                    'best-sellers': 'Best Sellers',
+                    'deals': 'Deals',
+                    'sales': 'Sales',
+                    'new-arrivals': 'New Arrivals',
+                    'electronics-tech': 'Electronics & Tech',
+                    'apparel-fashion': 'Apparel & Fashion',
+                    'home-living': 'Home & Living',
+                    'personal-care-beauty': 'Personal Care & Beauty',
+                    'sports-outdoors': 'Sports & Outdoors',
+                    'accessories-jewelry': 'Accessories & Jewelry',
+                    'stationery-office': 'Stationery & Office'
+                };
+                catLabel.textContent = catNames[category] || 'Category';
+            }
+
+            // Sync Price Label
+            const priceLabel = document.getElementById('active-price-label');
+            if (priceLabel) {
+                const priceNames = {
+                    'all': 'Price Range',
+                    'under-500': 'Under Rs. 500',
+                    '500-1500': 'Rs. 500 - 1500',
+                    'over-1500': 'Over Rs. 1500'
+                };
+                priceLabel.textContent = priceNames[price] || 'Price Range';
+            }
+
+            // Sync Sort Label
+            const sortLabel = document.getElementById('active-sort-label');
+            if (sortLabel) {
+                const sortNames = {
+                    'default': 'Sort By',
+                    'price-low': 'Price: Low to High',
+                    'price-high': 'Price: High to Low',
+                    'name-asc': 'Name: A to Z'
+                };
+                sortLabel.textContent = sortNames[sort] || 'Sort By';
+            }
+
+            // Add selected visual state class inside dropdown items
+            document.querySelectorAll('.filter-dropdown-menu a').forEach(a => a.classList.remove('selected'));
+            
+            const selectedCat = document.querySelector(`#category-dropdown a[onclick*="'${category}'"]`);
+            if (selectedCat) selectedCat.classList.add('selected');
+
+            const selectedPrice = document.querySelector(`#price-dropdown a[onclick*="'${price}'"]`);
+            if (selectedPrice) selectedPrice.classList.add('selected');
+
+            const selectedSort = document.querySelector(`#sort-dropdown a[onclick*="'${sort}'"]`);
+            if (selectedSort) selectedSort.classList.add('selected');
+
+            // Toggle active visual highlight of parent pill container
+            const catPill = document.getElementById('category-dropdown').parentElement;
+            if (catPill) catPill.classList.toggle('active', category !== 'all');
+
+            const pricePill = document.getElementById('price-dropdown').parentElement;
+            if (pricePill) pricePill.classList.toggle('active', price !== 'all');
+
+            const sortPill = document.getElementById('sort-dropdown').parentElement;
+            if (sortPill) sortPill.classList.toggle('active', sort !== 'default');
+        }
+
         // Get currently active main page view
         function getActiveMainView() {
             if (document.getElementById('home-view') && document.getElementById('home-view').style.display !== 'none') return 'home';
             if (document.getElementById('product-view') && document.getElementById('product-view').style.display !== 'none') return 'product';
             if (document.getElementById('wishlist-view') && document.getElementById('wishlist-view').style.display !== 'none') return 'wishlist';
             if (document.getElementById('account-page-view') && document.getElementById('account-page-view').style.display !== 'none') return 'account';
+            if (document.getElementById('categories-view') && document.getElementById('categories-view').style.display !== 'none') return 'categories';
             if (document.getElementById('checkout-view') && document.getElementById('checkout-view').style.display !== 'none') return 'checkout';
             if (document.getElementById('success-view') && document.getElementById('success-view').style.display !== 'none') return 'success';
             return null;
@@ -5689,24 +6751,30 @@
             // Desktop category bar
             const container = document.getElementById('categoriesContainer');
             if (container) {
-                let html = `<a href="#" class="category-link active" data-category="all" onclick="filterCategory('all', event)">All</a>`;
-                html += `<a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>`;
-                MASTER_CATEGORIES.forEach(cat => {
-                    html += `<a href="#" class="category-link" data-category="${cat.key}" onclick="filterCategory('${cat.key}', event)">${cat.name}</a>`;
-                });
-                container.innerHTML = html;
+                container.innerHTML = `
+                    <a href="#" class="category-link active" data-category="all" onclick="filterCategory('all', event)">Home</a>
+                    <a href="#" class="category-link" data-category="categories" onclick="goToAllCategories(event)">All Categories</a>
+                    <a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>
+                    <a href="#" class="category-link" data-category="best-sellers" onclick="filterCategory('best-sellers', event)">Best Sellers</a>
+                    <a href="#" class="category-link" data-category="deals" onclick="filterCategory('deals', event)">Deals</a>
+                    <a href="#" class="category-link" data-category="sales" onclick="filterCategory('sales', event)">Sales</a>
+                    <a href="#" class="category-link" data-category="new-arrivals" onclick="filterCategory('new-arrivals', event)">New Arrivals</a>
+                    <a href="seller.html" target="_blank" class="category-link">Sell</a>
+                `;
                 updateCategoryScrollArrows();
             }
 
             // Mobile nav categories
             const mobileNav = document.getElementById('mobileNavCategories');
             if (mobileNav) {
-                let html = `<li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>`;
-                html += `<li><a href="#" data-category="featured" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>`;
-                MASTER_CATEGORIES.forEach(cat => {
-                    html += `<li><a href="#" data-category="${cat.key}" onclick="toggleMobileMenu(); filterCategory('${cat.key}', event)">${cat.name}</a></li>`;
-                });
-                mobileNav.innerHTML = html;
+                mobileNav.innerHTML = `
+                    <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">Home</a></li>
+                    <li><a href="#" data-category="categories" onclick="toggleMobileMenu(); goToAllCategories(event)">All Categories</a></li>
+                    <li><a href="seller.html" target="_blank" onclick="toggleMobileMenu();">Sell</a></li>
+                    <li><a href="#" id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account', null, event)"><span class="account-btn-text">Login / Sign Up</span></a></li>
+                    <li><a href="#" id="mobileWishlistBtn" onclick="toggleMobileMenu(); showView('wishlist', null, event)">Wishlist</a></li>
+                    <li><a href="#" id="mobileCartBtn" onclick="toggleMobileMenu(); toggleCart(); if(event)event.preventDefault();">Cart <span class="cart-count" id="mobileCartCount" style="margin-left: 6px; display: inline-block; position: static; background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; vertical-align: middle;">0</span></a></li>
+                `;
             }
         }
 
@@ -5748,6 +6816,11 @@
         function filterCategory(catKey, event) {
             if (event) event.preventDefault();
             navigateToPage('home', { category: catKey });
+        }
+
+        function goToAllCategories(event) {
+            if (event) event.preventDefault();
+            navigateToPage('categories', { category: 'categories' });
         }
 
         // ----------------------------------------------------
@@ -5804,10 +6877,6 @@
                         <div class="product-info" onclick="showView('product', ${p.id})">
                             <div class="product-category">${p.category}</div>
                             <h3 class="product-name">${p.name}</h3>
-                            <div class="product-rating">
-                                <span class="stars">${'★'.repeat(p.rating)}${'☆'.repeat(5 - p.rating)}</span>
-                                <span class="review-count">(${p.reviewCount.toLocaleString()})</span>
-                            </div>
                             <div class="product-price">
                                 <span class="current-price">${formatPrice(p.currentPrice)}</span>
                                 ${p.originalPrice ? `<span class="original-price">${formatPrice(p.originalPrice)}</span>` : ''}
@@ -5823,14 +6892,14 @@
             return section;
         }
 
-        function renderProductGrid(filter = 'all', searchQuery = '', forceAll = false) {
+        function renderProductGrid(filter = 'all', searchQuery = '', priceFilter = 'all', sortFilter = 'default') {
             const container = document.getElementById('productsContainer');
             if (!container) return;
 
             container.innerHTML = '';
 
-            // If we are in "All" view and not searching, show category sections stacked
-            if (filter === 'all' && searchQuery === '') {
+            // If we are in "All" view, not searching, and no price/sort filters are applied, show category sections stacked
+            if (filter === 'all' && searchQuery === '' && priceFilter === 'all' && sortFilter === 'default') {
                 const renderedKeys = new Set();
                 MASTER_CATEGORIES.forEach(cat => {
                     const catProducts = products.filter(p => p.categoryKey === cat.key);
@@ -5860,20 +6929,65 @@
                 });
             } else {
                 // Single Category or Search Results section layout
-                const filtered = products.filter(p => {
-                    const matchesCat = (filter === 'all' || (filter === 'featured' ? !!p.featured : p.categoryKey === filter));
+                let filtered = products.filter(p => {
+                    let matchesCat = false;
+                    if (filter === 'all') {
+                        matchesCat = true;
+                    } else if (filter === 'featured') {
+                        matchesCat = !!p.featured;
+                    } else if (filter === 'best-sellers') {
+                        matchesCat = !!p.featured || !!p.verifiedBadge;
+                    } else if (filter === 'deals') {
+                        matchesCat = (p.originalPrice && p.originalPrice > p.currentPrice) || !!p.featured;
+                    } else if (filter === 'sales') {
+                        matchesCat = !!p.originalPrice && p.originalPrice > p.currentPrice;
+                    } else if (filter === 'new-arrivals') {
+                        matchesCat = true;
+                    } else {
+                        matchesCat = (p.categoryKey === filter);
+                    }
+
+                    // Price Range Filter
+                    let matchesPrice = true;
+                    if (priceFilter === 'under-500') {
+                        matchesPrice = p.currentPrice < 500;
+                    } else if (priceFilter === '500-1500') {
+                        matchesPrice = p.currentPrice >= 500 && p.currentPrice <= 1500;
+                    } else if (priceFilter === 'over-1500') {
+                        matchesPrice = p.currentPrice > 1500;
+                    }
+
                     const matchesSearch = (searchQuery === '' ||
                         p.name.toLowerCase().includes(searchQuery) ||
                         p.description.toLowerCase().includes(searchQuery) ||
                         p.category.toLowerCase().includes(searchQuery));
-                    return matchesCat && matchesSearch;
+                    return matchesCat && matchesPrice && matchesSearch;
                 });
+
+                // Apply Sorting
+                if (sortFilter === 'price-low') {
+                    filtered.sort((a, b) => a.currentPrice - b.currentPrice);
+                } else if (sortFilter === 'price-high') {
+                    filtered.sort((a, b) => b.currentPrice - a.currentPrice);
+                } else if (sortFilter === 'name-asc') {
+                    filtered.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (filter === 'new-arrivals') {
+                    filtered.sort((a, b) => b.id - a.id);
+                }
 
                 let title = 'Products';
                 if (searchQuery !== '') {
                     title = `Search Results for "${searchQuery}"`;
                 } else if (filter === 'featured') {
                     title = 'Featured Products';
+                } else if (filter === 'best-sellers') {
+                    title = 'Best Sellers';
+                } else if (filter === 'deals') {
+                    title = 'Hot Deals';
+                } else if (filter === 'sales') {
+                    title = 'Products on Sale';
+                } else if (filter === 'new-arrivals') {
+                    title = 'New Arrivals';
                 } else {
                     // Dynamically resolve category title from products
                     const cats = getUniqueCategories();
@@ -6170,19 +7284,18 @@
                 categoriesBar.style.display = 'block';
                 categoriesBar.classList.remove('dashboard-active');
                 categoriesContainer.innerHTML = `
-                    <a href="#" class="category-link" data-category="all" onclick="filterCategory('all', event)">All</a>
+                    <a href="#" class="category-link" data-category="all" onclick="filterCategory('all', event)">Home</a>
+                    <a href="#" class="category-link" data-category="categories" onclick="goToAllCategories(event)">All Categories</a>
                     <a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>
-                    <a href="#" class="category-link" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
-                    <a href="#" class="category-link" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
-                    <a href="#" class="category-link" data-category="home-living" onclick="filterCategory('home-living', event)">Home & Living</a>
-                    <a href="#" class="category-link" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
-                    <a href="#" class="category-link" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
-                    <a href="#" class="category-link" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
-                    <a href="#" class="category-link" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
+                    <a href="#" class="category-link" data-category="best-sellers" onclick="filterCategory('best-sellers', event)">Best Sellers</a>
+                    <a href="#" class="category-link" data-category="deals" onclick="filterCategory('deals', event)">Deals</a>
+                    <a href="#" class="category-link" data-category="sales" onclick="filterCategory('sales', event)">Sales</a>
+                    <a href="#" class="category-link" data-category="new-arrivals" onclick="filterCategory('new-arrivals', event)">New Arrivals</a>
+                    <a href="seller.html" target="_blank" class="category-link">Sell</a>
                 `;
                 // Re-sync category navigation active states
                 const category = urlParams.get('category') || 'all';
-                document.querySelectorAll('.category-link, #mobileNavCategories a').forEach(link => {
+                document.querySelectorAll('.category-link, #mobileNavCategories a, .category-card').forEach(link => {
                     const catAttr = link.getAttribute('data-category');
                     if (catAttr === category) {
                         link.classList.add('active');
@@ -6830,10 +7943,6 @@
                                 <div class="product-info" onclick="showView('product', ${p.id})">
                                     <div class="product-category">${p.category}</div>
                                     <h3 class="product-name">${p.name}</h3>
-                                    <div class="product-rating">
-                                        <span class="stars">${'â˜…'.repeat(p.rating)}${'â˜†'.repeat(5 - p.rating)}</span>
-                                        <span class="review-count">(${p.reviewCount.toLocaleString()})</span>
-                                    </div>
                                     <div class="product-price">
                                         <span class="current-price">${formatPrice(p.currentPrice)}</span>
                                         ${p.originalPrice ? `<span class="original-price">${formatPrice(p.originalPrice)}</span>` : ''}
@@ -6997,10 +8106,6 @@
                                 <div class="product-info" onclick="showView('product', ${r.id})">
                                     <div class="product-category">${r.category}</div>
                                     <h3 class="product-name">${r.name}</h3>
-                                    <div class="product-rating">
-                                        <span class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
-                                        <span class="review-count">(${r.reviewCount.toLocaleString()})</span>
-                                    </div>
                                     <div class="product-price">
                                         <span class="current-price">${formatPrice(r.currentPrice)}</span>
                                         ${r.originalPrice ? `<span class="original-price">${formatPrice(r.originalPrice)}</span>` : ''}
@@ -7889,15 +8994,34 @@
                 });
             });
 
-            // Scroll tracking to hide/show top-bar
+            // Scroll tracking to hide/show top-bar and handle sticky header toggles
             let lastScrollTop = 0;
             let toggleCooldown = false;
             const topBar = document.querySelector('.top-bar');
+            const header = document.querySelector('.header');
 
             window.addEventListener('scroll', () => {
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
                 if (toggleCooldown) return;
+
+                // Handle sticky header class additions based on scroll position and direction
+                if (scrollTop > 150) {
+                    const delta = scrollTop - lastScrollTop;
+                    if (delta > 0) {
+                        // Scrolling down: hide header completely
+                        header.classList.add('sticky-scrolled-up');
+                        header.classList.remove('sticky-scrolled-down');
+                    } else if (delta < 0) {
+                        // Scrolling up: show header (collapsed, without categories)
+                        header.classList.add('sticky-scrolled-down');
+                        header.classList.remove('sticky-scrolled-up');
+                    }
+                } else {
+                    // Near top: clear sticky behaviors and return to relative positioning
+                    header.classList.remove('sticky-scrolled-down');
+                    header.classList.remove('sticky-scrolled-up');
+                }
 
                 // At the very top: show everything
                 if (scrollTop <= 10) {

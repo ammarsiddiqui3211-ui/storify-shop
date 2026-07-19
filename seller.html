@@ -12,7 +12,7 @@
         html {
             scrollbar-gutter: stable;
             max-width: 100%;
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         :root {
@@ -49,7 +49,7 @@
             flex-direction: column;
             font-weight: 400;
             max-width: 100%;
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         /* Global font-weight override: use regular/medium instead of bold */
@@ -82,7 +82,7 @@
 
         .header-container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 0 40px;
             display: flex;
@@ -148,11 +148,269 @@
             background: rgba(239, 68, 68, 0.05);
         }
 
+        /* Desktop Profile Hover Dropdown */
+        .seller-profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .seller-profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--secondary);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .seller-profile-avatar:hover {
+            border-color: var(--accent);
+            background: var(--white);
+        }
+
+        .seller-profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 220px;
+            padding: 12px 0;
+            display: none;
+            flex-direction: column;
+            z-index: 1010;
+            margin-top: 8px;
+        }
+
+        /* Invisible bridge to prevent hover loss over the margin gap */
+        .seller-profile-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: transparent;
+        }
+
+        /* Show on hover of container */
+        .seller-profile-container:hover .seller-profile-dropdown {
+            display: flex;
+        }
+
+        .profile-dropdown-info {
+            padding: 4px 16px 8px;
+        }
+
+        .profile-shop-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+
+        .profile-email {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .seller-profile-dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .seller-profile-dropdown a:hover {
+            background: var(--secondary);
+            color: var(--danger);
+        }
+
+        /* Color Picker Inputs to Circular Shape */
+        input[type="color"] {
+            width: 38px !important;
+            height: 38px !important;
+            border: 1.5px solid var(--border) !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            cursor: pointer;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0 !important;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none !important;
+            border-radius: 50% !important;
+        }
+
+        input[type="color"]::-moz-color-swatch {
+            border: none !important;
+            border-radius: 50% !important;
+        }
+
+        /* Mobile Hamburger Button */
+        .hamburger-mobile {
+            display: none;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            gap: 4px;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .hamburger-mobile span {
+            display: block !important;
+            width: 18px;
+            height: 2px;
+            background: var(--text) !important;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .hamburger-mobile:hover {
+            background: var(--secondary);
+            border-color: var(--accent);
+        }
+
+        .hamburger-mobile:hover span {
+            background: var(--accent) !important;
+        }
+
+        /* Mobile Slide-out Menu styling */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: var(--white);
+            z-index: 3000;
+            padding: 12px 16px 24px;
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            right: 0;
+        }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-menu-header img {
+            height: 32px;
+        }
+
+        .close-mobile-menu {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            padding: 4px;
+        }
+
+        .close-mobile-menu span {
+            display: block !important;
+            width: 22px;
+            height: 2px;
+            background: var(--text) !important;
+            border-radius: 2px;
+            margin-bottom: 5px;
+        }
+
+        .close-mobile-menu span:last-child {
+            margin-bottom: 0;
+        }
+
+        .close-mobile-menu:hover {
+            background: var(--secondary);
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            margin-bottom: 12px;
+        }
+
+        .mobile-nav-links li {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-nav-links a {
+            display: block;
+            padding: 12px 0;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            color: var(--accent);
+        }
+
         /* Views Layout */
         .main-content {
             flex: 1;
             width: 100%;
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 40px;
             display: flex;
@@ -377,6 +635,7 @@
             display: flex;
             gap: 30px;
             align-items: flex-start;
+            min-height: calc(100vh - 150px);
         }
 
         .sidebar {
@@ -391,7 +650,8 @@
             gap: 8px;
             box-shadow: 0 4px 20px var(--shadow);
             position: sticky;
-            top: 100px;
+            top: 90px;
+            align-self: flex-start;
             z-index: 100;
         }
 
@@ -536,15 +796,15 @@
         }
 
         .timeline-step.escrow {
-            border-left: 4px solid var(--accent);
+            border: 2px solid var(--accent);
         }
 
         .timeline-step.eligible {
-            border-left: 4px solid var(--warning);
+            border: 2px solid var(--warning);
         }
 
         .timeline-step.paid {
-            border-left: 4px solid var(--success);
+            border: 2px solid var(--success);
         }
 
         .timeline-arrow {
@@ -763,12 +1023,12 @@
             border-radius: 24px;
             color: white;
             box-shadow: 0 10px 30px var(--shadow-strong);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
             overflow: hidden;
             margin-bottom: 40px;
         }
-        
+
         .landing-hero-card h1 {
             font-size: 36px;
             font-weight: 800;
@@ -776,7 +1036,7 @@
             margin-bottom: 16px;
             letter-spacing: -0.5px;
         }
-        
+
         .landing-hero-card p {
             font-size: 16px;
             color: rgba(255, 255, 255, 0.7);
@@ -886,7 +1146,15 @@
             }
 
             .mobile-bottom-nav {
-                display: flex;
+                display: none !important;
+            }
+
+            .seller-profile-container {
+                display: none !important;
+            }
+
+            .hamburger-mobile {
+                display: flex !important;
             }
 
             .dashboard-container {
@@ -970,7 +1238,8 @@
                 min-width: 650px;
             }
 
-            th, td {
+            th,
+            td {
                 white-space: normal;
                 word-break: break-word;
                 padding: 10px 8px;
@@ -1048,6 +1317,25 @@
 </head>
 
 <body>
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <img src="images/logo/seller header.png" alt="Storify Seller Portal">
+            <button class="close-mobile-menu" onclick="toggleMobileMenu()" aria-label="Close menu">
+                <span
+                    style="display:block;width:22px;height:2px;background:var(--text);border-radius:2px;margin-bottom:5px;"></span>
+                <span
+                    style="display:block;width:22px;height:2px;background:var(--text);border-radius:2px;margin-bottom:5px;"></span>
+                <span style="display:block;width:22px;height:2px;background:var(--text);border-radius:2px;"></span>
+            </button>
+        </div>
+        <ul class="mobile-nav-links" id="mobileNavLinks">
+            <!-- Dynamically populated links -->
+        </ul>
+    </div>
     <header class="header">
         <div class="header-container">
             <a href="seller.html" class="logo" onclick="handleLogoClick(event)">
@@ -1274,7 +1562,7 @@
                         })
                         .select()
                         .single();
-                    
+
                     if (!insertError && newProfile) {
                         profile = newProfile;
                     } else {
@@ -1399,25 +1687,119 @@
 
         function updateHeaderNav() {
             const nav = document.getElementById('userNav');
+            const mobileLinks = document.getElementById('mobileNavLinks');
             if (!nav) return;
 
             if (user) {
                 const displayName = profile?.shop_name || profile?.name || user.email;
                 nav.innerHTML = `
-                    <span style="font-size: 13px; font-weight: 700; color: var(--primary);">
-                        ${escapeHtml(displayName)}
-                    </span>
-                    <button class="btn-signout" onclick="signOutUser()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Sign Out
+                    <div class="seller-profile-container">
+                        <div class="seller-profile-avatar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="seller-profile-dropdown">
+                            <div class="profile-dropdown-info">
+                                <div class="profile-shop-name">${escapeHtml(displayName)}</div>
+                                <div class="profile-email">${escapeHtml(user.email)}</div>
+                            </div>
+                            <div style="border-top: 1px solid var(--border); margin: 6px 0;"></div>
+                            <a href="#" onclick="signOutUser(); event.preventDefault();">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                    <button class="hamburger-mobile" onclick="toggleMobileMenu()" aria-label="Open seller menu mobile">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </button>
                 `;
+
+                if (mobileLinks) {
+                    mobileLinks.innerHTML = `
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('overview'); event.preventDefault();">Dashboard</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('add-product'); event.preventDefault();">Add Product</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('manage'); event.preventDefault();">Manage Listing</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('orders'); event.preventDefault();">Customer Orders</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('earnings'); event.preventDefault();">Earnings</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('reviews'); event.preventDefault();">Customer Reviews</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); switchTab('settings'); event.preventDefault();">Shop Settings</a></li>
+                        <li><a href="#" onclick="toggleMobileMenu(); signOutUser(); event.preventDefault();" style="color: #ef4444;">Logout</a></li>
+                    `;
+                }
             } else {
                 nav.innerHTML = `
                     <a href="index.html" class="nav-link">Main Storefront</a>
                 `;
+                if (mobileLinks) {
+                    mobileLinks.innerHTML = `
+                        <li><a href="index.html" onclick="toggleMobileMenu()">Main Storefront</a></li>
+                    `;
+                }
             }
         }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (menu && overlay) {
+                const isActive = menu.classList.contains('active');
+                if (isActive) {
+                    menu.classList.remove('active');
+                    overlay.classList.remove('active');
+                    setTimeout(() => {
+                        menu.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }, 350);
+                } else {
+                    menu.style.display = 'block';
+                    overlay.style.display = 'block';
+                    menu.offsetHeight; // force reflow
+                    overlay.offsetHeight;
+                    menu.classList.add('active');
+                    overlay.classList.add('active');
+                }
+            }
+        }
+
+        function toggleSellerMenu(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('sellerMenuDropdown');
+            if (dropdown) {
+                const isActive = dropdown.classList.contains('active');
+                if (isActive) {
+                    dropdown.classList.remove('active');
+                    setTimeout(() => { dropdown.style.display = 'none'; }, 200);
+                } else {
+                    dropdown.style.display = 'flex';
+                    dropdown.offsetHeight; // trigger reflow
+                    dropdown.classList.add('active');
+                }
+            }
+        }
+
+        function switchSellerTab(tabId, event) {
+            if (event) event.preventDefault();
+            switchTab(tabId);
+            const dropdown = document.getElementById('sellerMenuDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
+                setTimeout(() => { dropdown.style.display = 'none'; }, 200);
+            }
+        }
+
+        // Close dropdown when clicking anywhere else
+        window.addEventListener('click', () => {
+            const dropdown = document.getElementById('sellerMenuDropdown');
+            if (dropdown && dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+                setTimeout(() => { dropdown.style.display = 'none'; }, 200);
+            }
+        });
 
         async function signOutUser() {
             if (supabaseClient) {
@@ -1768,25 +2150,7 @@
                     </section>
                 </div>
 
-                <!-- Mobile Bottom Navigation -->
-                <nav class="mobile-bottom-nav">
-                    <button class="bnav-item ${currentTab === 'overview' ? 'active' : ''}" onclick="switchTab('overview')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-                    </button>
-                    <button class="bnav-item ${currentTab === 'manage' ? 'active' : ''}" onclick="switchTab('manage')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                    </button>
-                    <button class="bnav-item ${currentTab === 'orders' ? 'active' : ''}" onclick="switchTab('orders')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                        ${mobileBadgeHTML}
-                    </button>
-                    <button class="bnav-item ${currentTab === 'earnings' ? 'active' : ''}" onclick="switchTab('earnings')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    </button>
-                    <button class="bnav-item ${currentTab === 'settings' ? 'active' : ''}" onclick="switchTab('settings')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51(1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    </button>
-                </nav>
+                </div>
             `;
 
             renderTabContent();
@@ -1949,7 +2313,7 @@
                             <span class="stat-label" style="color:var(--accent-dark)">Held in Escrow</span>
                             <div class="stat-value" style="font-size:20px; color:var(--accent-dark);">${formatPrice(inEscrow)}</div>
                             <div style="font-size: 11px; margin-top: 4px; color: var(--text-light); font-weight: 500; line-height: 1.4;">
-                                Products: ${formatPrice(productEscrow)}<br>Shipping: ${formatPrice(shippingEscrow)}
+                                Products: ${formatPrice(productEscrow)} | Shipping: ${formatPrice(shippingEscrow)}
                             </div>
                             <div class="stat-subtext" style="font-size:10px; margin-top: 8px;">Paid by buyer, locked until delivery & returns window clear.</div>
                         </div>
@@ -1958,7 +2322,7 @@
                             <span class="stat-label" style="color:var(--warning)">Eligible Payout</span>
                             <div class="stat-value" style="font-size:20px; color:var(--warning);">${formatPrice(eligiblePayout)}</div>
                             <div style="font-size: 11px; margin-top: 4px; color: var(--text-light); font-weight: 500; line-height: 1.4;">
-                                Products: ${formatPrice(productEligible)}<br>Shipping: ${formatPrice(shippingEligible)}
+                                Products: ${formatPrice(productEligible)} | Shipping: ${formatPrice(shippingEligible)}
                             </div>
                             <div class="stat-subtext" style="font-size:10px; margin-top: 8px;">Return window completed. Ready for weekly transfer.</div>
                         </div>
@@ -2055,7 +2419,7 @@
         function getAddProductFormHTML(isMobileForm = false) {
             const formStyle = isMobileForm ? 'style="margin-bottom: 40px; border-bottom: 2px dashed var(--border); padding-bottom: 30px;"' : '';
             const titleStyle = isMobileForm ? 'style="margin-top: 10px;"' : '';
-            
+
             return `
                 <div class="dashboard-header" ${titleStyle}>
                     <h2 class="dashboard-title">Add New Product</h2>
@@ -2114,8 +2478,8 @@
                         <div class="form-group">
                             <label>Product Colors</label>
                             <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center;">
-                                <input type="color" id="colorPicker" value="${tempColorPicker}" onchange="addColorFromPicker(this.value)" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;">
-                                <input type="text" id="colorHex" class="form-control" placeholder="#4A90E2" value="${escapeHtml(tempColorHex)}" oninput="syncColorPicker(this.value)" style="flex: 1;">
+                                <input type="color" id="colorPicker" value="${tempColorPicker}" onchange="addColorFromPicker(this.value)" onkeydown="if(event.key === 'Enter') { event.preventDefault(); }" style="width: 38px; height: 38px; border: 1.5px solid var(--border); cursor: pointer; border-radius: 50%; padding: 0; overflow: hidden;">
+                                <input type="text" id="colorHex" class="form-control" placeholder="#4A90E2" value="${escapeHtml(tempColorHex)}" oninput="syncColorPicker(this.value)" onkeydown="if(event.key === 'Enter') { event.preventDefault(); addColor(); }" style="flex: 1;">
                                 <button type="button" class="btn" onclick="addColor()">+ Add</button>
                             </div>
                             <div id="colorsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
@@ -2241,10 +2605,10 @@
             const container = document.getElementById('colorsList');
             if (container) {
                 container.innerHTML = addedColors.map(c => `
-                    <span style="background: ${c}; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-                        ${c}
-                        <span onclick="removeColor('${c}')" style="cursor: pointer; font-size: 14px;">×</span>
-                    </span>
+                    <div style="position: relative; display: inline-block; margin-right: 8px; margin-top: 6px;">
+                        <span style="display: block; width: 32px; height: 32px; border-radius: 50%; background: ${c}; border: 2.5px solid #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="${c}"></span>
+                        <span onclick="removeColor('${c}')" style="position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: #000; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--white);">×</span>
+                    </div>
                 `).join('');
             }
         }
@@ -2379,15 +2743,7 @@
             // List unique categories for filter dropdown
             const cats = Array.from(new Set(products.map(p => p.category)));
 
-            const isMobile = window.innerWidth <= 768;
-
-            let addProductFormHTML = '';
-            if (isMobile) {
-                addProductFormHTML = getAddProductFormHTML(true);
-            }
-
             container.innerHTML = `
-                ${addProductFormHTML}
                 <div class="dashboard-header">
                     <h2 class="dashboard-title">Manage Listings</h2>
                 </div>
@@ -2685,8 +3041,8 @@
                             <div class="form-group">
                                 <label>Product Colors</label>
                                 <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center;">
-                                    <input type="color" id="editColorPicker" value="${editingTempColorPicker}" onchange="addEditColorFromPicker(this.value)" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;">
-                                    <input type="text" id="editColorHex" class="form-control" placeholder="#4A90E2" value="${editingTempColorHex}" oninput="syncEditColorPicker(this.value)" style="flex: 1;">
+                                    <input type="color" id="editColorPicker" value="${editingTempColorPicker}" onchange="addEditColorFromPicker(this.value)" onkeydown="if(event.key === 'Enter') { event.preventDefault(); }" style="width: 38px; height: 38px; border: 1.5px solid var(--border); cursor: pointer; border-radius: 50%; padding: 0; overflow: hidden;">
+                                    <input type="text" id="editColorHex" class="form-control" placeholder="#4A90E2" value="${editingTempColorHex}" oninput="syncEditColorPicker(this.value)" onkeydown="if(event.key === 'Enter') { event.preventDefault(); addEditColor(); }" style="flex: 1;">
                                     <button type="button" class="btn" onclick="addEditColor()">+ Add</button>
                                 </div>
                                 <div id="editColorsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
@@ -2747,7 +3103,7 @@
             const container = document.getElementById('editExistingImagePreviews');
             if (!container) return;
             container.innerHTML = '';
-            
+
             if (editingImageUrls.length === 0) {
                 container.innerHTML = `<span style="font-size: 12px; color: var(--text-light); font-style: italic;">No existing images remaining.</span>`;
                 return;
@@ -2773,7 +3129,7 @@
             const container = document.getElementById('editNewImagePreviews');
             if (!container) return;
             container.innerHTML = '';
-            
+
             editingNewFiles.forEach((file, idx) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -2846,10 +3202,10 @@
             const container = document.getElementById('editColorsList');
             if (container) {
                 container.innerHTML = editingColors.map(c => `
-                    <span style="background: ${c}; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-                        ${c}
-                        <span onclick="removeEditColor('${c}')" style="cursor: pointer; font-size: 14px;">×</span>
-                    </span>
+                    <div style="position: relative; display: inline-block; margin-right: 8px; margin-top: 6px;">
+                        <span style="display: block; width: 32px; height: 32px; border-radius: 50%; background: ${c}; border: 2.5px solid #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="${c}"></span>
+                        <span onclick="removeEditColor('${c}')" style="position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: #000; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--white);">×</span>
+                    </div>
                 `).join('');
             }
         }
