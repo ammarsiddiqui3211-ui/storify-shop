@@ -4,6 +4,45 @@
 -- Enable UUID extension if not enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- ----------------------------------------------------
+-- CLEAN DROP COMMANDS (Idempotency)
+-- ----------------------------------------------------
+DROP VIEW IF EXISTS public.public_products CASCADE;
+DROP TABLE IF EXISTS public.reviews CASCADE;
+DROP TABLE IF EXISTS public.payouts CASCADE;
+DROP TABLE IF EXISTS public.payout_settings_log CASCADE;
+DROP TABLE IF EXISTS public.order_items CASCADE;
+DROP TABLE IF EXISTS public.orders CASCADE;
+DROP TABLE IF EXISTS public.seller_score_log CASCADE;
+DROP TABLE IF EXISTS public.products CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+DROP TABLE IF EXISTS public.app_settings CASCADE;
+
+DROP FUNCTION IF EXISTS public.is_admin CASCADE;
+DROP FUNCTION IF EXISTS public.is_dev_mode CASCADE;
+DROP FUNCTION IF EXISTS public.is_order_buyer CASCADE;
+DROP FUNCTION IF EXISTS public.confirm_payment_via_webhook CASCADE;
+DROP FUNCTION IF EXISTS public.auto_complete_order_item CASCADE;
+DROP FUNCTION IF EXISTS public.handle_new_user CASCADE;
+DROP FUNCTION IF EXISTS public.enforce_profile_update_restrictions CASCADE;
+DROP FUNCTION IF EXISTS public.enforce_product_update_restrictions CASCADE;
+DROP FUNCTION IF EXISTS public.enforce_order_insert_defaults CASCADE;
+DROP FUNCTION IF EXISTS public.validate_order_item_insert CASCADE;
+DROP FUNCTION IF EXISTS public.enforce_order_item_update_restrictions CASCADE;
+DROP FUNCTION IF EXISTS public.log_payout_details_change CASCADE;
+DROP FUNCTION IF EXISTS public.run_payout_batch CASCADE;
+
+-- Helper function to check if user is admin (prevents RLS recursion)
+CREATE OR REPLACE FUNCTION public.is_admin(p_user_id uuid)
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = p_user_id AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Create App Settings table for persistent configuration (e.g. dev mode)
 CREATE TABLE IF NOT EXISTS public.app_settings (
   key text PRIMARY KEY,
@@ -40,17 +79,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- 1. UTILITY FUNCTIONS & SCHEMAS
 -- ----------------------------------------------------
 
--- Helper function to check if user is admin (prevents RLS recursion)
-CREATE OR REPLACE FUNCTION public.is_admin(p_user_id uuid)
-RETURNS boolean AS $$
-BEGIN
-  RETURN EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE id = p_user_id AND role = 'admin'
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- ----------------------------------------------------
 -- 2. PROFILES TABLE & TRIGGERS
 -- ----------------------------------------------------
@@ -77,6 +105,9 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 -- RLS Policies
 CREATE POLICY "Allow users to select their own profile or admin" ON public.profiles
   FOR SELECT TO authenticated USING (auth.uid() = id OR public.is_admin(auth.uid()));
+
+CREATE POLICY "Allow users to insert their own profile" ON public.profiles
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Allow users to update their own profile or admin" ON public.profiles
   FOR UPDATE TO authenticated USING (auth.uid() = id OR public.is_admin(auth.uid()))
@@ -177,6 +208,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   stock_status text NOT NULL DEFAULT 'available' CHECK (stock_status IN ('available', 'sold_out')),
   gradient text,
   featured boolean DEFAULT false,
+  shipping_fee numeric NOT NULL DEFAULT 250,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -305,6 +337,7 @@ CREATE TABLE IF NOT EXISTS public.order_items (
   seller_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
   quantity integer NOT NULL CHECK (quantity > 0),
   price_at_purchase numeric NOT NULL,
+  shipping_fee_at_purchase numeric,
   item_status text NOT NULL DEFAULT 'pending_payment' CHECK (item_status IN ('pending_payment', 'paid_escrow', 'shipped', 'delivered', 'return_window', 'completed', 'disputed', 'refunded')),
   payout_released boolean NOT NULL DEFAULT false,
   delivered_at timestamp with time zone, -- per-item return-window tracking
@@ -350,9 +383,10 @@ CREATE OR REPLACE FUNCTION public.validate_order_item_insert()
 RETURNS TRIGGER AS $$
 DECLARE
   v_product_price numeric;
+  v_product_shipping_fee numeric;
   v_seller_id uuid;
 BEGIN
-  SELECT price, seller_id INTO v_product_price, v_seller_id
+  SELECT price, shipping_fee, seller_id INTO v_product_price, v_product_shipping_fee, v_seller_id
   FROM public.products
   WHERE id = NEW.product_id;
 
@@ -362,6 +396,13 @@ BEGIN
 
   IF NEW.price_at_purchase <> v_product_price THEN
     RAISE EXCEPTION 'Price mismatch for product ID %. Expected %, got %', NEW.product_id, v_product_price, NEW.price_at_purchase;
+  END IF;
+
+  -- Default or assert shipping fee at purchase
+  IF NEW.shipping_fee_at_purchase IS NULL THEN
+    NEW.shipping_fee_at_purchase := v_product_shipping_fee;
+  ELSIF NEW.shipping_fee_at_purchase <> v_product_shipping_fee THEN
+    RAISE EXCEPTION 'Shipping fee mismatch for product ID %. Expected %, got %', NEW.product_id, v_product_shipping_fee, NEW.shipping_fee_at_purchase;
   END IF;
 
   NEW.item_status := 'pending_payment';
@@ -566,6 +607,8 @@ CREATE OR REPLACE FUNCTION public.confirm_payment_via_webhook(
 RETURNS void AS $$
 DECLARE
   v_current_status text;
+  v_subtotal numeric;
+  v_shipping numeric;
   v_calculated_total numeric;
   v_order_id uuid;
 BEGIN
@@ -585,9 +628,19 @@ BEGIN
   END IF;
 
   -- Recalculate order total from actual line items to lock correctness (ignoring client-supplied total)
-  SELECT COALESCE(SUM(price_at_purchase * quantity), 0) + 250 INTO v_calculated_total
+  SELECT COALESCE(SUM(price_at_purchase * quantity), 0) INTO v_subtotal
   FROM public.order_items
   WHERE order_id = v_order_id;
+
+  SELECT COALESCE(SUM(max_shipping_fee), 0) INTO v_shipping
+  FROM (
+    SELECT MAX(shipping_fee_at_purchase) as max_shipping_fee
+    FROM public.order_items
+    WHERE order_id = v_order_id
+    GROUP BY seller_id
+  ) AS seller_shipping;
+
+  v_calculated_total := v_subtotal + v_shipping;
 
   -- Bypass trigger block by enabling session context flag
   PERFORM set_config('app.payment_settlement', 'true', true);
@@ -709,6 +762,8 @@ ALTER TABLE public.products ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS is_hidden boolean NOT NULL DEFAULT false;
 
 -- Re-create public_products view to filter out hidden products and products from suspended sellers
+DROP VIEW IF EXISTS public.public_products CASCADE;
+
 CREATE OR REPLACE VIEW public.public_products AS
   SELECT
     p.id,
@@ -726,6 +781,9 @@ CREATE OR REPLACE VIEW public.public_products AS
     p.stock_status,
     p.gradient,
     p.featured,
+    p.seller_id,
+    s.shop_name,
+    p.shipping_fee,
     p.created_at
   FROM public.products p
   LEFT JOIN public.profiles s ON p.seller_id = s.id
@@ -769,20 +827,33 @@ BEGIN
     RAISE EXCEPTION 'Unauthorized: Only administrators can run payout batches';
   END IF;
 
-  -- Insert grouped payouts
+  -- Insert grouped payouts (product subtotal + combined shipping fee per order)
   INSERT INTO public.payouts (seller_id, period_start, period_end, total_amount, status)
   SELECT 
-    seller_id, 
+    oi.seller_id, 
     p_start_date, 
     p_end_date, 
-    SUM(price_at_purchase * quantity) as total_amount, 
+    COALESCE(SUM(oi.price_at_purchase * oi.quantity), 0) + COALESCE(sh.shipping_total, 0) as total_amount, 
     'pending'
-  FROM public.order_items
-  WHERE item_status = 'completed' 
-    AND payout_released = false 
-    AND created_at >= p_start_date 
-    AND created_at <= p_end_date
-  GROUP BY seller_id;
+  FROM public.order_items oi
+  LEFT JOIN (
+    SELECT seller_id, SUM(max_shipping) as shipping_total
+    FROM (
+      SELECT seller_id, order_id, MAX(shipping_fee_at_purchase) as max_shipping
+      FROM public.order_items
+      WHERE item_status = 'completed' 
+        AND payout_released = false 
+        AND created_at >= p_start_date 
+        AND created_at <= p_end_date
+      GROUP BY seller_id, order_id
+    ) t
+    GROUP BY seller_id
+  ) sh ON oi.seller_id = sh.seller_id
+  WHERE oi.item_status = 'completed' 
+    AND oi.payout_released = false 
+    AND oi.created_at >= p_start_date 
+    AND oi.created_at <= p_end_date
+  GROUP BY oi.seller_id, sh.shipping_total;
 
   -- Mark order items as released
   UPDATE public.order_items

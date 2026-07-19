@@ -30,7 +30,7 @@ serve(async (req) => {
     // 1. Fetch order and its order items
     const { data: orderItems, error: itemsError } = await supabase
       .from('order_items')
-      .select('price_at_purchase, quantity')
+      .select('price_at_purchase, quantity, seller_id, shipping_fee_at_purchase')
       .eq('order_id', order_id)
 
     if (itemsError || !orderItems || orderItems.length === 0) {
@@ -40,12 +40,23 @@ serve(async (req) => {
       })
     }
 
-    // 2. Recalculate order total from actual line items
+    // 2. Recalculate order total from actual line items (per-seller shipping max)
     let subtotal = 0
+    const sellerShippingMap = new Map()
     for (const item of orderItems) {
       subtotal += Number(item.price_at_purchase) * Number(item.quantity)
+      
+      const sId = item.seller_id || 'unknown'
+      const fee = Number(item.shipping_fee_at_purchase || 0)
+      if (!sellerShippingMap.has(sId) || fee > sellerShippingMap.get(sId)) {
+        sellerShippingMap.set(sId, fee)
+      }
     }
-    const shipping = 250
+
+    let shipping = 0
+    for (const fee of sellerShippingMap.values()) {
+      shipping += fee
+    }
     const totalAmount = subtotal + shipping
 
     // 3. Update orders table with the locked recalculated total amount

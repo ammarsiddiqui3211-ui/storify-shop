@@ -4500,9 +4500,6 @@
 
     <!-- Header -->
     <header class="header">
-        <div class="top-bar">
-            Delivery charges Rs 250 | 3-day Delivery | 3-day returns
-        </div>
         <div class="nav-container">
             <nav class="nav-main">
                 <a href="#" class="logo"><img src="images/logo/header.png" alt="Storify Logo"></a>
@@ -4804,19 +4801,22 @@
                              category: catName,
                              categoryKey: catKey,
                              currentPrice: Number(item.price),
-                            originalPrice: item.original_price ? Number(item.original_price) : null,
-                            featured: !!item.featured,
-                            gradient: item.gradient || null,
-                            image: (item.images && item.images.length > 0) ? item.images[0] : 'images/placeholder.png',
-                            images: item.images || [],
-                            colors: item.colors || [],
-                            sizes: item.sizes || [],
-                            specs: item.specs || {},
-                            verifiedBadge: !!item.verified_badge,
-                            stockStatus: item.stock_status || 'available',
-                            sold: item.stock_status === 'sold_out',
-                            rating: 5,
-                            reviewCount: 0
+                             originalPrice: item.original_price ? Number(item.original_price) : null,
+                             featured: !!item.featured,
+                             gradient: item.gradient || null,
+                             image: (item.images && item.images.length > 0) ? item.images[0] : 'images/placeholder.png',
+                             images: item.images || [],
+                             colors: item.colors || [],
+                             sizes: item.sizes || [],
+                             specs: item.specs || {},
+                             verifiedBadge: !!item.verified_badge,
+                             stockStatus: item.stock_status || 'available',
+                             sold: item.stock_status === 'sold_out',
+                             rating: 5,
+                             reviewCount: 0,
+                             seller_id: item.seller_id,
+                             shopName: item.shop_name || 'Partner Shop',
+                             shippingFee: Number(item.shipping_fee || 250)
                         };
                     });
                 }
@@ -5061,7 +5061,8 @@
                     quantity: quantity,
                     color: color,
                     size: size,
-                    seller_id: p.seller_id
+                    seller_id: p.seller_id,
+                    shipping_fee: p.shippingFee || 250
                 });
             }
 
@@ -6857,7 +6858,7 @@
             }
 
             let specsHTML = '';
-            if (p.specs) {
+            if (p.specs && Object.keys(p.specs).length > 0) {
                 specsHTML = `
                     <div class="product-specs">
                         <div class="option-title" style="margin-bottom: 16px;">Product Specs</div>
@@ -7044,7 +7045,21 @@
                 subtotal += item.price * item.quantity;
             });
 
-            const shipping = 250;
+            // Calculate shipping dynamically per seller (max package rate per seller)
+            const sellerShippingMap = {};
+            cart.forEach(item => {
+                const sId = item.seller_id || 'unknown';
+                const fee = Number(item.shipping_fee || 250);
+                if (!sellerShippingMap[sId] || fee > sellerShippingMap[sId]) {
+                    sellerShippingMap[sId] = fee;
+                }
+            });
+
+            let shipping = 0;
+            const sellers = Object.keys(sellerShippingMap);
+            sellers.forEach(sId => {
+                shipping += sellerShippingMap[sId];
+            });
             const total = subtotal + shipping;
 
             view.innerHTML = `
@@ -7115,22 +7130,22 @@
                         
                         <div class="summary-items-list">
                             ${cart.map(item => {
-                const summaryImage = item.image || (products.find(p => p.id === item.id) || {}).image || '';
-                return `
-                                <div class="summary-item">
-                                    <div class="summary-item-left">
-                                        <div class="summary-item-thumb" style="background: ${item.gradient};">
-                                            ${summaryImage ? `<img src="${summaryImage}" alt="${item.name}">` : ''}
+                                const summaryImage = item.image || (products.find(p => p.id === item.id) || {}).image || '';
+                                return `
+                                    <div class="summary-item">
+                                        <div class="summary-item-left">
+                                            <div class="summary-item-thumb" style="background: ${item.gradient};">
+                                                ${summaryImage ? `<img src="${summaryImage}" alt="${item.name}">` : ''}
+                                            </div>
+                                            <div>
+                                                <div class="summary-item-name">${item.name}</div>
+                                                <div class="summary-item-qty">Qty: ${item.quantity} ${item.color || item.size ? `(${[item.color ? 'Color' : '', item.size ? item.size : ''].filter(Boolean).join(', ')})` : ''}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div class="summary-item-name">${item.name}</div>
-                                            <div class="summary-item-qty">Qty: ${item.quantity} ${item.color || item.size ? `(${[item.color ? 'Color' : '', item.size ? item.size : ''].filter(Boolean).join(', ')})` : ''}</div>
-                                        </div>
+                                        <div class="summary-item-price">${formatPrice(item.price * item.quantity)}</div>
                                     </div>
-                                    <div class="summary-item-price">${formatPrice(item.price * item.quantity)}</div>
-                                </div>
-                            `;
-            }).join('')}
+                                `;
+                            }).join('')}
                         </div>
                         
                         <div class="summary-pricing">
@@ -7138,11 +7153,23 @@
                                 <span>Subtotal</span>
                                 <span>${formatPrice(subtotal)}</span>
                             </div>
-                            <div class="pricing-row">
-                                <span>Shipping</span>
-                                <span>${formatPrice(shipping)}</span>
+                            <div class="pricing-row" style="flex-direction: column; align-items: stretch; gap: 4px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 500;">
+                                    <span>Shipping</span>
+                                    <span>${formatPrice(shipping)}</span>
+                                </div>
+                                ${sellers.length > 1 ? `
+                                    <div style="font-size: 11px; color: var(--text-light); text-align: right; line-height: 1.4; margin-top: 4px;">
+                                        Breakdown (${sellers.length} sellers):<br>
+                                        ${sellers.map((sId, index) => {
+                                            const prodInCart = cart.find(item => item.seller_id === sId);
+                                            const shopName = prodInCart ? (products.find(p => p.id === prodInCart.id)?.shopName || 'Seller ' + (index + 1)) : 'Seller ' + (index + 1);
+                                            return `${escapeHtml(shopName)}: ${formatPrice(sellerShippingMap[sId])}`;
+                                        }).join('<br>')}
+                                    </div>
+                                ` : ''}
                             </div>
-                            <div class="pricing-row total-row">
+                            <div class="pricing-row total-row" style="border-top: none; padding-top: 0; margin-top: 0;">
                                 <span>Total</span>
                                 <span>${formatPrice(total)}</span>
                             </div>
@@ -7203,7 +7230,20 @@
                 subtotal += item.price * item.quantity;
             });
 
-            const shipping = 250;
+            // Calculate shipping dynamically per seller (max package rate per seller)
+            const sellerShippingMap = {};
+            cart.forEach(item => {
+                const sId = item.seller_id || 'unknown';
+                const fee = Number(item.shipping_fee || 250);
+                if (!sellerShippingMap[sId] || fee > sellerShippingMap[sId]) {
+                    sellerShippingMap[sId] = fee;
+                }
+            });
+
+            let shipping = 0;
+            Object.values(sellerShippingMap).forEach(fee => {
+                shipping += fee;
+            });
             const total = subtotal + shipping;
 
             try {
@@ -7234,7 +7274,8 @@
                     product_id: item.id,
                     quantity: item.quantity,
                     price_at_purchase: item.price,
-                    seller_id: item.seller_id
+                    seller_id: item.seller_id,
+                    shipping_fee_at_purchase: item.shipping_fee || 250
                 }));
 
                 const { error: itemsError } = await supabaseClient
@@ -7382,82 +7423,6 @@
         // ----------------------------------------------------
         // PRODUCT REVIEWS SYSTEM
         // ----------------------------------------------------
-        const MOCK_REVIEWS = {
-            1: [
-                { name: "Ahmad Raza", rating: 5, comment: "Excellent fabric quality and stitching. The Dior print looks very premium. Fits perfectly as per size chart.", created_at: "2026-05-12 14:30:22" },
-                { name: "Bilal Khan", rating: 5, comment: "Super soft cotton, very breathable. Perfect for Karachi summer. Will buy again!", created_at: "2026-05-28 09:15:40" },
-                { name: "Zainab Bibi", rating: 4, comment: "Good value for money. Stitching is clean. Delivery was a bit slow but product is awesome.", created_at: "2026-06-05 18:22:11" }
-            ],
-            2: [
-                { name: "Hamza Malik", rating: 4, comment: "The calligraphy design 'Mir' is very unique. Got a lot of compliments. Fabric is decent.", created_at: "2026-04-18 11:20:00" },
-                { name: "Sana Tariq", rating: 5, comment: "Beautiful rose color! Standard fit is comfortable and printing is high quality.", created_at: "2026-05-02 16:45:30" }
-            ],
-            3: [
-                { name: "Haris Jamil", rating: 5, comment: "Outstanding vibrant red shade! The cotton is thick yet breathable. Perfect export quality.", created_at: "2026-05-10 10:14:15" },
-                { name: "Madiha Farooq", rating: 5, comment: "Very stylish athletic stripes on the sleeves. Fabric feel is premium.", created_at: "2026-05-24 14:22:11" }
-            ],
-            5: [
-                { name: "Kamran Shah", rating: 4, comment: "Awesome graphic design, fabric is soft. Sizing is accurate.", created_at: "2026-06-02 08:30:00" }
-            ],
-            11: [
-                { name: "Zeeshan Ahmed", rating: 5, comment: "Aura Midnight is a stunner. The Arabic dial is uniquely gorgeous, metal chain feels high quality and deployment clasp is secure.", created_at: "2026-05-19 12:45:10" },
-                { name: "Khadija Khan", rating: 5, comment: "Extremely lightweight and minimalist. Looks spectacular with black outfits.", created_at: "2026-06-03 16:12:44" }
-            ],
-            12: [
-                { name: "Omar Farooq", rating: 5, comment: "Pristine white is very eye-catching. Quartz movement is highly accurate. Great unisex watch.", created_at: "2026-05-22 10:11:55" }
-            ],
-            15: [
-                { name: "Saad Ahmed", rating: 5, comment: "The Trionda ball has a great grip and a solid match-ball feel. The flight is smooth on long passes and shots.", created_at: "2026-06-08 17:20:14" },
-                { name: "Danish Khan", rating: 5, comment: "Used it for weekend football and training drills. Holds air well, feels durable, and the colors look amazing on the pitch.", created_at: "2026-06-14 19:05:33" },
-                { name: "Arham Sheikh", rating: 4, comment: "Good quality football for the price. The textured surface helps control, especially when playing on turf.", created_at: "2026-06-18 16:42:09" }
-            ]
-        };
-
-        function getMockReviewsForProduct(productId) {
-            if (MOCK_REVIEWS[productId]) {
-                return MOCK_REVIEWS[productId];
-            }
-
-            const p = products.find(prod => prod.id === productId);
-            if (!p) return [];
-
-            const isWatch = p.categoryKey === 'watches';
-            const isSports = p.categoryKey === 'sports';
-            const name = p.name;
-
-            return [
-                {
-                    name: "Muhammad Ali",
-                    rating: isWatch || isSports ? 5 : 4,
-                    comment: isWatch
-                        ? `Bought the "${name}". The design is elegant, the chain feels solid, and the clasp is secure. Highly recommended!`
-                        : isSports
-                            ? `Bought the "${name}" for regular football practice. Great touch, strong build, and the ball feels stable in play.`
-                            : `Really nice cotton tee. Fabric feels very premium and durable. Stitches are neat. Good deal!`,
-                    created_at: "2026-05-15 10:25:00"
-                },
-                {
-                    name: "Ayesha Omer",
-                    rating: 5,
-                    comment: isWatch
-                        ? `Beautiful watch! The finish looks much more expensive than it is.`
-                        : isSports
-                            ? `The football looks exactly like the pictures and performs really well during drills. Fast delivery too!`
-                            : `Super soft and fits perfectly. The color looks exactly like the pictures. Fast shipping!`,
-                    created_at: "2026-06-01 15:40:12"
-                },
-                {
-                    name: "Usman Ghani",
-                    rating: isWatch ? 4 : 5,
-                    comment: isWatch
-                        ? `Excellent quality for this price range. Accurate timekeeping so far.`
-                        : isSports
-                            ? `Great value for match practice. It kicks cleanly, keeps shape well, and the outer texture gives nice control.`
-                            : `Got this in bundle deal, amazing value for money. Pure cotton material is very soft.`,
-                    created_at: "2026-06-10 12:10:45"
-                }
-            ];
-        }
 
         function formatDateString(dateStr) {
             if (!dateStr) return '';
@@ -7522,8 +7487,7 @@
             const p = products.find(prod => prod.id === productId);
             if (!p) return;
 
-            const mockReviews = getMockReviewsForProduct(productId);
-            const allReviews = [...dbReviews, ...mockReviews];
+            const allReviews = dbReviews || [];
 
             const totalReviews = allReviews.length;
             let sumRatings = 0;
