@@ -1160,13 +1160,13 @@
         .mobile-menu {
             display: none;
             position: fixed;
-            top: 59px;
+            top: 0;
             right: -100%;
             width: 300px;
-            height: calc(100vh - 59px);
+            height: 100vh;
             background: var(--white);
             z-index: 999;
-            padding: 24px;
+            padding: 80px 24px 24px;
             transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: -4px 0 30px var(--shadow-strong);
             overflow-y: auto;
@@ -1179,10 +1179,10 @@
         .mobile-menu-overlay {
             display: none;
             position: fixed;
-            top: 59px;
+            top: 0;
             left: 0;
             width: 100%;
-            height: calc(100vh - 59px);
+            height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 998;
             opacity: 0;
