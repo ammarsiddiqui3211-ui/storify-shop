@@ -1223,46 +1223,78 @@
 
         .mobile-nav-links {
             list-style: none;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
 
         .mobile-nav-links li {
-            border-bottom: 1px solid var(--border);
+            border: none;
         }
 
         .mobile-nav-links a {
-            display: block;
-            padding: 14px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px 4px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             color: var(--text);
             text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.3s ease;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            height: 100%;
         }
 
         .mobile-nav-links a:hover,
         .mobile-nav-links a.active {
+            background: var(--accent-light);
+            border-color: var(--accent);
             color: var(--accent);
         }
 
         .mobile-nav-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 15px;
         }
 
         .mobile-nav-actions button {
             width: 100%;
-            padding: 12px 16px;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            padding: 10px 4px !important;
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 8px;
             background: var(--white);
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
+            transition: all 0.2s ease;
+            text-align: center;
+            min-height: 65px;
+        }
+
+        .mobile-nav-actions button svg {
+            margin-right: 0 !important;
+            margin-bottom: 2px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .mobile-nav-actions button span {
+            font-size: 10px;
+            line-height: 1.2;
+            white-space: normal;
         }
 
         .mobile-nav-actions button:hover {
