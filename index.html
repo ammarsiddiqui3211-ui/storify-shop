@@ -244,6 +244,10 @@
             transform: translateY(0);
         }
 
+        .mobile-only-selectors {
+            display: none !important;
+        }
+
         .sfp-header {
             display: flex;
             justify-content: space-between;
@@ -520,10 +524,6 @@
             outline: none;
         }
 
-        .categories-toggle-btn:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-        }
 
         .categories-toggle-btn svg {
             width: 14px;
@@ -532,7 +532,7 @@
         }
 
         /* Rotates arrow down when collapsed */
-        .categories-bar.hidden-scroll + .categories-toggle-btn svg {
+        .categories-bar.hidden-scroll+.categories-toggle-btn svg {
             transform: rotate(180deg);
         }
 
@@ -652,6 +652,7 @@
 
         /* Responsive - Hide from main header on mobile, shown in drawer */
         @media (max-width: 992px) {
+
             .nav-main .country-dropdown,
             .nav-main .language-dropdown {
                 display: none !important;
@@ -941,6 +942,11 @@
             max-width: 100%;
             margin: 0 auto;
             padding: 60px 40px;
+        }
+
+        /* Reduce top padding on product detail view to match left/right padding of 40px */
+        main.container:has(#product-view:not([style*="display: none"])) {
+            padding-top: 40px;
         }
 
         .section-header {
@@ -1632,6 +1638,10 @@
                 padding: 40px 24px;
             }
 
+            main.container:has(#product-view:not([style*="display: none"])) {
+                padding-top: 24px;
+            }
+
             .categories {
                 padding: 0 24px;
                 gap: 24px;
@@ -1741,22 +1751,32 @@
                 height: 15px;
             }
 
+            .mobile-only-selectors {
+                display: block !important;
+            }
+
+            .mobile-only-selectors .header-dropdown .dropdown-menu {
+                bottom: calc(100% + 6px) !important;
+                top: auto !important;
+            }
+
             .search-filter-panel {
                 position: fixed !important;
                 top: 70px !important;
                 left: 0 !important;
                 right: 0 !important;
-                bottom: 0 !important;
+                bottom: auto !important;
                 width: 100% !important;
                 height: auto !important;
-                max-height: none !important;
+                max-height: calc(100vh - 70px) !important;
                 border-radius: 0 !important;
                 z-index: 9999 !important;
                 overflow-y: auto !important;
                 overflow-x: hidden !important;
                 background: #ffffff !important;
-                box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
                 border: none !important;
+                border-bottom: 1px solid var(--border) !important;
                 opacity: 0 !important;
                 visibility: hidden !important;
                 transform: none !important;
@@ -1916,6 +1936,10 @@
 
             .container {
                 padding: 32px 16px;
+            }
+
+            main.container:has(#product-view:not([style*="display: none"])) {
+                padding-top: 16px;
             }
 
             .section-header {
@@ -2205,7 +2229,9 @@
             position: relative;
             width: 100%;
             min-width: 0;
+            display: flex;
             flex-direction: column;
+            align-items: flex-start;
             gap: 16px;
             align-self: start;
         }
@@ -2215,24 +2241,17 @@
             justify-items: center;
         }
 
-        /* Ensure gallery and image stay centered */
-        .product-gallery,
+        /* Ensure image stays centered within wrapper */
         .product-detail-image-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .product-detail-image-wrapper {
             border-radius: 16px;
             width: 100%;
-            max-width: 540px;
-            height: 560px;
+            max-width: 480px;
+            height: 500px;
             min-width: 0;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
             background: var(--white);
             border: 2px solid rgba(255, 255, 255, 0.9);
@@ -2255,10 +2274,10 @@
         .product-thumbnails {
             display: grid;
             grid-template-columns: repeat(auto-fill, 76px);
-            justify-content: center;
+            justify-content: flex-start;
             gap: 12px;
             width: 100%;
-            max-width: 540px;
+            max-width: 480px;
         }
 
         .product-thumbnail {
@@ -2387,9 +2406,9 @@
             border-radius: 16px;
             border: 1px solid var(--border);
             width: 100%;
-            max-width: 520px;
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 480px;
+            margin-left: 0;
+            margin-right: 0;
             min-width: 0;
         }
 
@@ -4131,6 +4150,10 @@
                 margin-right: auto;
             }
 
+            .product-gallery {
+                align-items: center;
+            }
+
             .product-detail-image-wrapper {
                 width: 100%;
                 max-width: 620px;
@@ -4144,10 +4167,13 @@
 
             .product-thumbnails {
                 max-width: 620px;
+                justify-content: center;
             }
 
             .product-options {
                 max-width: 100%;
+                margin-left: auto;
+                margin-right: auto;
             }
         }
 
@@ -4927,27 +4953,35 @@
         .category-card[data-category="all-products"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(29, 78, 216, 0.9) 0%, rgba(29, 78, 216, 0.35) 100%);
         }
+
         .category-card[data-category="featured"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(109, 40, 217, 0.9) 0%, rgba(109, 40, 217, 0.35) 100%);
         }
+
         .category-card[data-category="electronics-tech"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(3, 105, 161, 0.9) 0%, rgba(3, 105, 161, 0.35) 100%);
         }
+
         .category-card[data-category="apparel-fashion"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(190, 24, 74, 0.9) 0%, rgba(190, 24, 74, 0.35) 100%);
         }
+
         .category-card[data-category="home-living"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(180, 83, 9, 0.9) 0%, rgba(180, 83, 9, 0.35) 100%);
         }
+
         .category-card[data-category="personal-care-beauty"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(219, 39, 119, 0.9) 0%, rgba(219, 39, 119, 0.35) 100%);
         }
+
         .category-card[data-category="sports-outdoors"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(4, 120, 87, 0.9) 0%, rgba(4, 120, 87, 0.35) 100%);
         }
+
         .category-card[data-category="accessories-jewelry"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(194, 65, 12, 0.9) 0%, rgba(194, 65, 12, 0.35) 100%);
         }
+
         .category-card[data-category="stationery-office"] .category-card-overlay {
             background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(51, 65, 85, 0.35) 100%);
         }
@@ -4989,7 +5023,7 @@
             box-shadow: 0 0 0 2px var(--accent), 0 8px 24px var(--accent-glow);
             transform: scale(1.02);
         }
-        
+
         .category-card.active .category-card-overlay {
             opacity: 0.95;
         }
@@ -4999,18 +5033,22 @@
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 12px;
             }
+
             .category-card {
                 height: 90px;
                 padding: 12px;
                 border-radius: 12px;
             }
+
             .category-card-title {
                 font-size: 14px;
             }
+
             .category-card-icon svg {
                 width: 18px;
                 height: 18px;
             }
+
             .graphic-categories-section .section-title {
                 font-size: 20px;
                 margin-bottom: 14px;
@@ -5148,12 +5186,14 @@
             #priceFilterPill {
                 display: none !important;
             }
+
             .filter-bar-section {
                 padding: 12px 0 !important;
                 margin-bottom: 16px !important;
                 gap: 8px !important;
                 overflow: visible !important;
             }
+
             .filter-pills-container {
                 flex-wrap: nowrap !important;
                 overflow: visible !important;
@@ -5162,14 +5202,17 @@
                 flex-grow: 1 !important;
                 padding-bottom: 0 !important;
             }
+
             .filter-pills-container::-webkit-scrollbar {
                 display: none !important;
             }
+
             .filter-pill-btn {
                 padding: 6px 12px !important;
                 font-size: 12px !important;
                 white-space: nowrap !important;
             }
+
             .filter-pill-btn span {
                 display: inline-block !important;
                 max-width: 110px !important;
@@ -5178,6 +5221,7 @@
                 white-space: nowrap !important;
                 vertical-align: middle !important;
             }
+
             .filter-icon-indicator {
                 width: 32px !important;
                 height: 32px !important;
@@ -5224,45 +5268,21 @@
                 <span style="display:block;width:22px;height:2px;background:var(--text);border-radius:2px;"></span>
             </button>
         </div>
-        <div class="mobile-selectors-container" style="padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 10px;">
-            <!-- Mobile Country Dropdown -->
-            <div class="header-dropdown country-dropdown" id="mobileCountryDropdown" style="flex: 1;">
-                <div class="dropdown-trigger" onclick="toggleHeaderDropdown('mobileCountryDropdown', event)" style="width: 100%; justify-content: space-between;">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin" style="vertical-align: middle; margin-right: 6px; color: var(--accent);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pakistan</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-                <div class="dropdown-menu" style="width: 100%; min-width: unset;">
-                    <div class="dropdown-header" style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">Delivery Location</div>
-                    <a href="#" onclick="selectCountry('PK', 'Pakistan', '🇵🇰', event)" class="active">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin" style="vertical-align: middle; margin-right: 6px; color: var(--accent);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pakistan
-                    </a>
-                </div>
-            </div>
-
-            <!-- Mobile Language Dropdown -->
-            <div class="header-dropdown language-dropdown" id="mobileLanguageDropdown" style="flex: 1;">
-                <div class="dropdown-trigger" onclick="toggleHeaderDropdown('mobileLanguageDropdown', event)" style="width: 100%; justify-content: space-between;">
-                    <span><img src="https://flagcdn.com/w20/us.png" alt="US" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;"> English</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-                <div class="dropdown-menu" style="width: 100%; min-width: unset; left: auto; right: 0;">
-                    <div class="dropdown-header" style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">Change Language</div>
-                    <a href="#" onclick="selectLanguage('en', 'English', event)" class="active">
-                        <img src="https://flagcdn.com/w20/us.png" alt="US" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;"> English
-                    </a>
-                    <a href="#" onclick="selectLanguage('ur', 'Urdu', event)">
-                        <img src="https://flagcdn.com/w20/pk.png" alt="PK" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;"> اردو
-                    </a>
-                </div>
-            </div>
-        </div>
         <ul class="mobile-nav-links" id="mobileNavCategories">
-            <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)" data-translate="home">Home</a></li>
-            <li><a href="#" data-category="categories" onclick="toggleMobileMenu(); goToAllCategories(event)" data-translate="all_categories">All Categories</a></li>
+            <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)"
+                    data-translate="home">Home</a></li>
+            <li><a href="#" data-category="categories" onclick="toggleMobileMenu(); goToAllCategories(event)"
+                    data-translate="all_categories">All Categories</a></li>
             <li><a href="seller.html" target="_blank" onclick="toggleMobileMenu();" data-translate="sell">Sell</a></li>
-            <li><a href="#" id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account', null, event)"><span class="account-btn-text" data-translate="login_signup">Login / Sign Up</span></a></li>
-            <li><a href="#" id="mobileWishlistBtn" onclick="toggleMobileMenu(); showView('wishlist', null, event)"><span data-translate="wishlist">Wishlist</span></a></li>
-            <li><a href="#" id="mobileCartBtn" onclick="toggleMobileMenu(); toggleCart(); if(event)event.preventDefault();"><span data-translate="cart">Cart</span> <span class="cart-count" id="mobileCartCount" style="margin-left: 6px; display: inline-block; position: static; background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; vertical-align: middle;">0</span></a></li>
+            <li><a href="#" id="mobileWishlistBtn" onclick="toggleMobileMenu(); showView('wishlist', null, event)"><span
+                        data-translate="wishlist">Wishlist</span></a></li>
+            <li><a href="#" id="mobileCartBtn"
+                    onclick="toggleMobileMenu(); toggleCart(); if(event)event.preventDefault();"><span
+                        data-translate="cart">Cart</span> <span class="cart-count" id="mobileCartCount"
+                        style="margin-left: 6px; display: inline-block; position: static; background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; vertical-align: middle;">0</span></a>
+            </li>
+            <li><a href="#" id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account', null, event)"><span
+                        class="account-btn-text" data-translate="login_signup">Login / Sign Up</span></a></li>
         </ul>
     </div>
 
@@ -5270,68 +5290,198 @@
     <header class="header">
         <div class="nav-container">
             <nav class="nav-main">
-                <div class="logo-country-container" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0;">
-                    <a href="#" class="logo" onclick="filterCategory('all', event)"><img src="images/logo/header.png" alt="Storify Logo"></a>
-                    
+                <div class="logo-country-container"
+                    style="display: flex; align-items: center; gap: 16px; flex-shrink: 0;">
+                    <a href="#" class="logo" onclick="filterCategory('all', event)"><img src="images/logo/header.png"
+                            alt="Storify Logo"></a>
+
                     <!-- Country Dropdown -->
                     <div class="header-dropdown country-dropdown" id="countryDropdown">
                         <div class="dropdown-trigger" onclick="toggleHeaderDropdown('countryDropdown', event)">
-                            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin" style="vertical-align: middle; margin-right: 6px; color: var(--accent);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pakistan</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-map-pin"
+                                    style="vertical-align: middle; margin-right: 6px; color: var(--accent);">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg> Pakistan</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
                         </div>
                         <div class="dropdown-menu">
-                            <div class="dropdown-header" style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">Delivery Location</div>
+                            <div class="dropdown-header"
+                                style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+                                Delivery Location</div>
                             <a href="#" onclick="selectCountry('PK', 'Pakistan', '🇵🇰', event)" class="active">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin" style="vertical-align: middle; margin-right: 6px; color: var(--accent);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pakistan
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-map-pin"
+                                    style="vertical-align: middle; margin-right: 6px; color: var(--accent);">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg> Pakistan
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <div class="search-bar">
-                    <button class="search-filter-icon" id="searchFilterToggle" onclick="toggleSearchFilterPanel(event)" title="Filters" aria-label="Toggle Filters">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    <button class="search-filter-icon" id="searchFilterToggle" onclick="toggleSearchFilterPanel(event)"
+                        title="Filters" aria-label="Toggle Filters">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                        </svg>
                     </button>
-                    <input type="text" class="search-input" data-translate-placeholder="search_placeholder" placeholder="Search for products, brands, and more...">
+                    <input type="text" class="search-input" data-translate-placeholder="search_placeholder"
+                        placeholder="Search for products, brands, and more...">
                     <!-- Search Filter Panel -->
                     <div class="search-filter-panel" id="searchFilterPanel">
                         <div class="sfp-header">
-                            <span class="sfp-title"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filters</span>
+                            <span class="sfp-title"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                                </svg> Filters</span>
                             <button class="sfp-close" onclick="closeSearchFilterPanel(event)">&times;</button>
                         </div>
                         <div class="sfp-group">
                             <div class="sfp-group-label">Category</div>
                             <div class="sfp-options">
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('electronics-tech', event)">Electronics &amp; Tech</a>
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('apparel-fashion', event)">Apparel &amp; Fashion</a>
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('home-living', event)">Home &amp; Living</a>
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('personal-care-beauty', event)">Personal Care &amp; Beauty</a>
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('sports-outdoors', event)">Sports &amp; Outdoors</a>
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('accessories-jewelry', event)">Accessories &amp; Jewelry</a>
-                                <a href="#" onclick="closeSearchFilterPanel(event); filterCategory('stationery-office', event)">Stationery &amp; Office</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('electronics-tech', event)">Electronics
+                                    &amp; Tech</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('apparel-fashion', event)">Apparel
+                                    &amp; Fashion</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('home-living', event)">Home
+                                    &amp; Living</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('personal-care-beauty', event)">Personal
+                                    Care &amp; Beauty</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('sports-outdoors', event)">Sports
+                                    &amp; Outdoors</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('accessories-jewelry', event)">Accessories
+                                    &amp; Jewelry</a>
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); filterCategory('stationery-office', event)">Stationery
+                                    &amp; Office</a>
                             </div>
                         </div>
                         <div class="sfp-group">
                             <div class="sfp-group-label">Price Range</div>
                             <div class="sfp-options">
-                                <a href="#" onclick="applyDropdownFilter('price', 'all', 'All Prices', event); closeSearchFilterPanel(event)">All Prices</a>
-                                <a href="#" onclick="applyDropdownFilter('price', 'under-500', 'Under Rs. 500', event); closeSearchFilterPanel(event)">Under Rs. 500</a>
-                                <a href="#" onclick="applyDropdownFilter('price', '500-1500', 'Rs. 500 - Rs. 1500', event); closeSearchFilterPanel(event)">Rs. 500 - Rs. 1500</a>
-                                <a href="#" onclick="applyDropdownFilter('price', 'over-1500', 'Over Rs. 1500', event); closeSearchFilterPanel(event)">Over Rs. 1500</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('price', 'all', 'All Prices', event); closeSearchFilterPanel(event)">All
+                                    Prices</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('price', 'under-500', 'Under Rs. 500', event); closeSearchFilterPanel(event)">Under
+                                    Rs. 500</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('price', '500-1500', 'Rs. 500 - Rs. 1500', event); closeSearchFilterPanel(event)">Rs.
+                                    500 - Rs. 1500</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('price', 'over-1500', 'Over Rs. 1500', event); closeSearchFilterPanel(event)">Over
+                                    Rs. 1500</a>
                             </div>
                         </div>
                         <div class="sfp-group">
                             <div class="sfp-group-label">Sort By</div>
                             <div class="sfp-options">
-                                <a href="#" onclick="applyDropdownFilter('sort', 'default', 'Sort: Default', event); closeSearchFilterPanel(event)">Default</a>
-                                <a href="#" onclick="applyDropdownFilter('sort', 'price-low', 'Price: Low to High', event); closeSearchFilterPanel(event)">Price: Low to High</a>
-                                <a href="#" onclick="applyDropdownFilter('sort', 'price-high', 'Price: High to Low', event); closeSearchFilterPanel(event)">Price: High to Low</a>
-                                <a href="#" onclick="applyDropdownFilter('sort', 'name-asc', 'Name: A to Z', event); closeSearchFilterPanel(event)">Name: A to Z</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('sort', 'default', 'Sort: Default', event); closeSearchFilterPanel(event)">Default</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('sort', 'price-low', 'Price: Low to High', event); closeSearchFilterPanel(event)">Price:
+                                    Low to High</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('sort', 'price-high', 'Price: High to Low', event); closeSearchFilterPanel(event)">Price:
+                                    High to Low</a>
+                                <a href="#"
+                                    onclick="applyDropdownFilter('sort', 'name-asc', 'Name: A to Z', event); closeSearchFilterPanel(event)">Name:
+                                    A to Z</a>
+                            </div>
+                        </div>
+                        <div class="sfp-group mobile-only-selectors">
+                            <div class="sfp-group-label">Region &amp; Language</div>
+                            <div class="mobile-selectors-container"
+                                style="padding: 10px 0 0 0; display: flex; gap: 10px;">
+                                <!-- Mobile Country Dropdown -->
+                                <div class="header-dropdown country-dropdown" id="mobileCountryDropdown" style="flex: 1; position: relative;">
+                                    <div class="dropdown-trigger" onclick="toggleHeaderDropdown('mobileCountryDropdown', event)"
+                                        style="width: 100%; justify-content: space-between;">
+                                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-map-pin"
+                                                style="vertical-align: middle; margin-right: 6px; color: var(--accent);">
+                                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                                <circle cx="12" cy="10" r="3" />
+                                            </svg> Pakistan</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="dropdown-menu" style="width: 100%; min-width: unset;">
+                                        <div class="dropdown-header"
+                                            style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+                                            Delivery Location</div>
+                                        <a href="#" onclick="selectCountry('PK', 'Pakistan', '🇵🇰', event)" class="active">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-map-pin"
+                                                style="vertical-align: middle; margin-right: 6px; color: var(--accent);">
+                                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                                <circle cx="12" cy="10" r="3" />
+                                            </svg> Pakistan
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Language Dropdown -->
+                                <div class="header-dropdown language-dropdown" id="mobileLanguageDropdown" style="flex: 1; position: relative;">
+                                    <div class="dropdown-trigger" onclick="toggleHeaderDropdown('mobileLanguageDropdown', event)"
+                                        style="width: 100%; justify-content: space-between;">
+                                        <span><img src="https://flagcdn.com/w20/us.png" alt="US"
+                                                style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">
+                                            English</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="dropdown-menu" style="width: 100%; min-width: unset; left: auto; right: 0;">
+                                        <div class="dropdown-header"
+                                            style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+                                            Change Language</div>
+                                        <a href="#" onclick="selectLanguage('en', 'English', event)" class="active">
+                                            <img src="https://flagcdn.com/w20/us.png" alt="US"
+                                                style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">
+                                            English
+                                        </a>
+                                        <a href="#" onclick="selectLanguage('ur', 'Urdu', event)">
+                                            <img src="https://flagcdn.com/w20/pk.png" alt="PK"
+                                                style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">
+                                            اردو
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="sfp-footer">
-                            <button class="sfp-reset-btn" onclick="resetAllDropdownFilters(); closeSearchFilterPanel(event)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                            <button class="sfp-reset-btn"
+                                onclick="resetAllDropdownFilters(); closeSearchFilterPanel(event)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                    <path d="M3 3v5h5" />
+                                </svg>
                                 Reset All Filters
                             </button>
                         </div>
@@ -5350,22 +5500,35 @@
                     <!-- Language Dropdown -->
                     <div class="header-dropdown language-dropdown" id="languageDropdown">
                         <div class="dropdown-trigger" onclick="toggleHeaderDropdown('languageDropdown', event)">
-                            <span><img src="https://flagcdn.com/w20/us.png" alt="US" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;"> English</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            <span><img src="https://flagcdn.com/w20/us.png" alt="US"
+                                    style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">
+                                English</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
                         </div>
                         <div class="dropdown-menu">
-                            <div class="dropdown-header" style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">Change Language</div>
+                            <div class="dropdown-header"
+                                style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+                                Change Language</div>
                             <a href="#" onclick="selectLanguage('en', 'English', event)" class="active">
-                                <img src="https://flagcdn.com/w20/us.png" alt="US" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;"> English
+                                <img src="https://flagcdn.com/w20/us.png" alt="US"
+                                    style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">
+                                English
                             </a>
                             <a href="#" onclick="selectLanguage('ur', 'Urdu', event)">
-                                <img src="https://flagcdn.com/w20/pk.png" alt="PK" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;"> اردو
+                                <img src="https://flagcdn.com/w20/pk.png" alt="PK"
+                                    style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">
+                                اردو
                             </a>
                         </div>
                     </div>
                     <!-- Account Dropdown -->
                     <div class="header-dropdown account-dropdown" id="accountDropdown">
-                        <button class="nav-btn" id="desktopAccountBtn" onclick="showView('account')" aria-label="Account">
+                        <button class="nav-btn" id="desktopAccountBtn" onclick="showView('account')"
+                            aria-label="Account">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -5374,17 +5537,26 @@
                             <span class="account-btn-text" data-translate="login_signup">Login / Sign Up</span>
                         </button>
                         <div class="dropdown-menu" style="min-width: 180px;">
-                            <div class="dropdown-header" style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">Account Menu</div>
+                            <div class="dropdown-header"
+                                style="font-size: 11px; font-weight: 700; color: var(--text-light); padding: 4px 12px 8px; border-bottom: 1px solid var(--border); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+                                Account Menu</div>
                             <a href="#" onclick="showAccountSubPage('personal', event)">Personal Info</a>
                             <a href="#" onclick="showAccountSubPage('activity', event)">Shopping Activity</a>
                             <a href="#" onclick="showAccountSubPage('orders', event)">Order History</a>
-                            <a href="#" onclick="signOutAccount(); if(event)event.preventDefault();" style="color: #ef4444; border-top: 1.5px solid var(--border); margin-top: 6px; padding-top: 10px; display: flex; align-items: center; gap: 8px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            <a href="#" onclick="signOutAccount(); if(event)event.preventDefault();"
+                                style="color: #ef4444; border-top: 1.5px solid var(--border); margin-top: 6px; padding-top: 10px; display: flex; align-items: center; gap: 8px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                    <polyline points="16 17 21 12 16 7" />
+                                    <line x1="21" y1="12" x2="9" y2="12" />
+                                </svg>
                                 Sign Out
                             </a>
                         </div>
                     </div>
-                    <button class="nav-btn" id="desktopWishlistBtn" onclick="showView('wishlist')" aria-label="Wishlist">
+                    <button class="nav-btn" id="desktopWishlistBtn" onclick="showView('wishlist')"
+                        aria-label="Wishlist">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                             style="vertical-align:middle;margin-right:6px">
@@ -5419,7 +5591,8 @@
                 <div class="categories" id="categoriesContainer">
                     <a href="#" class="category-link active" data-category="all"
                         onclick="filterCategory('all', event)">Home</a>
-                    <a href="#" class="category-link" data-category="categories" onclick="goToAllCategories(event)">All Categories</a>
+                    <a href="#" class="category-link" data-category="categories" onclick="goToAllCategories(event)">All
+                        Categories</a>
                     <a href="#" class="category-link" data-category="featured"
                         onclick="filterCategory('featured', event)">Featured</a>
                     <a href="#" class="category-link" data-category="best-sellers"
@@ -5436,8 +5609,10 @@
                     aria-label="Scroll categories right">›</button>
             </div>
         </div>
-        <button class="categories-toggle-btn" id="categoriesToggleBtn" onclick="toggleCategoriesBar()" aria-label="Toggle categories">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <button class="categories-toggle-btn" id="categoriesToggleBtn" onclick="toggleCategoriesBar()"
+            aria-label="Toggle categories">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>
             </svg>
         </button>
@@ -5491,82 +5666,137 @@
                 <h2 class="section-title">Categories</h2>
                 <div class="graphic-categories-list">
                     <a href="#" class="category-card" data-category="all-products" onclick="goToAllProducts(event)">
-                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60" alt="All Products">
+                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60"
+                            alt="All Products">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">All Products</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M12 2v4"/><path d="M21 12H12"/><path d="M8 12H3"/><path d="M10 10v4"/><path d="M21 20h-9"/><path d="M8 20H3"/><path d="M10 18v4"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-sliders-horizontal">
+                                    <path d="M21 4h-7" />
+                                    <path d="M10 4H3" />
+                                    <path d="M12 2v4" />
+                                    <path d="M21 12H12" />
+                                    <path d="M8 12H3" />
+                                    <path d="M10 10v4" />
+                                    <path d="M21 20h-9" />
+                                    <path d="M8 20H3" />
+                                    <path d="M10 18v4" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60" alt="Electronics & Tech">
+                    <a href="#" class="category-card" data-category="electronics-tech"
+                        onclick="filterCategory('electronics-tech', event)">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60"
+                            alt="Electronics & Tech">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Electronics & Tech</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&auto=format&fit=crop&q=60" alt="Apparel & Fashion">
+                    <a href="#" class="category-card" data-category="apparel-fashion"
+                        onclick="filterCategory('apparel-fashion', event)">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&auto=format&fit=crop&q=60"
+                            alt="Apparel & Fashion">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Apparel & Fashion</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="home-living" onclick="filterCategory('home-living', event)">
-                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60" alt="Home & Living">
+                    <a href="#" class="category-card" data-category="home-living"
+                        onclick="filterCategory('home-living', event)">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60"
+                            alt="Home & Living">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Home & Living</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">
-                        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60" alt="Personal Care & Beauty">
+                    <a href="#" class="category-card" data-category="personal-care-beauty"
+                        onclick="filterCategory('personal-care-beauty', event)">
+                        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60"
+                            alt="Personal Care & Beauty">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Personal Care & Beauty</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">
-                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60" alt="Sports & Outdoors">
+                    <a href="#" class="category-card" data-category="sports-outdoors"
+                        onclick="filterCategory('sports-outdoors', event)">
+                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60"
+                            alt="Sports & Outdoors">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Sports & Outdoors</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">
-                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60" alt="Accessories & Jewelry">
+                    <a href="#" class="category-card" data-category="accessories-jewelry"
+                        onclick="filterCategory('accessories-jewelry', event)">
+                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60"
+                            alt="Accessories & Jewelry">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Accessories & Jewelry</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">
-                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60" alt="Stationery & Office">
+                    <a href="#" class="category-card" data-category="stationery-office"
+                        onclick="filterCategory('stationery-office', event)">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60"
+                            alt="Stationery & Office">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Stationery & Office</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
@@ -5639,82 +5869,137 @@
                 <h2 class="section-title">Categories</h2>
                 <div class="graphic-categories-list">
                     <a href="#" class="category-card" data-category="all-products" onclick="goToAllProducts(event)">
-                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60" alt="All Products">
+                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60"
+                            alt="All Products">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">All Products</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M12 2v4"/><path d="M21 12H12"/><path d="M8 12H3"/><path d="M10 10v4"/><path d="M21 20h-9"/><path d="M8 20H3"/><path d="M10 18v4"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-sliders-horizontal">
+                                    <path d="M21 4h-7" />
+                                    <path d="M10 4H3" />
+                                    <path d="M12 2v4" />
+                                    <path d="M21 12H12" />
+                                    <path d="M8 12H3" />
+                                    <path d="M10 10v4" />
+                                    <path d="M21 20h-9" />
+                                    <path d="M8 20H3" />
+                                    <path d="M10 18v4" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60" alt="Electronics & Tech">
+                    <a href="#" class="category-card" data-category="electronics-tech"
+                        onclick="filterCategory('electronics-tech', event)">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60"
+                            alt="Electronics & Tech">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Electronics & Tech</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&auto=format&fit=crop&q=60" alt="Apparel & Fashion">
+                    <a href="#" class="category-card" data-category="apparel-fashion"
+                        onclick="filterCategory('apparel-fashion', event)">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&auto=format&fit=crop&q=60"
+                            alt="Apparel & Fashion">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Apparel & Fashion</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="home-living" onclick="filterCategory('home-living', event)">
-                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60" alt="Home & Living">
+                    <a href="#" class="category-card" data-category="home-living"
+                        onclick="filterCategory('home-living', event)">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60"
+                            alt="Home & Living">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Home & Living</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">
-                        <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop&q=60" alt="Personal Care & Beauty">
+                    <a href="#" class="category-card" data-category="personal-care-beauty"
+                        onclick="filterCategory('personal-care-beauty', event)">
+                        <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop&q=60"
+                            alt="Personal Care & Beauty">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Personal Care & Beauty</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">
-                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60" alt="Sports & Outdoors">
+                    <a href="#" class="category-card" data-category="sports-outdoors"
+                        onclick="filterCategory('sports-outdoors', event)">
+                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60"
+                            alt="Sports & Outdoors">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Sports & Outdoors</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">
-                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60" alt="Accessories & Jewelry">
+                    <a href="#" class="category-card" data-category="accessories-jewelry"
+                        onclick="filterCategory('accessories-jewelry', event)">
+                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60"
+                            alt="Accessories & Jewelry">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Accessories & Jewelry</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
-                    <a href="#" class="category-card" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">
-                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60" alt="Stationery & Office">
+                    <a href="#" class="category-card" data-category="stationery-office"
+                        onclick="filterCategory('stationery-office', event)">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60"
+                            alt="Stationery & Office">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
                             <span class="category-card-title">Stationery & Office</span>
                             <span class="category-card-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
                             </span>
                         </div>
                     </a>
@@ -5825,7 +6110,7 @@
 
         function applyTranslations(lang) {
             const dictionary = TRANSLATIONS[lang] || TRANSLATIONS.en;
-            
+
             // Translate text content
             document.querySelectorAll('[data-translate]').forEach(el => {
                 const key = el.getAttribute('data-translate');
@@ -5841,7 +6126,7 @@
                     el.placeholder = dictionary[key];
                 }
             });
-            
+
             // Set body document lang for accessibility
             document.documentElement.lang = lang === 'ur' ? 'ur' : 'en-PK';
         }
@@ -5852,10 +6137,10 @@
             if (!dropdown) return;
 
             const isAlreadyActive = dropdown.classList.contains('active');
-            
+
             // Close all header dropdowns first
             document.querySelectorAll('.header-dropdown').forEach(d => d.classList.remove('active'));
-            
+
             if (!isAlreadyActive) {
                 dropdown.classList.add('active');
             }
@@ -5863,26 +6148,26 @@
 
         function selectCountry(countryCode, countryName, flag, event) {
             if (event) event.preventDefault();
-            
+
             const pinIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin" style="vertical-align: middle; margin-right: 6px; color: var(--accent);"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
-            
+
             // Update both desktop and mobile triggers
             document.querySelectorAll('#countryDropdown .dropdown-trigger span, #mobileCountryDropdown .dropdown-trigger span').forEach(el => {
                 el.innerHTML = `${pinIcon} ${countryName}`;
             });
-            
+
             localStorage.setItem('selectedCountry', countryCode);
             showToast(`Delivery country set to ${countryName}`);
         }
 
         function selectLanguage(langCode, langName, event) {
             if (event) event.preventDefault();
-            
+
             const usFlag = '<img src="https://flagcdn.com/w20/us.png" alt="US" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">';
             const pkFlag = '<img src="https://flagcdn.com/w20/pk.png" alt="PK" style="width: 18px; height: 13px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 6px;">';
             const flag = langCode === 'ur' ? pkFlag : usFlag;
             const label = langCode === 'ur' ? 'اردو' : 'English';
-            
+
             // Update trigger text on both desktop and mobile
             document.querySelectorAll('#languageDropdown .dropdown-trigger span, #mobileLanguageDropdown .dropdown-trigger span').forEach(el => {
                 el.innerHTML = `${flag} ${label}`;
@@ -5893,7 +6178,7 @@
                 const matchesLang = a.getAttribute('onclick').includes(`'${langCode}'`);
                 a.classList.toggle('active', matchesLang);
             });
-            
+
             localStorage.setItem('selectedLang', langCode);
             applyTranslations(langCode);
             showToast(`Language changed to ${langName}`);
@@ -6094,7 +6379,15 @@
             menu.classList.toggle('active');
             overlay.classList.toggle('active');
             hamburger.classList.toggle('active');
+
+            // Lock body scroll when mobile menu is open
+            if (menu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         }
+
 
         // Save Cart to LocalStorage
         function saveCart() {
@@ -6497,7 +6790,7 @@
             if (viewName === 'home' || viewName === 'all-products') {
                 const isSearching = searchQuery.trim() !== '';
                 const isAllProductsPage = (viewName === 'all-products');
-                
+
                 if (hero) hero.style.display = (isAllProductsPage || isSearching) ? 'none' : '';
                 homeView.style.display = 'block';
 
@@ -6628,9 +6921,9 @@
             // Sync category navigation active states
             document.querySelectorAll('.category-link, #mobileNavCategories a, .category-card').forEach(link => {
                 const catAttr = link.getAttribute('data-category');
-                const isActive = (page === 'all-products' && catAttr === 'all-products') || 
-                                 (page === 'categories' && catAttr === 'categories') || 
-                                 (page !== 'all-products' && page !== 'categories' && catAttr === category);
+                const isActive = (page === 'all-products' && catAttr === 'all-products') ||
+                    (page === 'categories' && catAttr === 'categories') ||
+                    (page !== 'all-products' && page !== 'categories' && catAttr === category);
                 if (isActive) {
                     link.classList.add('active');
                 } else {
@@ -6691,7 +6984,7 @@
             if (page === 'home' || page === 'all-products') {
                 closeCartDrawer();
                 displayView(page === 'all-products' ? 'all-products' : 'home', null, null, null, search);
-                
+
                 const price = urlParams.get('price') || 'all';
                 const sort = urlParams.get('sort') || 'default';
                 const isFilteredView = (page === 'all-products') || (category !== 'all' || search !== '');
@@ -6768,10 +7061,10 @@
             if (!dropdown) return;
             const parent = dropdown.parentElement;
             const isAlreadyActive = parent.classList.contains('active');
-            
+
             // Close all dropdowns first
             document.querySelectorAll('.filter-pill-dropdown').forEach(p => p.classList.remove('active'));
-            
+
             if (!isAlreadyActive) {
                 parent.classList.add('active');
             }
@@ -6787,16 +7080,18 @@
             if (isOpen) {
                 panel.classList.remove('open');
                 if (btn) btn.classList.remove('active');
-                // On mobile, move panel back into search bar
+                // On mobile, restore scrolling and move panel back into search bar
                 if (window.innerWidth <= 768) {
+                    document.body.style.overflow = '';
                     const searchBar = document.querySelector('.search-bar');
                     if (searchBar && panel.parentElement === document.body) {
                         searchBar.appendChild(panel);
                     }
                 }
             } else {
-                // On mobile, move panel to body to escape header's backdrop-filter containing block
+                // On mobile, disable scrolling and move panel to body to escape header's backdrop-filter containing block
                 if (window.innerWidth <= 768) {
+                    document.body.style.overflow = 'hidden';
                     if (panel.parentElement !== document.body) {
                         document.body.appendChild(panel);
                     }
@@ -6813,8 +7108,9 @@
             const btn = document.getElementById('searchFilterToggle');
             if (panel) {
                 panel.classList.remove('open');
-                // On mobile, move panel back into search bar
+                // On mobile, restore scrolling and move panel back into search bar
                 if (window.innerWidth <= 768) {
+                    document.body.style.overflow = '';
                     const searchBar = document.querySelector('.search-bar');
                     if (searchBar && panel.parentElement === document.body) {
                         searchBar.appendChild(panel);
@@ -6846,7 +7142,7 @@
         }
 
         // Close dropdowns when clicking outside
-        window.addEventListener('click', function() {
+        window.addEventListener('click', function () {
             document.querySelectorAll('.filter-pill-dropdown').forEach(p => p.classList.remove('active'));
             closeSearchFilterPanel();
         });
@@ -6855,7 +7151,7 @@
             if (event) event.preventDefault();
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set(type, value);
-            
+
             // Build parameters object for navigateToPage
             const params = {};
             urlParams.forEach((val, key) => {
@@ -6863,7 +7159,7 @@
                     params[key] = val;
                 }
             });
-            
+
             navigateToPage(urlParams.get('page') || 'home', params);
         }
 
@@ -6928,7 +7224,7 @@
 
             // Add selected visual state class inside dropdown items
             document.querySelectorAll('.filter-dropdown-menu a').forEach(a => a.classList.remove('selected'));
-            
+
             const selectedCat = document.querySelector(`#category-dropdown a[onclick*="'${category}'"]`);
             if (selectedCat) selectedCat.classList.add('selected');
 
@@ -7142,7 +7438,6 @@
                 let accountMenuHtml = '';
                 if (account) {
                     accountMenuHtml = `
-                        <li style="border-top: 1.5px solid var(--border); margin-top: 8px; padding-top: 8px;"><span style="display: block; padding: 10px 16px 4px; font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Account Settings</span></li>
                         <li><a href="#" onclick="toggleMobileMenu(); showAccountSubPage('personal', event)">Personal Info</a></li>
                         <li><a href="#" onclick="toggleMobileMenu(); showAccountSubPage('activity', event)">Shopping Activity</a></li>
                         <li><a href="#" onclick="toggleMobileMenu(); showAccountSubPage('orders', event)">Order History</a></li>
@@ -7161,9 +7456,9 @@
                     <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">Home</a></li>
                     <li><a href="#" data-category="categories" onclick="toggleMobileMenu(); goToAllCategories(event)">All Categories</a></li>
                     <li><a href="seller.html" target="_blank" onclick="toggleMobileMenu();">Sell</a></li>
-                    ${accountMenuHtml}
                     <li><a href="#" id="mobileWishlistBtn" onclick="toggleMobileMenu(); showView('wishlist', null, event)">Wishlist</a></li>
                     <li><a href="#" id="mobileCartBtn" onclick="toggleMobileMenu(); toggleCart(); if(event)event.preventDefault();">Cart <span class="cart-count" id="mobileCartCount" style="margin-left: 6px; display: inline-block; position: static; background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; vertical-align: middle;">0</span></a></li>
+                    ${accountMenuHtml}
                 `;
             }
         }
@@ -7647,9 +7942,9 @@
             categoriesBar.style.display = 'block';
             categoriesBar.classList.remove('dashboard-active');
             if (toggleBtn) toggleBtn.style.display = 'flex';
-            
-            // Default collapse categories bar on account sub-pages
-            if (page === 'account') {
+
+            // Default collapse categories bar on account sub-pages and product page
+            if (page === 'account' || page === 'product') {
                 categoriesBar.classList.add('hidden-scroll');
             }
             categoriesContainer.innerHTML = `
@@ -7666,9 +7961,9 @@
             const category = urlParams.get('category') || 'all';
             document.querySelectorAll('.category-link, #mobileNavCategories a, .category-card').forEach(link => {
                 const catAttr = link.getAttribute('data-category');
-                const isActive = (page === 'all-products' && catAttr === 'all-products') || 
-                                 (page === 'categories' && catAttr === 'categories') || 
-                                 (page !== 'all-products' && page !== 'categories' && catAttr === category);
+                const isActive = (page === 'all-products' && catAttr === 'all-products') ||
+                    (page === 'categories' && catAttr === 'categories') ||
+                    (page !== 'all-products' && page !== 'categories' && catAttr === category);
                 if (isActive) {
                     link.classList.add('active');
                 } else {
@@ -9281,11 +9576,11 @@
             // Load saved language and country
             const savedLang = localStorage.getItem('selectedLang') || 'en';
             const savedCountry = localStorage.getItem('selectedCountry') || 'PK';
-            
+
             // Set initial language
             const langName = savedLang === 'ur' ? 'Urdu' : 'English';
             selectLanguage(savedLang, langName);
-            
+
             // Set initial country
             if (savedCountry === 'PK') {
                 selectCountry('PK', 'Pakistan', '🇵🇰');
@@ -9390,14 +9685,14 @@
             window.addEventListener('scroll', () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const page = urlParams.get('page') || 'home';
-                if (page === 'account') return;
+                if (page === 'account' || page === 'product') return;
 
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const categoriesBar = document.querySelector('.categories-bar');
                 if (!categoriesBar) return;
 
                 const delta = scrollTop - lastScrollTop;
-                
+
                 if (scrollTop > 50) {
                     // Only auto-collapse if scrolling down and not already collapsed
                     if (delta > 0 && !categoriesBar.classList.contains('hidden-scroll')) {
@@ -9409,7 +9704,7 @@
                         categoriesBar.classList.remove('hidden-scroll');
                     }
                 }
-                
+
                 lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
             });
         }
