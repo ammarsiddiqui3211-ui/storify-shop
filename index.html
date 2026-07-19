@@ -1149,14 +1149,6 @@
             margin-bottom: 5px;
         }
 
-        .close-mobile-menu {
-            display: none !important;
-        }
-
-        .mobile-menu-header {
-            display: none !important;
-        }
-
         .mobile-menu {
             display: none;
             position: fixed;
@@ -1165,8 +1157,8 @@
             width: 300px;
             height: 100vh;
             background: var(--white);
-            z-index: 999;
-            padding: 80px 24px 24px;
+            z-index: 3000;
+            padding: 30px 24px;
             transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: -4px 0 30px var(--shadow-strong);
             overflow-y: auto;
@@ -1184,7 +1176,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 998;
+            z-index: 2999;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
