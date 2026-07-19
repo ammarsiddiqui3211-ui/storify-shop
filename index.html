@@ -3714,7 +3714,24 @@
             }
 
             #account-page-view {
-                padding: 20px 16px 40px;
+                padding: 0 !important;
+            }
+
+            .container:has(#account-page-view:not([style*="display: none"])) {
+                padding: 16px !important;
+            }
+
+            #account-page-view .auth-card {
+                max-height: none !important;
+                overflow: visible !important;
+                padding: 20px !important;
+                border-radius: 16px !important;
+                border: 1px solid var(--border) !important;
+            }
+
+            #buyerOrdersContainer {
+                padding: 16px !important;
+                border-radius: 16px !important;
             }
         }
 
@@ -7831,7 +7848,7 @@
             // --- SUB-PAGE: Personal Info ---
             if (subPage === 'personal') {
                 view.innerHTML = `
-                    <div style="margin-top: -20px; display: flex; justify-content: center; width: 100%;">
+                    <div style="display: flex; justify-content: center; width: 100%;">
                         <div class="auth-card" style="position: static; transform: none; box-shadow: 0 4px 20px var(--shadow); margin: 0 auto; width: 100%; max-width: 500px;">
                             <div style="margin-bottom: 20px;">
                                 <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin: 0 0 6px 0;">Edit Account Details</h2>
@@ -7880,7 +7897,7 @@
             // --- SUB-PAGE: Shopping Activity ---
             if (subPage === 'activity') {
                 view.innerHTML = `
-                    <div style="margin-top: -20px; display: flex; justify-content: center; width: 100%;">
+                    <div style="display: flex; justify-content: center; width: 100%;">
                         <div class="auth-card" style="position: static; transform: none; box-shadow: 0 4px 20px var(--shadow); margin: 0 auto; width: 100%; max-width: 500px;">
                             <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px;">
                                 <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; color: var(--accent);">
@@ -7922,7 +7939,7 @@
             // --- SUB-PAGE: Order History ---
             if (subPage === 'orders') {
                 view.innerHTML = `
-                    <div id="buyerOrdersContainer" style="margin-top: -20px; background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
+                    <div id="buyerOrdersContainer" style="background: var(--white); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px var(--shadow);">
                     </div>
                 `;
                 renderBuyerOrdersSection();
