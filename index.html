@@ -341,7 +341,7 @@
             cursor: pointer;
             font-size: 16px;
             line-height: 1;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: all 0.2s ease;
             align-items: center;
             justify-content: center;
@@ -1149,7 +1149,29 @@
             margin-bottom: 5px;
         }
 
-        /* No X animation — 3 lines stay as-is when menu is open */
+        .hamburger.active {
+            position: fixed;
+            top: 9px;
+            right: 16px;
+            z-index: 3100;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .close-mobile-menu {
+            display: none !important;
+        }
 
         .mobile-menu {
             display: none;
@@ -1223,78 +1245,46 @@
 
         .mobile-nav-links {
             list-style: none;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            margin-bottom: 24px;
         }
 
         .mobile-nav-links li {
-            border: none;
+            border-bottom: 1px solid var(--border);
         }
 
         .mobile-nav-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 10px 4px;
-            background: var(--secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            display: block;
+            padding: 14px 0;
             color: var(--text);
             text-decoration: none;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            height: 100%;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .mobile-nav-links a:hover,
         .mobile-nav-links a.active {
-            background: var(--accent-light);
-            border-color: var(--accent);
             color: var(--accent);
         }
 
         .mobile-nav-actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .mobile-nav-actions button {
             width: 100%;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 6px !important;
-            padding: 10px 4px !important;
+            padding: 12px 16px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             background: var(--white);
             font-family: 'Inter', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            min-height: 65px;
-        }
-
-        .mobile-nav-actions button svg {
-            margin-right: 0 !important;
-            margin-bottom: 2px;
-            width: 18px;
-            height: 18px;
-        }
-
-        .mobile-nav-actions button span {
-            font-size: 10px;
-            line-height: 1.2;
-            white-space: normal;
+            transition: all 0.3s ease;
+            text-align: left;
         }
 
         .mobile-nav-actions button:hover {
@@ -2843,9 +2833,20 @@
         }
 
         @keyframes pulse-glow {
-            0% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.06); opacity: 0.1; }
-            100% { transform: scale(1); opacity: 0.3; }
+            0% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.06);
+                opacity: 0.1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
         }
 
         .account-membership-badge {
@@ -3189,6 +3190,7 @@
                 max-height: none !important;
                 height: auto !important;
             }
+
             .categories-bar.dashboard-active .categories {
                 justify-content: center !important;
                 flex-wrap: wrap !important;
@@ -3196,6 +3198,7 @@
                 gap: 4px 20px !important;
                 overflow-x: visible !important;
             }
+
             .categories-bar.dashboard-active .category-link {
                 padding: 8px 0 !important;
             }
@@ -4427,24 +4430,30 @@
             background: var(--secondary) !important;
             color: var(--primary) !important;
         }
+
         .seller-tab-btn.active:hover {
             background: var(--accent) !important;
             color: white !important;
         }
+
         .image-upload-zone:hover {
             border-color: var(--accent) !important;
             background: var(--border) !important;
         }
+
         .size-pill-label {
             transition: all 0.2s ease;
         }
+
         .size-pill-label:hover {
             border-color: var(--accent) !important;
             background: var(--secondary) !important;
         }
+
         .seller-promo-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .seller-promo-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
@@ -4492,14 +4501,25 @@
         </div>
         <ul class="mobile-nav-links" id="mobileNavCategories">
             <li><a href="#" data-category="all" onclick="toggleMobileMenu(); filterCategory('all', event)">All</a></li>
-            <li><a href="#" data-category="featured" onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
-            <li><a href="#" data-category="electronics-tech" onclick="toggleMobileMenu(); filterCategory('electronics-tech', event)">Electronics & Tech</a></li>
-            <li><a href="#" data-category="apparel-fashion" onclick="toggleMobileMenu(); filterCategory('apparel-fashion', event)">Apparel & Fashion</a></li>
-            <li><a href="#" data-category="home-living" onclick="toggleMobileMenu(); filterCategory('home-living', event)">Home & Living</a></li>
-            <li><a href="#" data-category="personal-care-beauty" onclick="toggleMobileMenu(); filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a></li>
-            <li><a href="#" data-category="sports-outdoors" onclick="toggleMobileMenu(); filterCategory('sports-outdoors', event)">Sports & Outdoors</a></li>
-            <li><a href="#" data-category="accessories-jewelry" onclick="toggleMobileMenu(); filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a></li>
-            <li><a href="#" data-category="stationery-office" onclick="toggleMobileMenu(); filterCategory('stationery-office', event)">Stationery & Office</a></li>
+            <li><a href="#" data-category="featured"
+                    onclick="toggleMobileMenu(); filterCategory('featured', event)">Featured</a></li>
+            <li><a href="#" data-category="electronics-tech"
+                    onclick="toggleMobileMenu(); filterCategory('electronics-tech', event)">Electronics & Tech</a></li>
+            <li><a href="#" data-category="apparel-fashion"
+                    onclick="toggleMobileMenu(); filterCategory('apparel-fashion', event)">Apparel & Fashion</a></li>
+            <li><a href="#" data-category="home-living"
+                    onclick="toggleMobileMenu(); filterCategory('home-living', event)">Home & Living</a></li>
+            <li><a href="#" data-category="personal-care-beauty"
+                    onclick="toggleMobileMenu(); filterCategory('personal-care-beauty', event)">Personal Care &
+                    Beauty</a></li>
+            <li><a href="#" data-category="sports-outdoors"
+                    onclick="toggleMobileMenu(); filterCategory('sports-outdoors', event)">Sports & Outdoors</a></li>
+            <li><a href="#" data-category="accessories-jewelry"
+                    onclick="toggleMobileMenu(); filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
+            </li>
+            <li><a href="#" data-category="stationery-office"
+                    onclick="toggleMobileMenu(); filterCategory('stationery-office', event)">Stationery & Office</a>
+            </li>
         </ul>
         <div class="mobile-nav-actions">
             <button id="mobileAccountBtn" onclick="toggleMobileMenu(); showView('account')" aria-label="Account">
@@ -4585,19 +4605,30 @@
         </div>
         <div class="categories-bar">
             <div class="categories-wrapper">
-                <button class="categories-scroll-btn scroll-left" id="catScrollLeft" onclick="scrollCategories(-200)" aria-label="Scroll categories left">‹</button>
+                <button class="categories-scroll-btn scroll-left" id="catScrollLeft" onclick="scrollCategories(-200)"
+                    aria-label="Scroll categories left">‹</button>
                 <div class="categories" id="categoriesContainer">
-                    <a href="#" class="category-link active" data-category="all" onclick="filterCategory('all', event)">All</a>
-                    <a href="#" class="category-link" data-category="featured" onclick="filterCategory('featured', event)">Featured</a>
-                    <a href="#" class="category-link" data-category="electronics-tech" onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
-                    <a href="#" class="category-link" data-category="apparel-fashion" onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
-                    <a href="#" class="category-link" data-category="home-living" onclick="filterCategory('home-living', event)">Home & Living</a>
-                    <a href="#" class="category-link" data-category="personal-care-beauty" onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
-                    <a href="#" class="category-link" data-category="sports-outdoors" onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
-                    <a href="#" class="category-link" data-category="accessories-jewelry" onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
-                    <a href="#" class="category-link" data-category="stationery-office" onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
+                    <a href="#" class="category-link active" data-category="all"
+                        onclick="filterCategory('all', event)">All</a>
+                    <a href="#" class="category-link" data-category="featured"
+                        onclick="filterCategory('featured', event)">Featured</a>
+                    <a href="#" class="category-link" data-category="electronics-tech"
+                        onclick="filterCategory('electronics-tech', event)">Electronics & Tech</a>
+                    <a href="#" class="category-link" data-category="apparel-fashion"
+                        onclick="filterCategory('apparel-fashion', event)">Apparel & Fashion</a>
+                    <a href="#" class="category-link" data-category="home-living"
+                        onclick="filterCategory('home-living', event)">Home & Living</a>
+                    <a href="#" class="category-link" data-category="personal-care-beauty"
+                        onclick="filterCategory('personal-care-beauty', event)">Personal Care & Beauty</a>
+                    <a href="#" class="category-link" data-category="sports-outdoors"
+                        onclick="filterCategory('sports-outdoors', event)">Sports & Outdoors</a>
+                    <a href="#" class="category-link" data-category="accessories-jewelry"
+                        onclick="filterCategory('accessories-jewelry', event)">Accessories & Jewelry</a>
+                    <a href="#" class="category-link" data-category="stationery-office"
+                        onclick="filterCategory('stationery-office', event)">Stationery & Office</a>
                 </div>
-                <button class="categories-scroll-btn scroll-right" id="catScrollRight" onclick="scrollCategories(200)" aria-label="Scroll categories right">›</button>
+                <button class="categories-scroll-btn scroll-right" id="catScrollRight" onclick="scrollCategories(200)"
+                    aria-label="Scroll categories right">›</button>
             </div>
         </div>
     </header>
@@ -4811,44 +4842,44 @@
                     .from('public_products')
                     .select('*')
                     .order('id', { ascending: true });
-                
+
                 if (error) {
                     console.error("Error fetching products from Supabase:", error);
-                 } else if (data && data.length > 0) {
-                     products = data.map(item => {
-                         let catKey = item.category_key || '';
-                         let catName = item.category || '';
-                         if (catKey && typeof CATEGORY_MAP !== 'undefined' && CATEGORY_MAP && Object.prototype.hasOwnProperty.call(CATEGORY_MAP, catKey)) {
-                             const mapped = CATEGORY_MAP[catKey];
-                             if (mapped) {
-                                 catKey = mapped.key || catKey;
-                                 catName = mapped.name || catName;
-                             }
-                         }
+                } else if (data && data.length > 0) {
+                    products = data.map(item => {
+                        let catKey = item.category_key || '';
+                        let catName = item.category || '';
+                        if (catKey && typeof CATEGORY_MAP !== 'undefined' && CATEGORY_MAP && Object.prototype.hasOwnProperty.call(CATEGORY_MAP, catKey)) {
+                            const mapped = CATEGORY_MAP[catKey];
+                            if (mapped) {
+                                catKey = mapped.key || catKey;
+                                catName = mapped.name || catName;
+                            }
+                        }
 
-                         return {
-                             id: Number(item.id),
-                             name: item.name,
-                             description: item.description,
-                             category: catName,
-                             categoryKey: catKey,
-                             currentPrice: Number(item.price),
-                             originalPrice: item.original_price ? Number(item.original_price) : null,
-                             featured: !!item.featured,
-                             gradient: item.gradient || null,
-                             image: (item.images && item.images.length > 0) ? item.images[0] : 'images/placeholder.png',
-                             images: item.images || [],
-                             colors: item.colors || [],
-                             sizes: item.sizes || [],
-                             specs: item.specs || {},
-                             verifiedBadge: !!item.verified_badge,
-                             stockStatus: item.stock_status || 'available',
-                             sold: item.stock_status === 'sold_out',
-                             rating: 5,
-                             reviewCount: 0,
-                             seller_id: item.seller_id,
-                             shopName: item.shop_name || 'Partner Shop',
-                             shippingFee: Number(item.shipping_fee || 250)
+                        return {
+                            id: Number(item.id),
+                            name: item.name,
+                            description: item.description,
+                            category: catName,
+                            categoryKey: catKey,
+                            currentPrice: Number(item.price),
+                            originalPrice: item.original_price ? Number(item.original_price) : null,
+                            featured: !!item.featured,
+                            gradient: item.gradient || null,
+                            image: (item.images && item.images.length > 0) ? item.images[0] : 'images/placeholder.png',
+                            images: item.images || [],
+                            colors: item.colors || [],
+                            sizes: item.sizes || [],
+                            specs: item.specs || {},
+                            verifiedBadge: !!item.verified_badge,
+                            stockStatus: item.stock_status || 'available',
+                            sold: item.stock_status === 'sold_out',
+                            rating: 5,
+                            reviewCount: 0,
+                            seller_id: item.seller_id,
+                            shopName: item.shop_name || 'Partner Shop',
+                            shippingFee: Number(item.shipping_fee || 250)
                         };
                     });
                 }
@@ -4865,7 +4896,7 @@
                     .select('*')
                     .eq('id', user.id)
                     .single();
-                
+
                 if (error) {
                     console.error("Failed to fetch user profile, using auth metadata fallback:", error);
                     account = {
@@ -6270,64 +6301,64 @@
                             </thead>
                             <tbody>
                                 ${items.map(item => {
-                                    const prod = products.find(p => p.id === Number(item.product_id)) || {};
-                                    const prodName = prod.name || `Product ID #${item.product_id}`;
-                                    const total = Number(item.price_at_purchase) * Number(item.quantity);
-                                    const orderRef = item.orders?.order_ref || 'N/A';
-                                    const dateStr = new Date(item.created_at).toLocaleDateString();
+                    const prod = products.find(p => p.id === Number(item.product_id)) || {};
+                    const prodName = prod.name || `Product ID #${item.product_id}`;
+                    const total = Number(item.price_at_purchase) * Number(item.quantity);
+                    const orderRef = item.orders?.order_ref || 'N/A';
+                    const dateStr = new Date(item.created_at).toLocaleDateString();
 
-                                    let statusBadge = '';
-                                    let actionHtml = '';
+                    let statusBadge = '';
+                    let actionHtml = '';
 
-                                    if (item.item_status === 'pending_payment') {
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
-                                        actionHtml = `
+                    if (item.item_status === 'pending_payment') {
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
+                        actionHtml = `
                                             <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
                                                 <button class="btn-premium-edit" onclick="simulateSafepayWebhook('${escapeHtml(orderRef)}')" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:700; background:#f59e0b; border-color:#f59e0b; color:white;">Simulate Payment</button>
                                             </div>
                                         `;
-                                    } else if (item.item_status === 'paid_escrow') {
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
-                                        actionHtml = `<span style="color:var(--text-light); font-size:12px; font-style:italic;">Awaiting shipment...</span>`;
-                                    } else if (item.item_status === 'shipped') {
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
-                                        actionHtml = `<button class="btn-premium-edit" onclick="confirmItemDelivery(${item.id})" style="padding: 6px 12px; font-size: 11px; font-weight:700;">Confirm Delivery</button>`;
-                                    } else if (item.item_status === 'return_window') {
-                                        const deliveredDate = new Date(item.delivered_at);
-                                        const expiryDate = new Date(deliveredDate.getTime() + (3 * 24 * 60 * 60 * 1000));
-                                        const now = new Date();
-                                        const diff = expiryDate.getTime() - now.getTime();
+                    } else if (item.item_status === 'paid_escrow') {
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
+                        actionHtml = `<span style="color:var(--text-light); font-size:12px; font-style:italic;">Awaiting shipment...</span>`;
+                    } else if (item.item_status === 'shipped') {
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
+                        actionHtml = `<button class="btn-premium-edit" onclick="confirmItemDelivery(${item.id})" style="padding: 6px 12px; font-size: 11px; font-weight:700;">Confirm Delivery</button>`;
+                    } else if (item.item_status === 'return_window') {
+                        const deliveredDate = new Date(item.delivered_at);
+                        const expiryDate = new Date(deliveredDate.getTime() + (3 * 24 * 60 * 60 * 1000));
+                        const now = new Date();
+                        const diff = expiryDate.getTime() - now.getTime();
 
-                                        let countdownStr = '';
-                                        if (diff <= 0) {
-                                            countdownStr = 'Window Expired';
-                                        } else {
-                                            const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-                                            const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-                                            const mins = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
-                                            countdownStr = `${days}d ${hours}h ${mins}m left`;
-                                        }
+                        let countdownStr = '';
+                        if (diff <= 0) {
+                            countdownStr = 'Window Expired';
+                        } else {
+                            const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+                            const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                            const mins = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+                            countdownStr = `${days}d ${hours}h ${mins}m left`;
+                        }
 
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #f3e5f5; color: #4a148c; display:block; text-align:center; margin-bottom:4px;">Return Window</span><span style="font-size:10px; color:var(--text-light); font-weight:600; display:block; text-align:center;">${countdownStr}</span>`;
-                                        
-                                        actionHtml = `
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #f3e5f5; color: #4a148c; display:block; text-align:center; margin-bottom:4px;">Return Window</span><span style="font-size:10px; color:var(--text-light); font-weight:600; display:block; text-align:center;">${countdownStr}</span>`;
+
+                        actionHtml = `
                                             <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
                                                 <button class="btn-premium-signout" onclick="disputeOrderItem(${item.id})" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:700;">Dispute Order</button>
                                                 <button class="btn-premium-edit" onclick="triggerOrderItemAutocomplete(${item.id})" style="padding: 4px 10px; font-size: 10px; width:100%; text-align:center; background:#475569; border-color:#475569; color:#fff; font-weight:700;" title="Bypasses time check for testing (Simulates window expiry)">Simulate Complete</button>
                                             </div>
                                         `;
-                                    } else if (item.item_status === 'completed') {
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
-                                        actionHtml = `<span style="color:#2e7d32; font-size:12px; font-weight:600;">Payout released</span>`;
-                                    } else if (item.item_status === 'disputed') {
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #c62828;">Disputed</span>`;
-                                        actionHtml = `<span style="color:#c62828; font-size:12px; font-style:italic;">Storify support reviewing...</span>`;
-                                    } else if (item.item_status === 'refunded') {
-                                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #b71c1c;">Refunded</span>`;
-                                        actionHtml = `<span style="color:#b71c1c; font-size:12px; font-weight:600;">Refund processed</span>`;
-                                    }
+                    } else if (item.item_status === 'completed') {
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
+                        actionHtml = `<span style="color:#2e7d32; font-size:12px; font-weight:600;">Payout released</span>`;
+                    } else if (item.item_status === 'disputed') {
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #c62828;">Disputed</span>`;
+                        actionHtml = `<span style="color:#c62828; font-size:12px; font-style:italic;">Storify support reviewing...</span>`;
+                    } else if (item.item_status === 'refunded') {
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #b71c1c;">Refunded</span>`;
+                        actionHtml = `<span style="color:#b71c1c; font-size:12px; font-weight:600;">Refund processed</span>`;
+                    }
 
-                                    return `
+                    return `
                                         <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
                                             <td style="padding: 12px 8px; font-weight:700; color:var(--primary);">${escapeHtml(orderRef)}</td>
                                             <td style="padding: 12px 8px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(prodName)}">${escapeHtml(prodName)}</td>
@@ -6338,7 +6369,7 @@
                                             <td style="padding: 12px 8px; text-align: center;">${actionHtml}</td>
                                         </tr>
                                     `;
-                                }).join('')}
+                }).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -6354,7 +6385,7 @@
             try {
                 const { error } = await supabaseClient
                     .from('order_items')
-                    .update({ 
+                    .update({
                         item_status: 'return_window',
                         delivered_at: new Date().toISOString()
                     })
@@ -7162,8 +7193,8 @@
                         
                         <div class="summary-items-list">
                             ${cart.map(item => {
-                                const summaryImage = item.image || (products.find(p => p.id === item.id) || {}).image || '';
-                                return `
+                const summaryImage = item.image || (products.find(p => p.id === item.id) || {}).image || '';
+                return `
                                     <div class="summary-item">
                                         <div class="summary-item-left">
                                             <div class="summary-item-thumb" style="background: ${item.gradient};">
@@ -7177,7 +7208,7 @@
                                         <div class="summary-item-price">${formatPrice(item.price * item.quantity)}</div>
                                     </div>
                                 `;
-                            }).join('')}
+            }).join('')}
                         </div>
                         
                         <div class="summary-pricing">
@@ -7194,10 +7225,10 @@
                                     <div style="font-size: 11px; color: var(--text-light); text-align: right; line-height: 1.4; margin-top: 4px;">
                                         Breakdown (${sellers.length} sellers):<br>
                                         ${sellers.map((sId, index) => {
-                                            const prodInCart = cart.find(item => item.seller_id === sId);
-                                            const shopName = prodInCart ? (products.find(p => p.id === prodInCart.id)?.shopName || 'Seller ' + (index + 1)) : 'Seller ' + (index + 1);
-                                            return `${escapeHtml(shopName)}: ${formatPrice(sellerShippingMap[sId])}`;
-                                        }).join('<br>')}
+                const prodInCart = cart.find(item => item.seller_id === sId);
+                const shopName = prodInCart ? (products.find(p => p.id === prodInCart.id)?.shopName || 'Seller ' + (index + 1)) : 'Seller ' + (index + 1);
+                return `${escapeHtml(shopName)}: ${formatPrice(sellerShippingMap[sId])}`;
+            }).join('<br>')}
                                     </div>
                                 ` : ''}
                             </div>
@@ -7366,7 +7397,7 @@
 
                 // 4. Redirect to Safepay sandbox checkout screen
                 const safepayRedirectUrl = `https://sandbox.api.getsafepay.com/checkout/pay?env=sandbox&beacon=${trackerToken}&order_id=${orderRef}&source=custom&redirect_url=${encodeURIComponent(window.location.origin + window.location.pathname + '?page=success&ref=' + orderRef)}&cancel_url=${encodeURIComponent(window.location.origin + window.location.pathname + '?page=account')}`;
-                
+
                 showToast("Redirecting to Safepay secure payment...");
                 window.location.href = safepayRedirectUrl;
 
@@ -7425,7 +7456,7 @@
                     .select('*')
                     .eq('order_ref', orderRef)
                     .single();
-                
+
                 if (error || !order) {
                     showToast("Order not found");
                     navigateToPage('home', {}, true);
