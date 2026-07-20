@@ -477,11 +477,16 @@ BEGIN
     END IF;
   END IF;
 
-  -- Buyers can only transition: shipped -> return_window | return_window -> disputed
+  -- Buyers can transition: shipped -> return_window | shipped -> disputed | return_window -> disputed
   IF auth.uid() = (SELECT buyer_id FROM public.orders WHERE id = OLD.order_id) THEN
     IF OLD.item_status = 'shipped' AND NEW.item_status = 'return_window' THEN
       IF NEW.delivered_at IS NULL THEN
         RAISE EXCEPTION 'delivered_at must be populated when transitioning to return_window';
+      END IF;
+      RETURN NEW;
+    ELSIF OLD.item_status = 'shipped' AND NEW.item_status = 'disputed' THEN
+      IF NEW.delivered_at IS DISTINCT FROM OLD.delivered_at THEN
+        RAISE EXCEPTION 'delivered_at cannot be modified';
       END IF;
       RETURN NEW;
     ELSIF OLD.item_status = 'return_window' AND NEW.item_status = 'disputed' THEN
@@ -842,6 +847,7 @@ BEGIN
       SELECT seller_id, order_id, MAX(shipping_fee_at_purchase) as max_shipping
       FROM public.order_items
       WHERE item_status = 'completed' 
+        AND item_status NOT IN ('disputed', 'refunded')
         AND payout_released = false 
         AND created_at >= p_start_date 
         AND created_at <= p_end_date
@@ -850,6 +856,7 @@ BEGIN
     GROUP BY seller_id
   ) sh ON oi.seller_id = sh.seller_id
   WHERE oi.item_status = 'completed' 
+    AND oi.item_status NOT IN ('disputed', 'refunded')
     AND oi.payout_released = false 
     AND oi.created_at >= p_start_date 
     AND oi.created_at <= p_end_date
@@ -859,6 +866,7 @@ BEGIN
   UPDATE public.order_items
   SET payout_released = true
   WHERE item_status = 'completed' 
+    AND item_status NOT IN ('disputed', 'refunded')
     AND payout_released = false 
     AND created_at >= p_start_date 
     AND created_at <= p_end_date;

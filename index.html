@@ -546,6 +546,21 @@
             .categories-toggle-btn {
                 right: 16px;
             }
+            .hide-mobile-table {
+                display: none !important;
+            }
+            .show-mobile-cards {
+                display: flex !important;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .show-mobile-cards {
+                display: none !important;
+            }
         }
 
         /* Header Dropdowns (Country & Language) */
@@ -1038,8 +1053,7 @@
         }
 
         .product-badge.sale {
-            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 700;
@@ -1054,8 +1068,7 @@
         }
 
         .product-detail-badge.sale {
-            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 800;
@@ -2901,6 +2914,54 @@
             animation: fadeIn 0.4s ease;
         }
 
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 20px 0;
+            color: var(--text-light);
+            font-size: 12.5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .google-signin-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+
+        .google-signin-btn:hover {
+            border-color: var(--primary);
+            background: var(--secondary);
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.08);
+        }
+
+        .google-signin-btn svg {
+            flex-shrink: 0;
+        }
+
         .password-input-wrapper {
             position: relative;
         }
@@ -3164,6 +3225,12 @@
             max-width: 100%;
             margin: 0 auto;
             padding: 40px 40px 60px;
+        }
+
+        #wishlist-view {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 6px 16px 60px;
         }
 
         .account-page-breadcrumb {
@@ -4252,6 +4319,10 @@
                 overflow-wrap: anywhere;
             }
 
+            #wishlist-view {
+                padding: 20px 16px 40px;
+            }
+
             .wishlist-page {
                 padding: 24px;
             }
@@ -4849,7 +4920,7 @@
         }
 
         .discount-badge {
-            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             color: white;
             padding: 6px 14px;
             border-radius: 50px;
@@ -4857,11 +4928,10 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
         }
 
         .sale-discount-badge {
-            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             color: white;
             padding: 3px 8px;
             border-radius: 50px;
@@ -4869,7 +4939,6 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
             white-space: nowrap;
             line-height: 1;
         }
@@ -5368,6 +5437,9 @@
                         <div class="sfp-group">
                             <div class="sfp-group-label">Category</div>
                             <div class="sfp-options">
+                                <a href="#"
+                                    onclick="closeSearchFilterPanel(event); goToAllCategories(event)">All
+                                    Categories</a>
                                 <a href="#"
                                     onclick="closeSearchFilterPanel(event); filterCategory('electronics-tech', event)">Electronics
                                     &amp; Tech</a>
@@ -6304,17 +6376,30 @@
 
                 if (error) {
                     console.error("Failed to fetch user profile, using auth metadata fallback:", error);
-                    account = {
+                    const fallbackProfile = {
                         id: user.id,
-                        name: user.user_metadata.name || '',
-                        email: user.email,
-                        phone: user.user_metadata.phone || '',
-                        address: user.user_metadata.address || '',
-                        city: user.user_metadata.city || '',
-                        zip: user.user_metadata.zip || '',
+                        name: user.user_metadata?.name || '',
+                        phone: user.user_metadata?.phone || '',
+                        address: user.user_metadata?.address || '',
+                        city: user.user_metadata?.city || '',
+                        zip: user.user_metadata?.zip || '',
                         role: 'buyer',
                         seller_status: 'none',
                         seller_score: 100
+                    };
+
+                    // Try to insert the profile row so the foreign key constraint is satisfied!
+                    const { error: insertError } = await supabaseClient
+                        .from('profiles')
+                        .insert([fallbackProfile]);
+
+                    if (insertError) {
+                        console.error("Failed to auto-create missing user profile row:", insertError);
+                    }
+
+                    account = {
+                        ...fallbackProfile,
+                        email: user.email
                     };
                 } else {
                     account = {
@@ -6353,6 +6438,22 @@
             } catch (err) {
                 console.error("Session check failed:", err);
             }
+        }
+
+        // Listen for auth state changes (handles OAuth redirects like Google sign-in)
+        if (supabaseClient) {
+            supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session && session.user) {
+                    await fetchUserProfile(session.user);
+                    closeAccountModal();
+                    showView('account');
+                    showToast("Welcome! You're signed in.");
+                } else if (event === 'SIGNED_OUT') {
+                    account = null;
+                    saveAccount();
+                    updateAccountNavBtn();
+                }
+            });
         }
         // --- END SUPABASE HELPERS ---
 
@@ -7584,9 +7685,14 @@
                         <div class="product-info" onclick="showView('product', ${p.id})">
                             <div class="product-category">${p.category}</div>
                             <h3 class="product-name">${p.name}</h3>
-                            <div class="product-price">
+                            <div class="product-price" style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:0;">
                                 <span class="current-price">${formatPrice(p.currentPrice)}</span>
-                                ${p.originalPrice ? `<span class="original-price">${formatPrice(p.originalPrice)}</span>` : ''}
+                                ${p.verifiedBadge ? `
+                                    <span style="color:var(--text-light); display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:400;">
+                                        <span>Storify</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#2563eb" stroke="none" style="display:inline-block; vertical-align:middle; color:#fff;" title="Verified Shop"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                    </span>
+                                ` : ''}
                             </div>
                             <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${p.id})" ${p.sold ? 'disabled' : ''}>${p.sold ? 'Sold Out' : 'Add to Cart'}</button>
                         </div>
@@ -7761,6 +7867,11 @@
                                 <a href="#" class="forgot-link" onclick="event.preventDefault(); showToast('Coming soon')">Forgot Password?</a>
                             </div>
                             <button type="submit" class="place-order-btn" id="loginSubmitBtn">Sign In</button>
+                            <div class="auth-divider">or</div>
+                            <button type="button" class="google-signin-btn" onclick="handleGoogleSignIn()">
+                                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                                Continue with Google
+                            </button>
                             <p class="auth-switch-prompt">Don't have an account? <span class="auth-switch-link" onclick="toggleAuthTab('register')">Sign Up</span></p>
                         </form>
                     </div>
@@ -7803,6 +7914,11 @@
                                 </div>
                             </div>
                             <button type="submit" class="place-order-btn" id="registerSubmitBtn">Create Account</button>
+                            <div class="auth-divider">or</div>
+                            <button type="button" class="google-signin-btn" onclick="handleGoogleSignIn()">
+                                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                                Continue with Google
+                            </button>
                             <p class="auth-switch-prompt">Already have an account? <span class="auth-switch-link" onclick="toggleAuthTab('login')">Sign In</span></p>
                         </form>
                     </div>
@@ -8032,6 +8148,14 @@
                     return;
                 }
 
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                const userId = session?.user?.id || account?.id;
+
+                if (!userId) {
+                    container.innerHTML = `<p style="color:#ef4444;">Please sign in to view your order history.</p>`;
+                    return;
+                }
+
                 const { data: items, error } = await supabaseClient
                     .from('order_items')
                     .select(`
@@ -8041,13 +8165,15 @@
                         item_status,
                         delivered_at,
                         created_at,
-                        orders (
+                        orders:orders!inner (
                             order_ref,
                             shipping_address,
-                            payment_method
+                            payment_method,
+                            buyer_id
                         ),
                         product_id
                     `)
+                    .eq('orders.buyer_id', userId)
                     .order('created_at', { ascending: false });
 
                 if (error) {
@@ -8063,19 +8189,23 @@
                     return;
                 }
 
+                window.currentBuyerOrderItems = items;
+
                 container.innerHTML = `
                     <h3 style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 10px;">Order History</h3>
-                    <div style="overflow-x: auto;">
+                    
+                    <!-- Desktop Table -->
+                    <div class="hide-mobile-table" style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
                             <thead>
                                 <tr style="border-bottom: 1.5px solid var(--border); text-align: left; color: var(--text-light); font-size: 13px;">
-                                    <th style="padding: 12px 8px;">Order Ref</th>
-                                    <th style="padding: 12px 8px;">Product</th>
-                                    <th style="padding: 12px 8px;">Qty</th>
-                                    <th style="padding: 12px 8px;">Total</th>
-                                    <th style="padding: 12px 8px;">Purchase Date</th>
-                                    <th style="padding: 12px 8px;">Item Status</th>
-                                    <th style="padding: 12px 8px; text-align: center;">Actions</th>
+                                    <th style="padding: 12px 8px; font-weight: 600;">Order Ref</th>
+                                    <th style="padding: 12px 8px; font-weight: 600;">Product</th>
+                                    <th style="padding: 12px 8px; font-weight: 600;">Qty</th>
+                                    <th style="padding: 12px 8px; font-weight: 600;">Total</th>
+                                    <th style="padding: 12px 8px; font-weight: 600;">Purchase Date</th>
+                                    <th style="padding: 12px 8px; font-weight: 600;">Item Status</th>
+                                    <th style="padding: 12px 8px; text-align: center; font-weight: 600;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -8090,18 +8220,19 @@
                     let actionHtml = '';
 
                     if (item.item_status === 'pending_payment') {
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
-                        actionHtml = `
-                                            <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
-                                                <button class="btn-premium-edit" onclick="simulateSafepayWebhook('${escapeHtml(orderRef)}')" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:700; background:#f59e0b; border-color:#f59e0b; color:white;">Simulate Payment</button>
-                                            </div>
-                                        `;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
+                        actionHtml = `<button onclick="simulateSafepayWebhook('${escapeHtml(orderRef)}')" style="padding: 5px 12px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Simulate Payment</button>`;
                     } else if (item.item_status === 'paid_escrow') {
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
                         actionHtml = `<span style="color:var(--text-light); font-size:12px; font-style:italic;">Awaiting shipment...</span>`;
                     } else if (item.item_status === 'shipped') {
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
-                        actionHtml = `<button class="btn-premium-edit" onclick="confirmItemDelivery(${item.id})" style="padding: 6px 12px; font-size: 11px; font-weight:700;">Confirm Delivery</button>`;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
+                        actionHtml = `
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <button onclick="confirmItemDelivery(${item.id})" style="padding: 5px 10px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Confirm Delivery</button>
+                                <button onclick="disputeOrderItem(${item.id})" style="padding: 5px 10px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--danger); border-radius: 6px; cursor: pointer;">Report Problem</button>
+                            </div>
+                        `;
                     } else if (item.item_status === 'return_window') {
                         const deliveredDate = new Date(item.delivered_at);
                         const expiryDate = new Date(deliveredDate.getTime() + (3 * 24 * 60 * 60 * 1000));
@@ -8118,45 +8249,203 @@
                             countdownStr = `${days}d ${hours}h ${mins}m left`;
                         }
 
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #f3e5f5; color: #4a148c; display:block; text-align:center; margin-bottom:4px;">Return Window</span><span style="font-size:10px; color:var(--text-light); font-weight:600; display:block; text-align:center;">${countdownStr}</span>`;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #f3e5f5; color: #4a148c; display:block; text-align:center; margin-bottom:4px;">Return Window</span><span style="font-size:10px; color:var(--text-light); font-weight:500; display:block; text-align:center;">${countdownStr}</span>`;
 
                         actionHtml = `
                                             <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
-                                                <button class="btn-premium-signout" onclick="disputeOrderItem(${item.id})" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:700;">Dispute Order</button>
-                                                <button class="btn-premium-edit" onclick="triggerOrderItemAutocomplete(${item.id})" style="padding: 4px 10px; font-size: 10px; width:100%; text-align:center; background:#475569; border-color:#475569; color:#fff; font-weight:700;" title="Bypasses time check for testing (Simulates window expiry)">Simulate Complete</button>
+                                                <button onclick="disputeOrderItem(${item.id})" style="padding: 4px 10px; font-size: 11px; width:100%; text-align:center; font-weight:500; background: transparent; border: 1px solid var(--border); color: var(--danger); border-radius: 6px; cursor: pointer;">Dispute Order</button>
+                                                <button onclick="triggerOrderItemAutocomplete(${item.id})" style="padding: 4px 10px; font-size: 10px; width:100%; text-align:center; background: transparent; border: 1px solid var(--border); color: var(--text-light); border-radius: 6px; font-weight:500; cursor: pointer;" title="Bypasses time check for testing (Simulates window expiry)">Simulate Complete</button>
                                             </div>
                                         `;
                     } else if (item.item_status === 'completed') {
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
-                        actionHtml = `<span style="color:#2e7d32; font-size:12px; font-weight:600;">Payout released</span>`;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
+                        actionHtml = `<span style="color:#2e7d32; font-size:12px; font-weight:500;">Payout released</span>`;
                     } else if (item.item_status === 'disputed') {
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #c62828;">Disputed</span>`;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #ffebee; color: #c62828;">Disputed</span>`;
                         actionHtml = `<span style="color:#c62828; font-size:12px; font-style:italic;">Storify support reviewing...</span>`;
                     } else if (item.item_status === 'refunded') {
-                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; background: #ffebee; color: #b71c1c;">Refunded</span>`;
-                        actionHtml = `<span style="color:#b71c1c; font-size:12px; font-weight:600;">Refund processed</span>`;
+                        statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #ffebee; color: #b71c1c;">Refunded</span>`;
+                        actionHtml = `<span style="color:#b71c1c; font-size:12px; font-weight:500;">Refund processed</span>`;
                     }
 
                     return `
                                         <tr style="border-bottom: 1px solid var(--border); font-size: 13px;">
-                                            <td style="padding: 12px 8px; font-weight:700; color:var(--primary);">${escapeHtml(orderRef)}</td>
+                                            <td style="padding: 12px 8px; font-weight:600; color:var(--primary);">${escapeHtml(orderRef)}</td>
                                             <td style="padding: 12px 8px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(prodName)}">${escapeHtml(prodName)}</td>
                                             <td style="padding: 12px 8px;">${item.quantity}</td>
-                                            <td style="padding: 12px 8px; font-weight:700;">${formatPrice(total)}</td>
+                                            <td style="padding: 12px 8px; font-weight:600;">${formatPrice(total)}</td>
                                             <td style="padding: 12px 8px; color:var(--text-light);">${dateStr}</td>
                                             <td style="padding: 12px 8px; text-align:center;">${statusBadge}</td>
-                                            <td style="padding: 12px 8px; text-align: center;">${actionHtml}</td>
+                                            <td style="padding: 12px 8px; text-align: center;">
+                                                <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
+                                                    <button onclick="viewBuyerOrderDetailsCard(${item.id})" style="padding: 5px 12px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Details</button>
+                                                    ${actionHtml}
+                                                </div>
+                                            </td>
                                         </tr>
                                     `;
                 }).join('')}
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile Cards List -->
+                    <div class="show-mobile-cards">
+                        ${items.map(item => {
+                    const prod = products.find(p => p.id === Number(item.product_id)) || {};
+                    const prodName = prod.name || `Product ID #${item.product_id}`;
+                    const total = Number(item.price_at_purchase) * Number(item.quantity);
+                    const orderRef = item.orders?.order_ref || 'N/A';
+                    const dateStr = new Date(item.created_at).toLocaleDateString();
+
+                    let statusBadge = '';
+                    let actionHtml = '';
+
+                    if (item.item_status === 'pending_payment') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
+                        actionHtml = `<button onclick="simulateSafepayWebhook('${escapeHtml(orderRef)}')" style="padding: 5px 12px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Simulate Payment</button>`;
+                    } else if (item.item_status === 'paid_escrow') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
+                    } else if (item.item_status === 'shipped') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
+                        actionHtml = `
+                            <button onclick="confirmItemDelivery(${item.id})" style="padding: 5px 10px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Confirm Delivery</button>
+                            <button onclick="disputeOrderItem(${item.id})" style="padding: 5px 10px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--danger); border-radius: 6px; cursor: pointer;">Report Problem</button>
+                        `;
+                    } else if (item.item_status === 'return_window') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #f3e5f5; color: #4a148c;">Return Window</span>`;
+                        actionHtml = `<button onclick="disputeOrderItem(${item.id})" style="padding: 5px 12px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--danger); border-radius: 6px; cursor: pointer;">Dispute Order</button>`;
+                    } else if (item.item_status === 'completed') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
+                    } else if (item.item_status === 'disputed') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #ffebee; color: #c62828;">Disputed</span>`;
+                    } else if (item.item_status === 'refunded') {
+                        statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #ffebee; color: #b71c1c;">Refunded</span>`;
+                    }
+
+                    return `
+                            <div style="background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px var(--shadow);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span style="font-weight: 600; font-size: 14px; color: var(--primary);">#${escapeHtml(orderRef)}</span>
+                                    <div>${statusBadge}</div>
+                                </div>
+                                <div style="font-size: 13.5px; font-weight: 500; color: var(--primary); margin-bottom: 4px; line-height: 1.4;">${escapeHtml(prodName)}</div>
+                                <div style="font-size: 11.5px; color: var(--text-light); margin-bottom: 8px;">Ordered on: ${dateStr}</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);">
+                                    <div>
+                                        <span style="font-size: 10.5px; color: var(--text-light); text-transform: uppercase;">Total (Qty: ${item.quantity})</span>
+                                        <div style="font-size: 15px; font-weight: 600; color: var(--primary);">${formatPrice(total)}</div>
+                                    </div>
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        ${actionHtml}
+                                        <button onclick="viewBuyerOrderDetailsCard(${item.id})" style="padding: 5px 12px; font-size: 11px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                }).join('')}
+                    </div>
                 `;
             } catch (err) {
                 console.error(err);
                 container.innerHTML = `<p style="color:#ef4444;">Failed to fetch order history: ${escapeHtml(err.message)}</p>`;
             }
+        }
+
+        function viewBuyerOrderDetailsCard(itemId) {
+            const item = (window.currentBuyerOrderItems || []).find(i => Number(i.id) === Number(itemId));
+            if (!item) return;
+
+            const prod = products.find(p => p.id === Number(item.product_id)) || {};
+            const prodName = prod.name || `Product ID #${item.product_id}`;
+            const total = Number(item.price_at_purchase) * Number(item.quantity);
+            const orderRef = item.orders?.order_ref || 'N/A';
+            const address = item.orders?.shipping_address || 'N/A';
+            const payMethod = item.orders?.payment_method || 'N/A';
+            const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+
+            let statusBadge = '';
+            let actionHtml = '';
+
+            if (item.item_status === 'pending_payment') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #fff8e1; color: #b78103;">Pending Payment</span>`;
+                actionHtml = `<button onclick="simulateSafepayWebhook('${escapeHtml(orderRef)}'); this.closest('.modal').remove();" style="padding: 6px 14px; font-size: 12px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Simulate Payment</button>`;
+            } else if (item.item_status === 'paid_escrow') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e3f2fd; color: #0d47a1;">Paid (Escrow)</span>`;
+            } else if (item.item_status === 'shipped') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8f5e9; color: #1b5e20;">Shipped</span>`;
+                actionHtml = `
+                    <button onclick="confirmItemDelivery(${item.id}); this.closest('.modal').remove();" style="padding: 6px 14px; font-size: 12px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Confirm Delivery</button>
+                    <button onclick="disputeOrderItem(${item.id}); this.closest('.modal').remove();" style="padding: 6px 14px; font-size: 12px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--danger); border-radius: 6px; cursor: pointer;">Report Problem</button>
+                `;
+            } else if (item.item_status === 'return_window') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #f3e5f5; color: #4a148c;">Return Window Active</span>`;
+                actionHtml = `<button onclick="disputeOrderItem(${item.id}); this.closest('.modal').remove();" style="padding: 6px 14px; font-size: 12px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--danger); border-radius: 6px; cursor: pointer;">Dispute Order</button>`;
+            } else if (item.item_status === 'completed') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8f5e9; color: #2e7d32;">Completed</span>`;
+            } else if (item.item_status === 'disputed') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #ffebee; color: #c62828;">Disputed</span>`;
+            } else if (item.item_status === 'refunded') {
+                statusBadge = `<span style="padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #ffebee; color: #b71c1c;">Refunded</span>`;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = "modal active";
+            modal.style.cssText = "position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px;";
+            modal.innerHTML = `
+                <div class="modal-card" style="max-width: 500px; width: 100%; background: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); font-family: 'Inter', sans-serif;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div>
+                            <span style="font-size:11px; font-weight:600; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px;">Order Details</span>
+                            <h3 style="font-size:17px; font-weight:600; color:var(--primary); margin:2px 0 0 0;">#${escapeHtml(orderRef)}</h3>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            ${statusBadge}
+                            <button style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-light);" onclick="this.closest('.modal').remove()">✕</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:14px;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                                Item Summary
+                            </div>
+                            <div style="font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 4px;">${escapeHtml(prodName)}</div>
+                            <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-light); margin-bottom:2px;">
+                                <span>Unit Rate</span>
+                                <span>${formatPrice(item.price_at_purchase)}</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-light); margin-bottom:4px;">
+                                <span>Quantity</span>
+                                <span>× ${item.quantity}</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:600; color:var(--primary); padding-top:6px; border-top:1px dashed var(--border);">
+                                <span>Total Paid</span>
+                                <span>${formatPrice(total)}</span>
+                            </div>
+                        </div>
+
+                        <div style="border-bottom: 1px solid var(--border);"></div>
+
+                        <div>
+                            <div style="font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                                Delivery &amp; Payment Info
+                            </div>
+                            <div style="font-size: 12.5px; color: var(--text-light); display:flex; flex-direction:column; gap:4px;">
+                                <div><strong style="font-weight:600;">Date:</strong> ${dateStr}</div>
+                                <div><strong style="font-weight:600;">Payment Method:</strong> ${escapeHtml(payMethod.toUpperCase())}</div>
+                                <div><strong style="font-weight:600;">Shipping Address:</strong> ${escapeHtml(address)}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border); margin-top:16px; padding-top: 14px; display:flex; justify-content: flex-end; gap:10px;">
+                        ${actionHtml}
+                        <button onclick="this.closest('.modal').remove()" style="padding: 6px 14px; font-size: 12px; font-weight: 500; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer;">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         async function confirmItemDelivery(itemId) {
@@ -8228,45 +8517,78 @@
             if (!supabaseClient) return;
             showToast("Simulating Safepay payment webhook...");
             try {
-                const { data: order, error } = await supabaseClient
+                const simRef = 'SIM-REF-' + Math.floor(100000 + Math.random() * 900000);
+                
+                // Fetch order details
+                const { data: order } = await supabaseClient
                     .from('orders')
-                    .select('tracker_token')
+                    .select('id, tracker_token')
                     .eq('order_ref', orderRef)
                     .single();
 
-                if (error || !order || !order.tracker_token) {
-                    showToast("Failed to retrieve tracker token for order");
-                    return;
+                let success = false;
+
+                // 1. Try Edge Function if tracker token present
+                if (order?.tracker_token) {
+                    try {
+                        const response = await fetch(`${SUPABASE_URL}/functions/v1/payment-webhook`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                            },
+                            body: JSON.stringify({
+                                event: 'payment.succeeded',
+                                data: {
+                                    tracker: order.tracker_token,
+                                    reference: simRef,
+                                    payment: { channel: 'jazzcash' }
+                                }
+                            })
+                        });
+                        if (response.ok) success = true;
+                    } catch (edgeErr) {
+                        console.warn("Edge function simulation bypassed:", edgeErr);
+                    }
                 }
 
-                const response = await fetch(`${SUPABASE_URL}/functions/v1/payment-webhook`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    },
-                    body: JSON.stringify({
-                        event: 'payment.succeeded',
-                        data: {
-                            tracker: order.tracker_token,
-                            reference: 'SIM-REF-' + Math.floor(100000 + Math.random() * 900000),
-                            payment: {
-                                channel: 'jazzcash'
-                            }
-                        }
-                    })
-                });
+                // 2. Try RPC confirm_payment_via_webhook fallback
+                if (!success) {
+                    const { error: rpcErr } = await supabaseClient.rpc('confirm_payment_via_webhook', {
+                        p_order_ref: orderRef,
+                        p_payment_method: 'jazzcash',
+                        p_payment_reference: simRef
+                    });
+                    if (!rpcErr) {
+                        success = true;
+                    }
+                }
 
-                if (response.ok) {
+                // 3. Fallback direct update for test environment
+                if (!success && order?.id) {
+                    const { error: orderErr } = await supabaseClient
+                        .from('orders')
+                        .update({ status: 'paid_escrow', payment_method: 'jazzcash', payment_reference: simRef })
+                        .eq('id', order.id);
+
+                    if (!orderErr) {
+                        await supabaseClient
+                            .from('order_items')
+                            .update({ item_status: 'paid_escrow' })
+                            .eq('order_id', order.id);
+                        success = true;
+                    }
+                }
+
+                if (success) {
                     showToast("Simulated payment settled successfully!");
                     renderAccountPageView();
                 } else {
-                    const text = await response.text();
-                    showToast(`Simulation failed: ${text}`);
+                    showToast("Simulation failed: Unable to update order status");
                 }
             } catch (err) {
                 console.error("Webhook simulation failed:", err);
-                showToast("Simulated webhook failed to run");
+                showToast(`Simulation error: ${err.message}`);
             }
         }
         // --- END SELLER DASHBOARD HELPER METHODS ---
@@ -8412,6 +8734,31 @@
                     showAuthMessage('error', 'An error occurred during login. Please try again.');
                     console.error(err);
                 });
+        }
+
+        async function handleGoogleSignIn() {
+            if (!supabaseClient) {
+                showAuthMessage('error', 'Supabase is not configured.');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + window.location.pathname
+                    }
+                });
+
+                if (error) {
+                    showAuthMessage('error', error.message);
+                    console.error('Google sign-in error:', error);
+                }
+                // User will be redirected to Google, then back to the site
+            } catch (err) {
+                showAuthMessage('error', 'Failed to initiate Google sign-in. Please try again.');
+                console.error(err);
+            }
         }
 
         function handleRegisterSubmit(event) {
@@ -8603,7 +8950,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
                             <h1 class="wishlist-title">Your Wishlist is Empty</h1>
                             <p class="wishlist-subtitle">Save products you like, then come back here to view them.</p>
-                            <button class="add-to-cart-large" style="margin-top: 24px;" onclick="showView('home')">Browse Products</button>
+                            <button class="add-to-cart-large" style="margin-top: 24px; display: block; margin-left: auto; margin-right: auto;" onclick="showView('home')">Browse Products</button>
                         </div>
                     </div>
                 `;
@@ -8633,9 +8980,14 @@
                                 <div class="product-info" onclick="showView('product', ${p.id})">
                                     <div class="product-category">${p.category}</div>
                                     <h3 class="product-name">${p.name}</h3>
-                                    <div class="product-price">
+                                    <div class="product-price" style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:0;">
                                         <span class="current-price">${formatPrice(p.currentPrice)}</span>
-                                        ${p.originalPrice ? `<span class="original-price">${formatPrice(p.originalPrice)}</span>` : ''}
+                                        ${p.verifiedBadge ? `
+                                            <span style="color:var(--text-light); display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:400;">
+                                                <span>Storify</span>
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#2563eb" stroke="none" style="display:inline-block; vertical-align:middle; color:#fff;" title="Verified Shop"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                            </span>
+                                        ` : ''}
                                     </div>
                                     <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${p.id})" ${p.sold ? 'disabled' : ''}>${p.sold ? 'Sold Out' : 'Add to Cart'}</button>
                                 </div>
@@ -8756,12 +9108,19 @@
                     </div>
                     
                     <div class="product-detail-info">
-                        <div class="product-detail-cat">${p.category}</div>
-                        <h1 class="product-detail-name">${p.name}</h1>
+                        <div class="product-detail-cat" style="margin-bottom:8px;">${p.category}</div>
+                        <h1 class="product-detail-name" style="font-size:24px; font-weight:500; margin-top:4px;">${p.name}</h1>
                         
-                        <div class="product-detail-rating" id="detailRatingSummary">
+                        <div class="product-detail-rating" id="detailRatingSummary" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                             <span class="stars">${'★'.repeat(p.rating)}${'☆'.repeat(5 - p.rating)}</span>
                             <span class="review-count">(${p.reviewCount.toLocaleString()} Customer Reviews)</span>
+                            ${p.verifiedBadge ? `
+                                <span style="color:var(--text-light); font-size:12px;">•</span>
+                                <span style="display:inline-flex; align-items:center; gap:4px; font-size:14.5px; color:var(--primary); font-weight:500;">
+                                    <span>Storify</span>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#2563eb" stroke="none" style="display:inline-block; vertical-align:middle; color:#fff;" title="Verified Shop"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </span>
+                            ` : ''}
                         </div>
                         
                         <div class="product-detail-price">
@@ -8796,9 +9155,14 @@
                                 <div class="product-info" onclick="showView('product', ${r.id})">
                                     <div class="product-category">${r.category}</div>
                                     <h3 class="product-name">${r.name}</h3>
-                                    <div class="product-price">
+                                    <div class="product-price" style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:0;">
                                         <span class="current-price">${formatPrice(r.currentPrice)}</span>
-                                        ${r.originalPrice ? `<span class="original-price">${formatPrice(r.originalPrice)}</span>` : ''}
+                                        ${r.verifiedBadge ? `
+                                            <span style="color:var(--text-light); display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:400;">
+                                                <span>Storify</span>
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#2563eb" stroke="none" style="display:inline-block; vertical-align:middle; color:#fff;" title="Verified Shop"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                            </span>
+                                        ` : ''}
                                     </div>
                                     <button class="add-to-cart" onclick="event.stopPropagation(); quickAddToCart(${r.id})" ${r.sold ? 'disabled' : ''}>${r.sold ? 'Sold Out' : 'Add to Cart'}</button>
                                 </div>
@@ -9342,6 +9706,13 @@
                 detailRatingSummary.innerHTML = `
                     <span class="stars">${'★'.repeat(roundedAvg)}${'☆'.repeat(5 - roundedAvg)}</span>
                     <span class="review-count">(${totalReviews.toLocaleString()} Customer Reviews)</span>
+                    ${p.verifiedBadge ? `
+                        <span style="color:var(--text-light); font-size:12px;">•</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px; font-size:14.5px; color:var(--primary); font-weight:500;">
+                            <span>Storify</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="#2563eb" stroke="none" style="display:inline-block; vertical-align:middle; color:#fff;" title="Verified Shop"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        </span>
+                    ` : ''}
                 `;
             }
 
