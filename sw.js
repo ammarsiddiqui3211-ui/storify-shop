@@ -1,4 +1,4 @@
-const CACHE_NAME = 'storify-cache-v8';
+const CACHE_NAME = 'storify-cache-v9';
 const ASSETS = [
   '/',
   '/index.html',
@@ -6,10 +6,13 @@ const ASSETS = [
   '/images/logo/header.png',
   '/images/logo/footer.png',
   '/images/favicon/favicon.png',
-  '/images/icon/Icon-v6.png'
+  '/images/icon/icon-192-v9.png',
+  '/images/icon/icon-512-v9.png',
+  '/images/icon/icon-1080-v9.png'
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
@@ -27,7 +30,7 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
