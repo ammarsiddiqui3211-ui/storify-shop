@@ -5005,18 +5005,23 @@
 
         .category-card {
             width: 100%;
-            height: 110px;
-            border-radius: 16px;
+            height: 120px;
+            border-radius: 20px;
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
             display: flex;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
             text-decoration: none;
+        }
+
+        .category-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         .category-card img {
@@ -5026,50 +5031,83 @@
             height: 100%;
             object-fit: cover;
             z-index: 1;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .category-card:hover img {
+            transform: scale(1.1) rotate(0.5deg);
         }
 
         .category-card-overlay {
             position: absolute;
             inset: 0;
             z-index: 2;
-            transition: opacity 0.3s ease;
+            opacity: 0.85;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+        }
+
+        .category-card:hover .category-card-overlay {
+            opacity: 0.92;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
         }
 
         .category-card[data-category="all-products"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(29, 78, 216, 0.9) 0%, rgba(29, 78, 216, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(29, 78, 216, 0.5) 100%);
         }
-
-        .category-card[data-category="featured"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(109, 40, 217, 0.9) 0%, rgba(109, 40, 217, 0.35) 100%);
+        .category-card[data-category="all-products"]:hover {
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
         }
 
         .category-card[data-category="electronics-tech"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(3, 105, 161, 0.9) 0%, rgba(3, 105, 161, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(3, 105, 161, 0.95) 0%, rgba(3, 105, 161, 0.5) 100%);
+        }
+        .category-card[data-category="electronics-tech"]:hover {
+            box-shadow: 0 12px 28px rgba(3, 105, 161, 0.25);
         }
 
         .category-card[data-category="apparel-fashion"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(190, 24, 74, 0.9) 0%, rgba(190, 24, 74, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.95) 0%, rgba(190, 24, 74, 0.5) 100%);
+        }
+        .category-card[data-category="apparel-fashion"]:hover {
+            box-shadow: 0 12px 28px rgba(225, 29, 72, 0.25);
         }
 
         .category-card[data-category="home-living"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(180, 83, 9, 0.9) 0%, rgba(180, 83, 9, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.95) 0%, rgba(180, 83, 9, 0.5) 100%);
+        }
+        .category-card[data-category="home-living"]:hover {
+            box-shadow: 0 12px 28px rgba(217, 119, 6, 0.25);
         }
 
         .category-card[data-category="personal-care-beauty"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(219, 39, 119, 0.9) 0%, rgba(219, 39, 119, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(219, 39, 119, 0.95) 0%, rgba(219, 39, 119, 0.5) 100%);
+        }
+        .category-card[data-category="personal-care-beauty"]:hover {
+            box-shadow: 0 12px 28px rgba(219, 39, 119, 0.25);
         }
 
         .category-card[data-category="sports-outdoors"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(4, 120, 87, 0.9) 0%, rgba(4, 120, 87, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.95) 0%, rgba(4, 120, 87, 0.5) 100%);
+        }
+        .category-card[data-category="sports-outdoors"]:hover {
+            box-shadow: 0 12px 28px rgba(5, 150, 105, 0.25);
         }
 
         .category-card[data-category="accessories-jewelry"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(194, 65, 12, 0.9) 0%, rgba(194, 65, 12, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.95) 0%, rgba(194, 65, 12, 0.5) 100%);
+        }
+        .category-card[data-category="accessories-jewelry"]:hover {
+            box-shadow: 0 12px 28px rgba(234, 88, 12, 0.25);
         }
 
         .category-card[data-category="stationery-office"] .category-card-overlay {
-            background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(51, 65, 85, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(71, 85, 105, 0.95) 0%, rgba(51, 65, 85, 0.5) 100%);
+        }
+        .category-card[data-category="stationery-office"]:hover {
+            box-shadow: 0 12px 28px rgba(71, 85, 105, 0.25);
         }
 
         .category-card-content {
@@ -5081,13 +5119,34 @@
             align-items: center;
         }
 
+        .category-card-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .category-card-title {
             color: var(--white);
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 500;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.4px;
             line-height: 1.2;
-            max-width: 130px;
+            max-width: 145px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-card-subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-card-subtitle {
+            color: var(--white);
+            transform: translateX(2px);
         }
 
         .category-card-icon {
@@ -5095,14 +5154,27 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .category-card:hover .category-card-icon {
+            transform: translateX(4px) scale(1.08);
+            background: rgba(255, 255, 255, 0.22);
+            color: var(--white);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .category-card-icon svg {
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
         }
-
 
         .category-card.active {
             border-color: var(--accent);
@@ -5759,20 +5831,18 @@
                             alt="All Products">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">All Products</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">All Products</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-sliders-horizontal">
-                                    <path d="M21 4h-7" />
-                                    <path d="M10 4H3" />
-                                    <path d="M12 2v4" />
-                                    <path d="M21 12H12" />
-                                    <path d="M8 12H3" />
-                                    <path d="M10 10v4" />
-                                    <path d="M21 20h-9" />
-                                    <path d="M8 20H3" />
-                                    <path d="M10 18v4" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="9" rx="1"/>
+                                    <rect x="14" y="3" width="7" height="5" rx="1"/>
+                                    <rect x="14" y="12" width="7" height="9" rx="1"/>
+                                    <rect x="3" y="16" width="7" height="5" rx="1"/>
                                 </svg>
                             </span>
                         </div>
@@ -5783,12 +5853,17 @@
                             alt="Electronics & Tech">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Electronics & Tech</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Electronics & Tech</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
                                 </svg>
                             </span>
                         </div>
@@ -5799,12 +5874,17 @@
                             alt="Apparel & Fashion">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Apparel & Fashion</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Apparel & Fashion</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                    <line x1="3" y1="6" x2="21" y2="6"/>
+                                    <path d="M16 10a4 4 0 0 1-8 0"/>
                                 </svg>
                             </span>
                         </div>
@@ -5815,12 +5895,16 @@
                             alt="Home & Living">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Home & Living</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Home & Living</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
                                 </svg>
                             </span>
                         </div>
@@ -5831,12 +5915,15 @@
                             alt="Personal Care & Beauty">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Personal Care & Beauty</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Personal Care & Beauty</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
                                 </svg>
                             </span>
                         </div>
@@ -5847,12 +5934,15 @@
                             alt="Sports & Outdoors">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Sports & Outdoors</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Sports & Outdoors</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                                 </svg>
                             </span>
                         </div>
@@ -5863,12 +5953,16 @@
                             alt="Accessories & Jewelry">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Accessories & Jewelry</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Accessories & Jewelry</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M6 3h12l4 6-10 13L2 9z"/>
+                                    <path d="M11 3 8 9l3 13M13 3l3 9-3 10M2 9h20"/>
                                 </svg>
                             </span>
                         </div>
@@ -5879,12 +5973,16 @@
                             alt="Stationery & Office">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Stationery & Office</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Stationery & Office</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
                                 </svg>
                             </span>
                         </div>
@@ -5962,20 +6060,18 @@
                             alt="All Products">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">All Products</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">All Products</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-sliders-horizontal">
-                                    <path d="M21 4h-7" />
-                                    <path d="M10 4H3" />
-                                    <path d="M12 2v4" />
-                                    <path d="M21 12H12" />
-                                    <path d="M8 12H3" />
-                                    <path d="M10 10v4" />
-                                    <path d="M21 20h-9" />
-                                    <path d="M8 20H3" />
-                                    <path d="M10 18v4" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="9" rx="1"/>
+                                    <rect x="14" y="3" width="7" height="5" rx="1"/>
+                                    <rect x="14" y="12" width="7" height="9" rx="1"/>
+                                    <rect x="3" y="16" width="7" height="5" rx="1"/>
                                 </svg>
                             </span>
                         </div>
@@ -5986,12 +6082,17 @@
                             alt="Electronics & Tech">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Electronics & Tech</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Electronics & Tech</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
                                 </svg>
                             </span>
                         </div>
@@ -6002,12 +6103,17 @@
                             alt="Apparel & Fashion">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Apparel & Fashion</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Apparel & Fashion</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                    <line x1="3" y1="6" x2="21" y2="6"/>
+                                    <path d="M16 10a4 4 0 0 1-8 0"/>
                                 </svg>
                             </span>
                         </div>
@@ -6018,28 +6124,35 @@
                             alt="Home & Living">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Home & Living</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Home & Living</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
                                 </svg>
                             </span>
                         </div>
                     </a>
                     <a href="#" class="category-card" data-category="personal-care-beauty"
                         onclick="filterCategory('personal-care-beauty', event)">
-                        <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop&q=60"
+                        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60"
                             alt="Personal Care & Beauty">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Personal Care & Beauty</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Personal Care & Beauty</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
                                 </svg>
                             </span>
                         </div>
@@ -6050,12 +6163,15 @@
                             alt="Sports & Outdoors">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Sports & Outdoors</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Sports & Outdoors</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                                 </svg>
                             </span>
                         </div>
@@ -6066,12 +6182,16 @@
                             alt="Accessories & Jewelry">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Accessories & Jewelry</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Accessories & Jewelry</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M6 3h12l4 6-10 13L2 9z"/>
+                                    <path d="M11 3 8 9l3 13M13 3l3 9-3 10M2 9h20"/>
                                 </svg>
                             </span>
                         </div>
@@ -6082,12 +6202,16 @@
                             alt="Stationery & Office">
                         <div class="category-card-overlay"></div>
                         <div class="category-card-content">
-                            <span class="category-card-title">Stationery & Office</span>
+                            <div class="category-card-text">
+                                <span class="category-card-title">Stationery & Office</span>
+                                <span class="category-card-subtitle">Shop Now</span>
+                            </div>
                             <span class="category-card-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-chevron-right">
-                                    <path d="m9 18 6-6-6-6" />
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
                                 </svg>
                             </span>
                         </div>
@@ -8076,8 +8200,8 @@
             categoriesBar.classList.remove('dashboard-active');
             if (toggleBtn) toggleBtn.style.display = 'flex';
 
-            // Default collapse categories bar on account sub-pages and product page
-            if (page === 'account' || page === 'product') {
+            // Default collapse categories bar on account sub-pages, product page, and wishlist page
+            if (page === 'account' || page === 'product' || page === 'wishlist') {
                 categoriesBar.classList.add('hidden-scroll');
             }
             categoriesContainer.innerHTML = `
@@ -10073,7 +10197,7 @@
             window.addEventListener('scroll', () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const page = urlParams.get('page') || 'home';
-                if (page === 'account' || page === 'product') return;
+                if (page === 'account' || page === 'product' || page === 'wishlist') return;
 
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const categoriesBar = document.querySelector('.categories-bar');
