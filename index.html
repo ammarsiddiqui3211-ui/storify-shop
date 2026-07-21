@@ -12,6 +12,7 @@
     <meta name="author" content="Storify Shop">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#1a1a2e">
+    <link rel="manifest" href="/manifest.json">
     <meta name="application-name" content="Storify Shop">
     <meta name="apple-mobile-web-app-title" content="Storify Shop">
     <meta name="format-detection" content="telephone=no">
@@ -10195,6 +10196,15 @@
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {
             initializeApp();
+        }
+
+        // Register Service Worker for PWA support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
         }
     </script>
 </body>
