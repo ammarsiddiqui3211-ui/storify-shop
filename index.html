@@ -5011,7 +5011,6 @@
             overflow: hidden;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
             display: flex;
             align-items: center;
@@ -5020,7 +5019,6 @@
         }
 
         .category-card:hover {
-            transform: translateY(-6px);
             border-color: rgba(255, 255, 255, 0.25);
         }
 
@@ -5031,11 +5029,6 @@
             height: 100%;
             object-fit: cover;
             z-index: 1;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .category-card:hover img {
-            transform: scale(1.1) rotate(0.5deg);
         }
 
         .category-card-overlay {
@@ -5043,7 +5036,6 @@
             inset: 0;
             z-index: 2;
             opacity: 0.85;
-            transition: all 0.4s ease;
             backdrop-filter: blur(1px);
             -webkit-backdrop-filter: blur(1px);
         }
@@ -5141,12 +5133,10 @@
             font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            transition: all 0.3s ease;
         }
 
         .category-card:hover .category-card-subtitle {
             color: var(--white);
-            transform: translateX(2px);
         }
 
         .category-card-icon {
@@ -5154,7 +5144,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             background: rgba(255, 255, 255, 0.12);
             border-radius: 50%;
             width: 38px;
@@ -5165,7 +5154,6 @@
         }
 
         .category-card:hover .category-card-icon {
-            transform: translateX(4px) scale(1.08);
             background: rgba(255, 255, 255, 0.22);
             color: var(--white);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -5179,7 +5167,6 @@
         .category-card.active {
             border-color: var(--accent);
             box-shadow: 0 0 0 2px var(--accent), 0 8px 24px var(--accent-glow);
-            transform: scale(1.02);
         }
 
         .category-card.active .category-card-overlay {
