@@ -1,11 +1,11 @@
-const CACHE_NAME = 'storify-cache-v2';
+const CACHE_NAME = 'storify-cache-v3';
 const ASSETS = [
   '/',
   '/index.html',
   '/images/logo/header.png',
   '/images/logo/footer.png',
   '/images/favicon/favicon.png',
-  '/images/favicon/Icon-v2.png'
+  '/images/icon/Icon-v2.png'
 ];
 
 self.addEventListener('install', (event) => {
