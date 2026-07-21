@@ -5,8 +5,7 @@ const ASSETS = [
   '/images/logo/header.png',
   '/images/logo/footer.png',
   '/images/favicon/favicon.png',
-  '/images/favicon/icon-192.png',
-  '/images/favicon/icon-512.png'
+  '/images/favicon/Icon.png'
 ];
 
 self.addEventListener('install', (event) => {
