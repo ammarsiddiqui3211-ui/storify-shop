@@ -1,13 +1,14 @@
 {
+  "id": "/?v=6",
   "name": "Storify",
   "short_name": "Storify",
-  "start_url": "/",
+  "start_url": "/?v=6",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#1a1a2e",
   "icons": [
     {
-      "src": "/images/icon/Icon-v6.png",
+      "src": "/images/icon/Icon-v6.png?v=6",
       "sizes": "192x192 512x512 1080x1080",
       "type": "image/png",
       "purpose": "any maskable"
