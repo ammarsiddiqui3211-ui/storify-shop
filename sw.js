@@ -1,7 +1,8 @@
-const CACHE_NAME = 'storify-cache-v7';
+const CACHE_NAME = 'storify-cache-v8';
 const ASSETS = [
   '/',
   '/index.html',
+  '/manifest.json',
   '/images/logo/header.png',
   '/images/logo/footer.png',
   '/images/favicon/favicon.png',
